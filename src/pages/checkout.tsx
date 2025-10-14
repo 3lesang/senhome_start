@@ -79,10 +79,11 @@ type FormValues = z.infer<typeof schema>;
 
 export function CheckoutPage() {
 	const navigate = useNavigate();
-	const { data } = useLiveQuery((q) =>
+	const { data: order } = useLiveQuery((q) =>
 		q
 			.from({ order: orderCollection })
-			.where(({ order }) => eq(order.id, 1))
+			.where(({ order }) => eq(order.id, localStorage.getItem("browser_id")))
+			.findOne()
 			.select(({ order }) => ({
 				id: order?.id,
 				name: order?.name,
@@ -95,7 +96,6 @@ export function CheckoutPage() {
 				items: order?.items,
 			})),
 	);
-	const order = data[0];
 
 	const form = useForm<FormValues>({
 		resolver: zodResolver(schema),
@@ -110,7 +110,7 @@ export function CheckoutPage() {
 			payment: "cod",
 			status: "created",
 			note: "",
-			items: order.items,
+			items: order?.items,
 		},
 	});
 
@@ -124,7 +124,7 @@ export function CheckoutPage() {
 
 	function handleSubmit(values: FormValues) {
 		mutate(values);
-		orderCollection.update(order.id, (order) => {
+		orderCollection.update(order?.id, (order) => {
 			order.name = values.name;
 			order.phone = values.phone;
 			order.email = values.email;

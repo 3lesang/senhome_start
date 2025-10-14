@@ -28,7 +28,7 @@ export const cartCollection = createCollection(
 );
 
 const orderSchema = z.object({
-	id: z.number(),
+	id: z.string(),
 	name: z.string(),
 	phone: z.string(),
 	email: z.string(),

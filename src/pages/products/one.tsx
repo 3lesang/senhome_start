@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ClientOnly, useParams } from "@tanstack/react-router";
+import { ClientOnly, useNavigate, useParams } from "@tanstack/react-router";
 import { createClientOnlyFn } from "@tanstack/react-start";
 import Bold from "@tiptap/extension-bold";
 import Document from "@tiptap/extension-document";
@@ -15,12 +15,19 @@ import Underline from "@tiptap/extension-underline";
 import Youtube from "@tiptap/extension-youtube";
 import { Placeholder, UndoRedo } from "@tiptap/extensions";
 import { renderToReactElement } from "@tiptap/static-renderer";
-import { MinusIcon, PlusIcon, ShoppingCartIcon } from "lucide-react";
+import {
+	InfoIcon,
+	MinusIcon,
+	PercentIcon,
+	PlusIcon,
+	ShoppingCartIcon,
+} from "lucide-react";
 import { Activity, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { getOptionsProduct } from "@/api/option/list";
 import { getProductQueryOptions } from "@/api/product/one";
 import { getVariantsProduct } from "@/api/variant/list";
+import { Badge } from "@/components/ui/badge";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -39,8 +46,13 @@ import {
 	CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Separator } from "@/components/ui/separator";
-import { cn, convertToFileUrl, formatVND } from "@/lib/utils";
-import { cartCollection } from "@/stores/db";
+import {
+	calculateDiscount,
+	cn,
+	convertToFileUrl,
+	formatVND,
+} from "@/lib/utils";
+import { cartCollection, orderCollection } from "@/stores/db";
 
 const extensions = [
 	Document,
@@ -78,31 +90,8 @@ type VariantType = {
 	thumbnail: string;
 };
 
-const addToCart = createClientOnlyFn(
-	(data: {
-		id: string;
-		name: string;
-		slug: string;
-		price: number;
-		sale_price: number;
-		thumbnail: string;
-		quantity: number;
-		combos: string;
-		selected: boolean;
-		product: string;
-		variant: string;
-	}) => {
-		const exist = cartCollection.get(data.id);
-		if (exist?.id) {
-			return cartCollection.update(data.id, (cart) => {
-				cart.quantity += 1;
-			});
-		}
-		cartCollection.insert(data);
-	},
-);
-
 export function ProductPage() {
+	const navigate = useNavigate();
 	const [combos, setCombos] = useState<Record<string, string>>({});
 	const [api, setApi] = useState<CarouselApi>();
 	const [current, setCurrent] = useState(0);
@@ -138,6 +127,78 @@ export function ProductPage() {
 			setVariant(variant);
 		}
 		setCombos(newCombos);
+	}
+
+	function handleAddToCart() {
+		if (!variant?.id) return;
+		const data = {
+			id: variant.id ?? product.id,
+			name: product.name,
+			slug: product.slug,
+			price: variant.price,
+			sale_price: variant.sale_price,
+			thumbnail: variant.thumbnail,
+			quantity,
+			combos: variant.combos,
+			selected: true,
+			product: product.id,
+			variant: variant?.id,
+		};
+		const addToCart = createClientOnlyFn(() => {
+			const exist = cartCollection.get(data.id);
+			if (exist?.id) {
+				return cartCollection.update(exist.id, (cart) => {
+					cart.quantity += 1;
+				});
+			}
+			cartCollection.insert(data);
+		});
+		addToCart();
+		toast.success("Add to cart successfully");
+	}
+
+	function handleCheckout() {
+		if (!variant?.id) return;
+		const addOrder = createClientOnlyFn(() => {
+			const item = {
+				id: variant.id ?? product.id,
+				name: product.name,
+				slug: product.slug,
+				price: variant.price,
+				sale_price: variant.sale_price,
+				thumbnail: variant.thumbnail,
+				quantity,
+				combos: variant.combos,
+				selected: true,
+				product: product.id,
+				variant: variant?.id,
+			};
+			const browserId = localStorage.getItem("browser_id");
+			const exist = browserId ? cartCollection.get(browserId) : null;
+			if (exist?.id) {
+				return orderCollection.update(exist.id, (order) => {
+					order.items = [item];
+				});
+			}
+			const id = crypto.randomUUID();
+			localStorage.setItem("browser_id", id);
+			return orderCollection.insert({
+				id,
+				name: "",
+				phone: "",
+				email: "",
+				street: "",
+				province: { label: "", value: "" },
+				district: { label: "", value: "" },
+				ward: { label: "", value: "" },
+				status: "created",
+				payment: "cod",
+				items: [item],
+				note: "",
+			});
+		});
+		addOrder();
+		navigate({ to: "/checkout" });
 	}
 
 	useEffect(() => {
@@ -214,6 +275,12 @@ export function ProductPage() {
 						</ClientOnly>
 					</div>
 					<div className="flex-1 px-8">
+						{variant?.id && (
+							<Badge variant="destructive">
+								-{calculateDiscount(variant?.price, variant?.sale_price)}
+								<PercentIcon />
+							</Badge>
+						)}
 						<p className="text-2xl font-bold">{product.name}</p>
 						<div className="my-8">
 							<p className="line-through text-neutral-500">
@@ -267,7 +334,7 @@ export function ProductPage() {
 							})}
 						</div>
 						<div className="mt-4 space-y-4">
-							<p className="text-sm">Số lượng</p>
+							<p className="font-bold">Số lượng</p>
 							<div className="flex items-center gap-4 bg-white rounded w-fit">
 								<Button
 									type="button"
@@ -297,34 +364,28 @@ export function ProductPage() {
 								)}
 							</div>
 						</div>
-
-						<div className="flex gap-2 items-center w-full">
+						{!variant?.id && (
+							<Badge variant="secondary">
+								<InfoIcon />
+								Vui lòng chọn loại sản phẩm
+							</Badge>
+						)}
+						<div className="flex gap-2 items-center w-full mt-8">
 							<Button
 								type="button"
 								size="lg"
 								variant="outline"
 								className="flex-1"
-								onClick={() => {
-									if (!variant?.id) return;
-									addToCart({
-										id: variant.id ?? product.id,
-										name: product.name,
-										slug: product.slug,
-										price: variant.price,
-										sale_price: variant.sale_price,
-										thumbnail: variant.thumbnail,
-										quantity,
-										combos: variant.combos,
-										selected: true,
-										product: product.id,
-										variant: variant?.id,
-									});
-									toast.success("Add to cart successfully");
-								}}
+								onClick={handleAddToCart}
 							>
 								Thêm vào giỏ hàng
 							</Button>
-							<Button type="button" size="lg" className="flex-1">
+							<Button
+								type="button"
+								size="lg"
+								className="flex-1"
+								onClick={handleCheckout}
+							>
 								Đặt hàng
 							</Button>
 						</div>
@@ -359,7 +420,7 @@ export function ProductPage() {
 					</div>
 					<Separator />
 				</div>
-				<div className="max-w-5xl mx-auto grid grid-cols-10 gap-8 mt-8">
+				<div className="max-w-5xl mx-auto grid grid-cols-10 mt-8">
 					<div className="col-span-7">
 						<Activity mode={tab === "info" ? "visible" : "hidden"}>
 							<div className="typography">
@@ -377,10 +438,20 @@ export function ProductPage() {
 						<div className="sticky top-0 h-full max-h-[1000px] flex flex-col py-4">
 							<div className="flex-1"></div>
 							<div className="flex gap-2 items-center">
-								<Button size="icon-lg" variant="outline">
+								<Button
+									type="button"
+									size="icon-lg"
+									variant="outline"
+									onClick={handleAddToCart}
+								>
 									<ShoppingCartIcon />
 								</Button>
-								<Button size="lg" className="w-full">
+								<Button
+									type="button"
+									size="lg"
+									className="w-full"
+									onClick={handleCheckout}
+								>
 									Đặt hàng
 								</Button>
 							</div>

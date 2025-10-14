@@ -12,6 +12,7 @@ import Nprogress from "nprogress";
 import { Toaster } from "@/components/ui/sonner";
 import "nprogress/nprogress.css";
 import appCss from "../styles.css?url";
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 	{
 		head: () => ({
@@ -55,8 +56,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			<body>
 				{children}
 				<TanStackDevtools
-					config={{
-						position: "bottom-right",
+					eventBusConfig={{
+						debug: false,
+						connectToServerBus: true,
 					}}
 					plugins={[
 						{

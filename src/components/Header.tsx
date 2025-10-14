@@ -1,9 +1,9 @@
-import { Link } from "@tanstack/react-router";
+import { ClientOnly, Link } from "@tanstack/react-router";
 import { CircleUserIcon, SearchIcon, ShoppingBagIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Badge } from "./ui/badge";
+import { CartBadge } from "./cart";
 
 export function Header() {
 	return (
@@ -37,12 +37,9 @@ export function Header() {
 					)}
 				>
 					<ShoppingBagIcon />
-					<Badge
-						variant="secondary"
-						className="absolute -bottom-2 -right-2 z-10"
-					>
-						10
-					</Badge>
+					<ClientOnly fallback={null}>
+						<CartBadge />
+					</ClientOnly>
 				</Link>
 				<Link to="/signin" className={cn(buttonVariants({ variant: "ghost" }))}>
 					Tài khoản

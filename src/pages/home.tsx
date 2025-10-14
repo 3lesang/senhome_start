@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { ClientOnly, Link } from "@tanstack/react-router";
 import Autoplay from "embla-carousel-autoplay";
 import { ArrowRightIcon } from "lucide-react";
 import {
@@ -36,31 +36,33 @@ export function HomePage() {
 	return (
 		<main>
 			<section>
-				<Carousel
-					plugins={[
-						Autoplay({
-							delay: 2000,
-						}),
-					]}
-				>
-					<CarouselContent>
-						{heroCollections.map((item) => (
-							<CarouselItem key={item.id}>
-								<div className="h-[800px] bg-neutral-50">
-									<Link to="/collections/$id" params={{ id: item.slug }}>
-										<img
-											src={convertToFileUrl(item.expand.file)}
-											alt={item.slug}
-											className="w-full h-full object-cover"
-										/>
-									</Link>
-								</div>
-							</CarouselItem>
-						))}
-					</CarouselContent>
-					<CarouselPrevious className="left-2" />
-					<CarouselNext className="right-2" />
-				</Carousel>
+				<ClientOnly>
+					<Carousel
+						plugins={[
+							Autoplay({
+								delay: 2000,
+							}),
+						]}
+					>
+						<CarouselContent>
+							{heroCollections.map((item) => (
+								<CarouselItem key={item.id}>
+									<div className="h-[800px] bg-neutral-50">
+										<Link to="/collections/$id" params={{ id: item.slug }}>
+											<img
+												src={convertToFileUrl(item.expand.file)}
+												alt={item.slug}
+												className="w-full h-full object-cover"
+											/>
+										</Link>
+									</div>
+								</CarouselItem>
+							))}
+						</CarouselContent>
+						<CarouselPrevious className="left-2" />
+						<CarouselNext className="right-2" />
+					</Carousel>
+				</ClientOnly>
 			</section>
 			<section>
 				{collections.map((item) => (

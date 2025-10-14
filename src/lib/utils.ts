@@ -21,3 +21,9 @@ export function convertToFileUrl(record: {
 	if (!record?.id) return "";
 	return `${API_KEY}/api/files/${record?.collectionName}/${record?.id}/${record?.file}?thumb=100x0`;
 }
+
+export function calculateDiscount(originPrice: number, salePrice: number) {
+	if (originPrice <= 0) return 0;
+	const discount = ((originPrice - salePrice) / originPrice) * 100;
+	return Math.round(discount);
+}
