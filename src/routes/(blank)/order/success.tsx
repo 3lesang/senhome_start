@@ -6,7 +6,7 @@ const schema = z.object({
 	id: z.string(),
 });
 
-export const Route = createFileRoute("/(blank)/order/success/")({
+export const Route = createFileRoute("/(blank)/order/success")({
 	component: OrderSuccessPage,
 	validateSearch: schema,
 });

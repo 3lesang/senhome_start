@@ -59,3 +59,21 @@ export const orderCollection = createCollection(
 		schema: orderSchema,
 	}),
 );
+
+const recentProductsSchema = z.object({
+	id: z.string(),
+	name: z.string(),
+	slug: z.string(),
+	price: z.number(),
+	sale_price: z.number(),
+	thumbnail: z.string(),
+});
+
+export const recentProductsCollection = createCollection(
+	localStorageCollectionOptions({
+		id: "recentProducts",
+		storageKey: "recentProducts",
+		getKey: (item) => item.id,
+		schema: recentProductsSchema,
+	}),
+);

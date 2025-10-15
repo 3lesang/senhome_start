@@ -1,4 +1,5 @@
 import z from "zod";
+import { checkBrowserId } from "@/lib/utils";
 import pocketClient, {
 	ORDER_COLLECTION,
 	ORDER_ITEM_COLLECTION,
@@ -49,6 +50,7 @@ export async function createOrderHandler(values: CreateOrderPayload) {
 				district: values.district,
 				ward: values.ward,
 			},
+			browser_id: checkBrowserId(),
 		},
 		payment: values.payment,
 		status: values.status,

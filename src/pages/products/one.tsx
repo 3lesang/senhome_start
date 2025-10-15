@@ -27,6 +27,8 @@ import { toast } from "sonner";
 import { getOptionsProduct } from "@/api/option/list";
 import { getProductQueryOptions } from "@/api/product/one";
 import { getVariantsProduct } from "@/api/variant/list";
+import { CheckoutButton } from "@/components/checkout";
+import { RecentProducts } from "@/components/recent-product";
 import { Badge } from "@/components/ui/badge";
 import {
 	Breadcrumb,
@@ -48,6 +50,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import {
 	calculateDiscount,
+	checkBrowserId,
 	cn,
 	convertToFileUrl,
 	formatVND,
@@ -159,6 +162,7 @@ export function ProductPage() {
 
 	function handleCheckout() {
 		if (!variant?.id) return;
+		const id = checkBrowserId();
 		const addOrder = createClientOnlyFn(() => {
 			const item = {
 				id: variant.id ?? product.id,
@@ -173,16 +177,14 @@ export function ProductPage() {
 				product: product.id,
 				variant: variant?.id,
 			};
-			const browserId = localStorage.getItem("browser_id");
-			const exist = browserId ? cartCollection.get(browserId) : null;
-			if (exist?.id) {
-				return orderCollection.update(exist.id, (order) => {
+			const order = orderCollection.get(id);
+			if (order?.id) {
+				orderCollection.update(order.id, (order) => {
 					order.items = [item];
 				});
+				return;
 			}
-			const id = crypto.randomUUID();
-			localStorage.setItem("browser_id", id);
-			return orderCollection.insert({
+			orderCollection.insert({
 				id,
 				name: "",
 				phone: "",
@@ -212,60 +214,47 @@ export function ProductPage() {
 	}, [api]);
 
 	return (
-		<main className="py-8">
-			<Breadcrumb className="max-w-6xl mx-auto mb-8">
-				<BreadcrumbList>
-					<BreadcrumbItem>
-						<BreadcrumbLink href="/">Trang chủ</BreadcrumbLink>
-					</BreadcrumbItem>
-					<BreadcrumbSeparator />
-					<BreadcrumbItem>
-						<BreadcrumbPage>{product.name}</BreadcrumbPage>
-					</BreadcrumbItem>
-				</BreadcrumbList>
-			</Breadcrumb>
+		<main>
+			<ClientOnly>
+				<RecentProducts
+					data={{
+						id: product.id,
+						name: product.name,
+						price: product.price,
+						sale_price: product.sale_price,
+						slug: product.slug,
+						thumbnail: convertToFileUrl(product.expand.file[0]),
+					}}
+				/>
+			</ClientOnly>
 			<section className="max-w-6xl mx-auto">
-				<div className="flex">
-					<div className="space-y-2 w-14 mr-2 h-[500px] overflow-scroll">
-						{files.map((item, index) => (
-							<div
-								key={`${item?.id}-${index}`}
-								className={cn(
-									"aspect-square bg-neutral-50 border-2 rounded-md relative",
-									current === index ? "border-primary" : "border-transparent",
-								)}
-							>
-								<button
-									type="button"
-									className="absolute inset-0 hover:cursor-pointer"
-									onClick={() => api?.scrollTo(index)}
-								/>
-								{item?.id && (
-									<img
-										src={convertToFileUrl(item)}
-										alt="file"
-										className="w-full h-full object-contain rounded-md"
-									/>
-								)}
-							</div>
-						))}
-					</div>
-					<div className="flex-1">
+				<Breadcrumb className="mt-4">
+					<BreadcrumbList>
+						<BreadcrumbItem>
+							<BreadcrumbLink href="/">Trang chủ</BreadcrumbLink>
+						</BreadcrumbItem>
+						<BreadcrumbSeparator />
+						<BreadcrumbItem>
+							<BreadcrumbPage>{product.name}</BreadcrumbPage>
+						</BreadcrumbItem>
+					</BreadcrumbList>
+				</Breadcrumb>
+				<div className="grid grid-cols-2 mt-4">
+					<div className="space-y-2">
 						<ClientOnly>
 							<Carousel setApi={setApi}>
 								<CarouselContent>
 									{files.map((item, index) => (
-										<CarouselItem
-											key={`${item?.id}-${index}`}
-											className="aspect-square"
-										>
-											{item?.id && (
-												<img
-													src={convertToFileUrl(item)}
-													alt="file"
-													className="rounded-md object-contain w-full h-full"
-												/>
-											)}
+										<CarouselItem key={`${item?.id}-${index}`}>
+											<div className="w-full h-full rounded-xl bg-neutral-50 overflow-hidden aspect-square">
+												{item?.id && (
+													<img
+														src={convertToFileUrl(item)}
+														alt="file"
+														className="object-contain w-full h-full"
+													/>
+												)}
+											</div>
 										</CarouselItem>
 									))}
 								</CarouselContent>
@@ -273,29 +262,62 @@ export function ProductPage() {
 								<CarouselNext className="right-2" />
 							</Carousel>
 						</ClientOnly>
+						<div className="overflow-x-scroll">
+							<div className="grid grid-cols-8 gap-2">
+								{files.map((item, index) => (
+									<div
+										key={`${item?.id}-${index}`}
+										className={cn(
+											"aspect-square bg-neutral-50 border-2 rounded-md relative",
+											current === index
+												? "border-primary"
+												: "border-transparent",
+										)}
+									>
+										<button
+											type="button"
+											className="absolute inset-0 hover:cursor-pointer"
+											onClick={() => api?.scrollTo(index)}
+										/>
+										{item?.id && (
+											<img
+												src={convertToFileUrl(item)}
+												alt="file"
+												className="w-full h-full object-contain rounded-md"
+											/>
+										)}
+									</div>
+								))}
+							</div>
+						</div>
 					</div>
-					<div className="flex-1 px-8">
-						{variant?.id && (
-							<Badge variant="destructive">
-								-{calculateDiscount(variant?.price, variant?.sale_price)}
-								<PercentIcon />
-							</Badge>
-						)}
-						<p className="text-2xl font-bold">{product.name}</p>
+					<div className="pl-8">
+						<p className="text-2xl font-light">{product.name}</p>
 						<div className="my-8">
-							<p className="line-through text-neutral-500">
+							<div className="flex items-center space-x-2">
+								<Badge variant="secondary">
+									{variant?.id
+										? calculateDiscount(variant?.price, variant?.sale_price)
+										: calculateDiscount(
+												variants[0].price,
+												variants[0].sale_price,
+											)}
+									<PercentIcon />
+								</Badge>
 								{variant?.id ? (
-									<span>{formatVND(variant.price)}</span>
+									<p className="line-through text-neutral-500 text-sm">
+										{formatVND(variant.price)}
+									</p>
 								) : (
-									<>
+									<p className="line-through text-neutral-500">
 										<span>{formatVND(variants?.[0].price)}</span>
 										<span> - </span>
 										<span>
 											{formatVND(variants?.[variants.length - 1].price)}
 										</span>
-									</>
+									</p>
 								)}
-							</p>
+							</div>
 							<p className="text-3xl font-bold">
 								{variant?.id ? (
 									<span>{formatVND(variant.sale_price)}</span>
@@ -315,14 +337,14 @@ export function ProductPage() {
 								return (
 									<div key={item.id} className="space-y-2">
 										<p className="font-bold">{item.name}</p>
-										<div className="flex flex-wrap gap-2">
+										<div className="grid grid-cols-2 gap-2">
 											{item.values.map((v) => (
 												<Button
 													key={v.id}
 													variant={
 														combos[item.id] === v.name ? "default" : "secondary"
 													}
-													className="flex-1"
+													className=""
 													onClick={() => handleSelect(item.id, v.name)}
 												>
 													{v.name}
@@ -333,7 +355,7 @@ export function ProductPage() {
 								);
 							})}
 						</div>
-						<div className="mt-4 space-y-4">
+						<div className="mt-8 space-y-4">
 							<p className="font-bold">Số lượng</p>
 							<div className="flex items-center gap-4 bg-white rounded w-fit">
 								<Button
@@ -357,19 +379,18 @@ export function ProductPage() {
 							<Separator />
 							<div className="flex justify-between my-4">
 								<p className="font-bold">Số lượng sản phẩm</p>
-								{variant?.id && (
-									<p className="font-bold text-lg">
-										{formatVND(variant?.sale_price * quantity)}
-									</p>
-								)}
+								<p className="font-bold text-lg">
+									{variant?.id && formatVND(variant?.sale_price * quantity)}
+								</p>
 							</div>
 						</div>
-						{!variant?.id && (
-							<Badge variant="secondary">
-								<InfoIcon />
-								Vui lòng chọn loại sản phẩm
-							</Badge>
-						)}
+						<Badge
+							variant="secondary"
+							className={cn(variant?.id ? "opacity-0" : "opacity-100")}
+						>
+							<InfoIcon />
+							Vui lòng chọn loại sản phẩm
+						</Badge>
 						<div className="flex gap-2 items-center w-full mt-8">
 							<Button
 								type="button"
@@ -380,6 +401,9 @@ export function ProductPage() {
 							>
 								Thêm vào giỏ hàng
 							</Button>
+							<ClientOnly>
+								<CheckoutButton />
+							</ClientOnly>
 							<Button
 								type="button"
 								size="lg"
@@ -393,7 +417,7 @@ export function ProductPage() {
 				</div>
 			</section>
 			<section className="mt-8">
-				<div className="sticky top-0 bg-white">
+				<div className="sticky top-16 bg-white">
 					<div className="max-w-6xl mx-auto grid grid-cols-8">
 						<Button
 							type="button"

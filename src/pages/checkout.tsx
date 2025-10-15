@@ -41,7 +41,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
-import { cn, formatVND } from "@/lib/utils";
+import { checkBrowserId, cn, formatVND } from "@/lib/utils";
 import { orderCollection } from "@/stores/db";
 
 const schema = z.object({
@@ -82,19 +82,8 @@ export function CheckoutPage() {
 	const { data: order } = useLiveQuery((q) =>
 		q
 			.from({ order: orderCollection })
-			.where(({ order }) => eq(order.id, localStorage.getItem("browser_id")))
-			.findOne()
-			.select(({ order }) => ({
-				id: order?.id,
-				name: order?.name,
-				phone: order?.phone,
-				email: order?.email,
-				street: order?.street,
-				province: order?.province,
-				district: order?.district,
-				ward: order?.ward,
-				items: order?.items,
-			})),
+			.where(({ order }) => eq(order.id, checkBrowserId()))
+			.findOne(),
 	);
 
 	const form = useForm<FormValues>({

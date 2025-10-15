@@ -11,6 +11,7 @@ export const Route = createFileRoute("/(app)/products/$id")({
 			getProductQueryOptions(params.id),
 		);
 		await context.queryClient.ensureQueryData(getOptionsProduct(product.id));
-		return context.queryClient.ensureQueryData(getVariantsProduct(product.id));
+		await context.queryClient.ensureQueryData(getVariantsProduct(product.id));
+		return product;
 	},
 });

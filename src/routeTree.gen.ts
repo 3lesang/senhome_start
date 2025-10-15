@@ -9,19 +9,31 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as CartRouteRouteImport } from './routes/cart/route'
 import { Route as appRouteRouteImport } from './routes/(app)/route'
+import { Route as CartIndexRouteImport } from './routes/cart/index'
 import { Route as appIndexRouteImport } from './routes/(app)/index'
 import { Route as blankCheckoutRouteImport } from './routes/(blank)/checkout'
-import { Route as appCartRouteImport } from './routes/(app)/cart'
+import { Route as blankOrderIndexRouteImport } from './routes/(blank)/order/index'
+import { Route as blankOrderSuccessRouteImport } from './routes/(blank)/order/success'
 import { Route as blankauthSignupRouteImport } from './routes/(blank)/(auth)/signup'
 import { Route as blankauthSigninRouteImport } from './routes/(blank)/(auth)/signin'
 import { Route as appProductsIdRouteImport } from './routes/(app)/products/$id'
 import { Route as appCollectionsIdRouteImport } from './routes/(app)/collections/$id'
-import { Route as blankOrderSuccessIndexRouteImport } from './routes/(blank)/order/success/index'
 
+const CartRouteRoute = CartRouteRouteImport.update({
+  id: '/cart',
+  path: '/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const appRouteRoute = appRouteRouteImport.update({
   id: '/(app)',
   getParentRoute: () => rootRouteImport,
+} as any)
+const CartIndexRoute = CartIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CartRouteRoute,
 } as any)
 const appIndexRoute = appIndexRouteImport.update({
   id: '/',
@@ -33,10 +45,15 @@ const blankCheckoutRoute = blankCheckoutRouteImport.update({
   path: '/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const appCartRoute = appCartRouteImport.update({
-  id: '/cart',
-  path: '/cart',
-  getParentRoute: () => appRouteRoute,
+const blankOrderIndexRoute = blankOrderIndexRouteImport.update({
+  id: '/(blank)/order/',
+  path: '/order/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const blankOrderSuccessRoute = blankOrderSuccessRouteImport.update({
+  id: '/(blank)/order/success',
+  path: '/order/success',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const blankauthSignupRoute = blankauthSignupRouteImport.update({
   id: '/(blank)/(auth)/signup',
@@ -58,43 +75,43 @@ const appCollectionsIdRoute = appCollectionsIdRouteImport.update({
   path: '/collections/$id',
   getParentRoute: () => appRouteRoute,
 } as any)
-const blankOrderSuccessIndexRoute = blankOrderSuccessIndexRouteImport.update({
-  id: '/(blank)/order/success/',
-  path: '/order/success/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof appIndexRoute
-  '/cart': typeof appCartRoute
+  '/cart': typeof CartRouteRouteWithChildren
   '/checkout': typeof blankCheckoutRoute
+  '/cart/': typeof CartIndexRoute
   '/collections/$id': typeof appCollectionsIdRoute
   '/products/$id': typeof appProductsIdRoute
   '/signin': typeof blankauthSigninRoute
   '/signup': typeof blankauthSignupRoute
-  '/order/success': typeof blankOrderSuccessIndexRoute
+  '/order/success': typeof blankOrderSuccessRoute
+  '/order': typeof blankOrderIndexRoute
 }
 export interface FileRoutesByTo {
-  '/cart': typeof appCartRoute
   '/checkout': typeof blankCheckoutRoute
   '/': typeof appIndexRoute
+  '/cart': typeof CartIndexRoute
   '/collections/$id': typeof appCollectionsIdRoute
   '/products/$id': typeof appProductsIdRoute
   '/signin': typeof blankauthSigninRoute
   '/signup': typeof blankauthSignupRoute
-  '/order/success': typeof blankOrderSuccessIndexRoute
+  '/order/success': typeof blankOrderSuccessRoute
+  '/order': typeof blankOrderIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)': typeof appRouteRouteWithChildren
-  '/(app)/cart': typeof appCartRoute
+  '/cart': typeof CartRouteRouteWithChildren
   '/(blank)/checkout': typeof blankCheckoutRoute
   '/(app)/': typeof appIndexRoute
+  '/cart/': typeof CartIndexRoute
   '/(app)/collections/$id': typeof appCollectionsIdRoute
   '/(app)/products/$id': typeof appProductsIdRoute
   '/(blank)/(auth)/signin': typeof blankauthSigninRoute
   '/(blank)/(auth)/signup': typeof blankauthSignupRoute
-  '/(blank)/order/success/': typeof blankOrderSuccessIndexRoute
+  '/(blank)/order/success': typeof blankOrderSuccessRoute
+  '/(blank)/order/': typeof blankOrderIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -102,50 +119,71 @@ export interface FileRouteTypes {
     | '/'
     | '/cart'
     | '/checkout'
+    | '/cart/'
     | '/collections/$id'
     | '/products/$id'
     | '/signin'
     | '/signup'
     | '/order/success'
+    | '/order'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/cart'
     | '/checkout'
     | '/'
+    | '/cart'
     | '/collections/$id'
     | '/products/$id'
     | '/signin'
     | '/signup'
     | '/order/success'
+    | '/order'
   id:
     | '__root__'
     | '/(app)'
-    | '/(app)/cart'
+    | '/cart'
     | '/(blank)/checkout'
     | '/(app)/'
+    | '/cart/'
     | '/(app)/collections/$id'
     | '/(app)/products/$id'
     | '/(blank)/(auth)/signin'
     | '/(blank)/(auth)/signup'
-    | '/(blank)/order/success/'
+    | '/(blank)/order/success'
+    | '/(blank)/order/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   appRouteRoute: typeof appRouteRouteWithChildren
+  CartRouteRoute: typeof CartRouteRouteWithChildren
   blankCheckoutRoute: typeof blankCheckoutRoute
   blankauthSigninRoute: typeof blankauthSigninRoute
   blankauthSignupRoute: typeof blankauthSignupRoute
-  blankOrderSuccessIndexRoute: typeof blankOrderSuccessIndexRoute
+  blankOrderSuccessRoute: typeof blankOrderSuccessRoute
+  blankOrderIndexRoute: typeof blankOrderIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(app)': {
       id: '/(app)'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof appRouteRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/cart/': {
+      id: '/cart/'
+      path: '/'
+      fullPath: '/cart/'
+      preLoaderRoute: typeof CartIndexRouteImport
+      parentRoute: typeof CartRouteRoute
     }
     '/(app)/': {
       id: '/(app)/'
@@ -161,12 +199,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof blankCheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(app)/cart': {
-      id: '/(app)/cart'
-      path: '/cart'
-      fullPath: '/cart'
-      preLoaderRoute: typeof appCartRouteImport
-      parentRoute: typeof appRouteRoute
+    '/(blank)/order/': {
+      id: '/(blank)/order/'
+      path: '/order'
+      fullPath: '/order'
+      preLoaderRoute: typeof blankOrderIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(blank)/order/success': {
+      id: '/(blank)/order/success'
+      path: '/order/success'
+      fullPath: '/order/success'
+      preLoaderRoute: typeof blankOrderSuccessRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/(blank)/(auth)/signup': {
       id: '/(blank)/(auth)/signup'
@@ -196,25 +241,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appCollectionsIdRouteImport
       parentRoute: typeof appRouteRoute
     }
-    '/(blank)/order/success/': {
-      id: '/(blank)/order/success/'
-      path: '/order/success'
-      fullPath: '/order/success'
-      preLoaderRoute: typeof blankOrderSuccessIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 interface appRouteRouteChildren {
-  appCartRoute: typeof appCartRoute
   appIndexRoute: typeof appIndexRoute
   appCollectionsIdRoute: typeof appCollectionsIdRoute
   appProductsIdRoute: typeof appProductsIdRoute
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
-  appCartRoute: appCartRoute,
   appIndexRoute: appIndexRoute,
   appCollectionsIdRoute: appCollectionsIdRoute,
   appProductsIdRoute: appProductsIdRoute,
@@ -224,12 +260,26 @@ const appRouteRouteWithChildren = appRouteRoute._addFileChildren(
   appRouteRouteChildren,
 )
 
+interface CartRouteRouteChildren {
+  CartIndexRoute: typeof CartIndexRoute
+}
+
+const CartRouteRouteChildren: CartRouteRouteChildren = {
+  CartIndexRoute: CartIndexRoute,
+}
+
+const CartRouteRouteWithChildren = CartRouteRoute._addFileChildren(
+  CartRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   appRouteRoute: appRouteRouteWithChildren,
+  CartRouteRoute: CartRouteRouteWithChildren,
   blankCheckoutRoute: blankCheckoutRoute,
   blankauthSigninRoute: blankauthSigninRoute,
   blankauthSignupRoute: blankauthSignupRoute,
-  blankOrderSuccessIndexRoute: blankOrderSuccessIndexRoute,
+  blankOrderSuccessRoute: blankOrderSuccessRoute,
+  blankOrderIndexRoute: blankOrderIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

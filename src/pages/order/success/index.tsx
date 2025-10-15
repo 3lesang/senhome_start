@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 import pocketClient, { ORDER_COLLECTION } from "@/pocketbase";
 
 export function OrderSuccessPage() {
-	const { id } = useSearch({ from: "/(blank)/order/success/" });
+	const { id } = useSearch({ from: "/(blank)/order/success" });
 	const { data, isLoading } = useQuery({
 		queryKey: [ORDER_COLLECTION, id],
 		queryFn: () => {
@@ -72,8 +72,8 @@ export function OrderSuccessPage() {
 						</ItemDescription>
 					</ItemContent>
 					<ItemActions>
-						<Link to="/" className={cn(buttonVariants())}>
-							Quay lại trang chủ
+						<Link to="/order" className={cn(buttonVariants())}>
+							Đơn hàng của tôi
 						</Link>
 					</ItemActions>
 				</Item>
