@@ -15,14 +15,14 @@ export function getProductsCollectionQueryOptions(collectionId: string) {
 							price: number;
 							sale_price: number;
 							expand: {
-								thumbnail: { id: string; collectionName: string; file: string };
+								file: { id: string; collectionName: string; file: string }[];
 							};
 						};
 					};
 				}>(COLLECTION_PRODUCT_COLLECTION)
 				.getList(1, 8, {
 					filter: `collection="${collectionId}"`,
-					expand: "product.thumbnail",
+					expand: "product.file",
 				});
 		},
 	});

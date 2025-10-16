@@ -14,22 +14,27 @@ interface CollectionProductProps {
 export function CollectionProduct({ id }: CollectionProductProps) {
 	const { data } = useQuery(getProductsCollectionQueryOptions(id));
 	return (
-		<div className="grid grid-cols-4 gap-5">
+		<div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
 			{data?.items.map((item) => (
 				<Card key={item.expand.product.id} className="border-0 shadow-none p-0">
-					<div className="aspect-square bg-neutral-50 rounded-md relative">
+					<div className="aspect-square bg-neutral-50 rounded-md relative group">
 						<Link to="/products/$id" params={{ id: item.expand.product.slug }}>
 							<img
-								src={convertToFileUrl(item.expand.product.expand.thumbnail)}
+								src={convertToFileUrl(item.expand.product.expand.file[0])}
 								alt=""
-								className="rounded-lg object-contain"
+								className="rounded-lg object-contain group-hover:opacity-0 transition-opacity duration-150"
+							/>
+							<img
+								src={convertToFileUrl(item.expand.product.expand.file[1])}
+								alt=""
+								className="rounded-lg object-contain opacity-0 group-hover:opacity-100 absolute inset-0 z-20 transition-opacity duration-150"
 							/>
 						</Link>
 						<Button
 							type="submit"
 							size="icon-sm"
 							variant="secondary"
-							className="absolute right-2 bottom-2"
+							className="absolute right-2 bottom-2 z-30"
 						>
 							<ShoppingCartIcon />
 						</Button>

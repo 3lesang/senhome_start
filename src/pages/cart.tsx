@@ -1,6 +1,7 @@
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
+	InfoIcon,
 	MinusIcon,
 	PlusIcon,
 	ShoppingCartIcon,
@@ -9,17 +10,9 @@ import {
 import { Activity } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import {
-	Breadcrumb,
-	BreadcrumbItem,
-	BreadcrumbList,
-	BreadcrumbPage,
-	BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
 	Card,
-	CardAction,
 	CardContent,
 	CardFooter,
 	CardHeader,
@@ -35,19 +28,17 @@ import {
 	EmptyTitle,
 } from "@/components/ui/empty";
 import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
+	Item,
+	ItemActions,
+	ItemContent,
+	ItemDescription,
+	ItemMedia,
+	ItemTitle,
+} from "@/components/ui/item";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import { checkBrowserId, cn, formatVND } from "@/lib/utils";
-import {
-	cartCollection,
-	orderCollection,
-	recentProductsCollection,
-} from "@/stores/db";
+import { cartCollection, orderCollection } from "@/stores/db";
 
 export function CartPage() {
 	const navigate = useNavigate();
@@ -74,8 +65,14 @@ export function CartPage() {
 		})),
 	);
 
-	const { data: products } = useLiveQuery((q) =>
-		q.from({ product: recentProductsCollection }),
+	const cartSumary = cart.reduce(
+		(acc, cur) => {
+			return {
+				totalPrice: acc.totalPrice + cur.price * cur.quantity,
+				finalPrice: acc.finalPrice + cur.sale_price * cur.quantity,
+			};
+		},
+		{ totalPrice: 0, finalPrice: 0 },
 	);
 
 	function handlePayment() {
@@ -105,77 +102,45 @@ export function CartPage() {
 	}
 
 	return (
-		<main className="bg-neutral-50 h-[calc(100vh-64px)]">
+		<main className="bg-neutral-50 min-h-[calc(100vh-64px)] py-8 px-4">
 			<div className="max-w-6xl mx-auto">
-				<Card className="bg-neutral-50 border-0 shadow-none">
-					<CardHeader>
-						<Breadcrumb>
-							<BreadcrumbList>
-								<BreadcrumbItem>
-									<Link to="/">Trang chủ</Link>
-								</BreadcrumbItem>
-								<BreadcrumbSeparator />
-								<BreadcrumbItem>
-									<BreadcrumbPage>Giỏ hàng</BreadcrumbPage>
-								</BreadcrumbItem>
-							</BreadcrumbList>
-						</Breadcrumb>
-						<CardTitle>Giỏ hàng của bạn</CardTitle>
-						<CardAction>
-							<Link
-								to="/order"
-								className={cn(buttonVariants({ variant: "ghost" }))}
-							>
-								<ShoppingCartIcon />
-								Đơn hàng của tôi
-							</Link>
-						</CardAction>
-					</CardHeader>
-					<Activity mode={cart.length > 0 ? "visible" : "hidden"}>
-						<CardContent className="grid grid-cols-12 gap-4">
-							<div className="col-span-8">
-								<Card className="border-0 shadow-none">
-									<CardHeader>
-										<CardTitle>Sản phẩm</CardTitle>
-										<CardAction>
-											<Button
-												type="button"
-												variant="ghost"
-												onClick={() => {
-													cartCollection.delete(cart.map((i) => i.id));
-												}}
-											>
-												Xóa tất cả
-											</Button>
-										</CardAction>
-									</CardHeader>
-									<Table className="rounded-md">
-										<TableHeader className="bg-neutral-50">
-											<TableRow>
-												<TableHead className="text-center">
-													<Checkbox />
-												</TableHead>
-												<TableHead className="w-8"></TableHead>
-												<TableHead>Tên sản phẩm</TableHead>
-												<TableHead></TableHead>
-												<TableHead>Số lượng</TableHead>
-												<TableHead>Số tiền</TableHead>
-												<TableHead></TableHead>
-											</TableRow>
-										</TableHeader>
-										<TableBody>
-											{cart.map((item) => (
-												<TableRow key={item.id}>
-													<TableCell className="text-center">
-														<Checkbox defaultChecked={item.selected} />
-													</TableCell>
-													<TableCell>
-														<Avatar className="rounded-md">
-															<AvatarImage src={item.thumbnail} />
-															<AvatarFallback>CN</AvatarFallback>
-														</Avatar>
-													</TableCell>
-													<TableCell className="w-56 whitespace-normal">
+				<Activity mode={cart.length > 0 ? "visible" : "hidden"}>
+					<div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+						<div className="lg:col-span-12">
+							<Item variant="muted">
+								<ItemMedia>
+									<Button variant="ghost" size="icon">
+										<InfoIcon />
+									</Button>
+								</ItemMedia>
+								<ItemContent>
+									<ItemTitle>Thông tin đơn hàng</ItemTitle>
+								</ItemContent>
+								<ItemActions>
+									<Link to="/order" className={cn(buttonVariants())}>
+										Đơn hàng của tôi
+									</Link>
+								</ItemActions>
+							</Item>
+						</div>
+						<div className="lg:col-span-8">
+							<Card className="border-0 shadow-none h-full">
+								<CardHeader className="">
+									<CardTitle>Giỏ hàng</CardTitle>
+								</CardHeader>
+								<ScrollArea className="max-h-96">
+									<CardContent className="space-y-2">
+										{cart.map((item) => (
+											<Item key={item.id} variant="muted">
+												<ItemMedia>
+													<Checkbox className="bg-white" />
+													<Avatar className="rounded">
+														<AvatarImage src={item.thumbnail} />
+														<AvatarFallback>CN</AvatarFallback>
+													</Avatar>
+												</ItemMedia>
+												<ItemContent>
+													<ItemTitle>
 														<Link
 															to="/products/$id"
 															params={{ id: item.slug }}
@@ -183,129 +148,124 @@ export function CartPage() {
 														>
 															{item.name}
 														</Link>
-													</TableCell>
-													<TableCell className="space-x-1">
+													</ItemTitle>
+													<ItemDescription className="space-x-1">
 														{item.combos?.split(",").map((item) => (
 															<Badge key={item} variant="secondary">
 																{item}
 															</Badge>
 														))}
-													</TableCell>
-													<TableCell>
-														<div className="flex items-center">
-															<Button
-																type="button"
-																variant="secondary"
-																size="icon-sm"
-																onClick={() => {
-																	if (item.quantity === 1) return;
-																	cartCollection.update(item.id, (cart) => {
-																		cart.quantity -= 1;
-																	});
-																}}
-															>
-																<MinusIcon />
-															</Button>
-															<span className="w-10 text-center">
-																{item.quantity}
-															</span>
-															<Button
-																type="button"
-																variant="secondary"
-																size="icon-sm"
-																onClick={() => {
-																	cartCollection.update(item.id, (cart) => {
-																		cart.quantity += 1;
-																	});
-																}}
-															>
-																<PlusIcon />
-															</Button>
-														</div>
-													</TableCell>
-													<TableCell>
-														{formatVND(item.quantity * item.sale_price)}
-													</TableCell>
-													<TableCell>
+														{formatVND(item.sale_price)}
+													</ItemDescription>
+												</ItemContent>
+												<ItemActions>
+													<div className="flex items-center">
 														<Button
 															type="button"
-															variant="ghost"
+															variant="secondary"
 															size="icon-sm"
 															onClick={() => {
-																cartCollection.delete(item.id);
+																if (item.quantity === 1) return;
+																cartCollection.update(item.id, (cart) => {
+																	cart.quantity -= 1;
+																});
 															}}
 														>
-															<Trash2Icon />
+															<MinusIcon />
 														</Button>
-													</TableCell>
-												</TableRow>
-											))}
-										</TableBody>
-									</Table>
-								</Card>
-							</div>
-							<div className="col-span-4">
-								<Card className="border-0 shadow-none">
-									<CardHeader>
-										<CardTitle>Thông tin đặt hàng</CardTitle>
-									</CardHeader>
-									<CardContent></CardContent>
-									<CardFooter>
-										<Button
-											type="button"
-											size="lg"
-											className="w-full"
-											onClick={handlePayment}
-										>
-											Tiến hành mua hàng
-										</Button>
-									</CardFooter>
-								</Card>
-							</div>
-						</CardContent>
-					</Activity>
-					<Activity mode={cart.length === 0 ? "visible" : "hidden"}>
-						<Empty>
-							<EmptyHeader>
-								<EmptyMedia variant="icon">
-									<ShoppingCartIcon />
-								</EmptyMedia>
-								<EmptyTitle>Giỏ hàng của bạn đang trống!</EmptyTitle>
-								<EmptyDescription>
-									Tất cả các mặt hàng đều được giao hàng miễn phí. Hãy tìm những
-									gì bạn yêu thích, phần còn lại là của chúng tôi.
-								</EmptyDescription>
-							</EmptyHeader>
-							<EmptyContent>
-								<Button>Bắt đầu mua sắm</Button>
-							</EmptyContent>
-						</Empty>
-					</Activity>
-				</Card>
-				<Card className="border-0 shadow-none bg-neutral-50">
-					<CardHeader>
-						<CardTitle>Sản phẩm gần đây</CardTitle>
-					</CardHeader>
-					<CardContent className="grid grid-cols-5 gap-4">
-						{products.map((item) => (
-							<Card
-								key={item.id}
-								className="border-0 shadow-none bg-neutral-50"
-							>
-								<Link to="/products/$id" params={{ id: item.slug }}>
-									<img src={item.thumbnail} alt="" className="rounded-lg" />
-								</Link>
-								<CardContent className="px-0">
-									<p className="text-sm font-light hover:underline line-clamp-2">
-										<Link to="/products/$id" params={{ id: item.slug }}>
-											{item.name}
-										</Link>
-									</p>
-								</CardContent>
+														<span className="w-10 text-center">
+															{item.quantity}
+														</span>
+														<Button
+															type="button"
+															variant="secondary"
+															size="icon-sm"
+															onClick={() => {
+																cartCollection.update(item.id, (cart) => {
+																	cart.quantity += 1;
+																});
+															}}
+														>
+															<PlusIcon />
+														</Button>
+													</div>
+													<Button
+														type="button"
+														variant="ghost"
+														size="icon-sm"
+														onClick={() => {
+															cartCollection.delete(item.id);
+														}}
+													>
+														<Trash2Icon />
+													</Button>
+												</ItemActions>
+											</Item>
+										))}
+									</CardContent>
+								</ScrollArea>
 							</Card>
-						))}
-					</CardContent>
-				</Card>
+						</div>
+						<div className="lg:col-span-4">
+							<Card className="border-0 shadow-none">
+								<CardHeader>
+									<CardTitle>Chi tiết thanh toán</CardTitle>
+								</CardHeader>
+								<CardContent className="text-neutral-600 text-sm space-y-2">
+									<div className="flex justify-between mb-4">
+										<p>Tạm tính</p>
+										<p>{formatVND(cartSumary.totalPrice)}</p>
+									</div>
+									<div className="flex justify-between">
+										<p>Giảm giá</p>
+										<p>
+											{formatVND(cartSumary.totalPrice - cartSumary.finalPrice)}
+										</p>
+									</div>
+									<div className="flex justify-between">
+										<p>Phí giao hàng</p>
+										<p>Miễn phí</p>
+									</div>
+								</CardContent>
+								<Separator />
+								<CardFooter className="flex justify-between">
+									<p className="font-bold">Thành tiền</p>
+									<p className="font-bold text-lg">
+										{formatVND(cartSumary.finalPrice)}
+									</p>
+								</CardFooter>
+							</Card>
+						</div>
+						<div className="lg:col-span-8" />
+						<div className="lg:col-span-4">
+							<Button
+								type="button"
+								size="lg"
+								onClick={handlePayment}
+								className="w-full"
+							>
+								Đặt hàng
+							</Button>
+						</div>
+					</div>
+				</Activity>
+				<Activity mode={cart.length === 0 ? "visible" : "hidden"}>
+					<Empty>
+						<EmptyHeader>
+							<EmptyMedia variant="icon">
+								<ShoppingCartIcon />
+							</EmptyMedia>
+							<EmptyTitle>Giỏ hàng của bạn đang trống!</EmptyTitle>
+							<EmptyDescription>
+								Tất cả các mặt hàng đều được giao hàng miễn phí. Hãy tìm những
+								gì bạn yêu thích, phần còn lại là của chúng tôi.
+							</EmptyDescription>
+						</EmptyHeader>
+						<EmptyContent>
+							<Button>Bắt đầu mua sắm</Button>
+						</EmptyContent>
+					</Empty>
+				</Activity>
 			</div>
 		</main>
 	);

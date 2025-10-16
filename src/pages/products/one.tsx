@@ -28,7 +28,6 @@ import { getOptionsProduct } from "@/api/option/list";
 import { getProductQueryOptions } from "@/api/product/one";
 import { getVariantsProduct } from "@/api/variant/list";
 import { CheckoutButton } from "@/components/checkout";
-import { RecentProducts } from "@/components/recent-product";
 import { Badge } from "@/components/ui/badge";
 import {
 	Breadcrumb,
@@ -157,7 +156,13 @@ export function ProductPage() {
 			cartCollection.insert(data);
 		});
 		addToCart();
-		toast.success("Add to cart successfully");
+		toast.success("Add to cart successfully", {
+			action: (
+				<Button type="button" onClick={() => navigate({ to: "/cart" })}>
+					Xem giỏ hàng
+				</Button>
+			),
+		});
 	}
 
 	function handleCheckout() {
@@ -214,21 +219,9 @@ export function ProductPage() {
 	}, [api]);
 
 	return (
-		<main>
-			<ClientOnly>
-				<RecentProducts
-					data={{
-						id: product.id,
-						name: product.name,
-						price: product.price,
-						sale_price: product.sale_price,
-						slug: product.slug,
-						thumbnail: convertToFileUrl(product.expand.file[0]),
-					}}
-				/>
-			</ClientOnly>
+		<main className="py-8">
 			<section className="max-w-6xl mx-auto">
-				<Breadcrumb className="mt-4">
+				<Breadcrumb className="mb-8">
 					<BreadcrumbList>
 						<BreadcrumbItem>
 							<BreadcrumbLink href="/">Trang chủ</BreadcrumbLink>
@@ -239,14 +232,14 @@ export function ProductPage() {
 						</BreadcrumbItem>
 					</BreadcrumbList>
 				</Breadcrumb>
-				<div className="grid grid-cols-2 mt-4">
+				<div className="grid grid-cols-1 lg:grid-cols-2">
 					<div className="space-y-2">
 						<ClientOnly>
 							<Carousel setApi={setApi}>
 								<CarouselContent>
 									{files.map((item, index) => (
 										<CarouselItem key={`${item?.id}-${index}`}>
-											<div className="w-full h-full rounded-xl bg-neutral-50 overflow-hidden aspect-square">
+											<div className="w-full h-full lg:rounded-md bg-neutral-50 overflow-hidden aspect-square">
 												{item?.id && (
 													<img
 														src={convertToFileUrl(item)}
@@ -263,12 +256,12 @@ export function ProductPage() {
 							</Carousel>
 						</ClientOnly>
 						<div className="overflow-x-scroll">
-							<div className="grid grid-cols-8 gap-2">
+							<div className="flex gap-2">
 								{files.map((item, index) => (
 									<div
 										key={`${item?.id}-${index}`}
 										className={cn(
-											"aspect-square bg-neutral-50 border-2 rounded-md relative",
+											"size-16 aspect-square bg-neutral-50 border-2 lg:rounded-md relative",
 											current === index
 												? "border-primary"
 												: "border-transparent",
@@ -283,7 +276,7 @@ export function ProductPage() {
 											<img
 												src={convertToFileUrl(item)}
 												alt="file"
-												className="w-full h-full object-contain rounded-md"
+												className="w-full h-full object-contain lg:rounded-md"
 											/>
 										)}
 									</div>
@@ -291,7 +284,7 @@ export function ProductPage() {
 							</div>
 						</div>
 					</div>
-					<div className="pl-8">
+					<div className="lg:pl-8">
 						<p className="text-2xl font-light">{product.name}</p>
 						<div className="my-8">
 							<div className="flex items-center space-x-2">
@@ -337,7 +330,7 @@ export function ProductPage() {
 								return (
 									<div key={item.id} className="space-y-2">
 										<p className="font-bold">{item.name}</p>
-										<div className="grid grid-cols-2 gap-2">
+										<div className="grid grid-cols-3 gap-2">
 											{item.values.map((v) => (
 												<Button
 													key={v.id}
@@ -417,8 +410,8 @@ export function ProductPage() {
 				</div>
 			</section>
 			<section className="mt-8">
-				<div className="sticky top-16 bg-white">
-					<div className="max-w-6xl mx-auto grid grid-cols-8">
+				<div className="sticky top-16 bg-white z-20">
+					<div className="lg:max-w-6xl mx-auto flex">
 						<Button
 							type="button"
 							variant="link"
@@ -444,8 +437,8 @@ export function ProductPage() {
 					</div>
 					<Separator />
 				</div>
-				<div className="max-w-5xl mx-auto grid grid-cols-10 mt-8">
-					<div className="col-span-7">
+				<div className="max-w-5xl mx-auto grid lg:grid-cols-10 mt-8">
+					<div className="lg:col-span-7">
 						<Activity mode={tab === "info" ? "visible" : "hidden"}>
 							<div className="typography">
 								{renderToReactElement({
@@ -458,9 +451,61 @@ export function ProductPage() {
 							<div></div>
 						</Activity>
 					</div>
-					<div className="col-span-3">
-						<div className="sticky top-0 h-full max-h-[1000px] flex flex-col py-4">
+					<div className="lg:col-span-3 hidden lg:block">
+						<div className="sticky top-36 h-[calc(100vh-160px)] flex flex-col py-4">
+							<div className="space-y-4">
+								{options.map((item) => {
+									return (
+										<div key={item.id} className="space-y-2">
+											<p className="font-bold">{item.name}</p>
+											<div className="grid grid-cols-2 gap-2">
+												{item.values.map((v) => (
+													<Button
+														key={v.id}
+														size="sm"
+														variant={
+															combos[item.id] === v.name
+																? "default"
+																: "secondary"
+														}
+														className=""
+														onClick={() => handleSelect(item.id, v.name)}
+													>
+														{v.name}
+													</Button>
+												))}
+											</div>
+										</div>
+									);
+								})}
+							</div>
+							<div className="flex items-center gap-4 bg-white rounded w-fit mt-4">
+								<Button
+									type="button"
+									variant="secondary"
+									size="icon"
+									onClick={() => setQuantity((q) => (q > 1 ? q - 1 : 1))}
+								>
+									<MinusIcon />
+								</Button>
+								<span className="w-8 text-center text-sm">{quantity}</span>
+								<Button
+									type="button"
+									variant="secondary"
+									size="icon"
+									onClick={() => setQuantity((q) => q + 1)}
+								>
+									<PlusIcon />
+								</Button>
+							</div>
 							<div className="flex-1"></div>
+							<div className="my-2">
+								{variant?.id && (
+									<p className="font-bold text-right">
+										{formatVND(variant?.sale_price * quantity)}
+									</p>
+								)}
+							</div>
 							<div className="flex gap-2 items-center">
 								<Button
 									type="button"
@@ -473,7 +518,7 @@ export function ProductPage() {
 								<Button
 									type="button"
 									size="lg"
-									className="w-full"
+									className="flex-1"
 									onClick={handleCheckout}
 								>
 									Đặt hàng

@@ -39,6 +39,15 @@ const schema = z.object({
 type CreateOrderPayload = z.infer<typeof schema>;
 
 export async function createOrderHandler(values: CreateOrderPayload) {
+	const orderSumary = values?.items.reduce(
+		(acc, cur) => {
+			return {
+				totalPrice: acc.totalPrice + cur.price * cur.quantity,
+				finalPrice: acc.finalPrice + cur.sale_price * cur.quantity,
+			};
+		},
+		{ totalPrice: 0, finalPrice: 0 },
+	);
 	const res = await pocketClient.collection(ORDER_COLLECTION).create({
 		customer: {
 			name: values.name,
@@ -55,6 +64,9 @@ export async function createOrderHandler(values: CreateOrderPayload) {
 		payment: values.payment,
 		status: values.status,
 		note: values.note,
+		total_price: orderSumary.totalPrice,
+		final_price: orderSumary.finalPrice,
+		total_discount: orderSumary.totalPrice - orderSumary.finalPrice,
 	});
 
 	if (values.items.length) {

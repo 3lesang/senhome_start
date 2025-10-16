@@ -48,7 +48,7 @@ export function HomePage() {
 							{heroCollections.items.map((item) => (
 								<CarouselItem key={item.id}>
 									<Link to="/collections/$id" params={{ id: item.slug }}>
-										<div className="h-[800px] bg-neutral-50">
+										<div className="h-56 lg:h-[800px] bg-neutral-50">
 											<img
 												src={convertToFileUrl(item.expand.file)}
 												alt={item.slug}
@@ -67,7 +67,7 @@ export function HomePage() {
 			{homeCollections.items.map((item) => (
 				<section key={item.id} className="mt-16">
 					{item.expand.file.id && (
-						<div className="h-96 my-8 relative">
+						<div className="h-32 lg:h-96 my-8 relative">
 							<img
 								src={convertToFileUrl(item.expand.file)}
 								alt=""
