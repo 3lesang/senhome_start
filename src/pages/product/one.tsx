@@ -1,19 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ClientOnly, useNavigate, useParams } from "@tanstack/react-router";
 import { createClientOnlyFn } from "@tanstack/react-start";
-import Bold from "@tiptap/extension-bold";
-import Document from "@tiptap/extension-document";
-import Heading from "@tiptap/extension-heading";
-import Image from "@tiptap/extension-image";
-import Italic from "@tiptap/extension-italic";
-import Link from "@tiptap/extension-link";
-import { BulletList, ListItem, OrderedList } from "@tiptap/extension-list";
-import Paragraph from "@tiptap/extension-paragraph";
-import Text from "@tiptap/extension-text";
-import TextAlign from "@tiptap/extension-text-align";
-import Underline from "@tiptap/extension-underline";
-import Youtube from "@tiptap/extension-youtube";
-import { Placeholder, UndoRedo } from "@tiptap/extensions";
 import { renderToReactElement } from "@tiptap/static-renderer";
 import { InfoIcon, MinusIcon, PercentIcon, PlusIcon } from "lucide-react";
 import { Activity, useEffect, useState } from "react";
@@ -22,6 +9,7 @@ import { getOptionsProduct } from "@/api/option/list";
 import { getProductQueryOptions } from "@/api/product/one";
 import { getVariantsProduct } from "@/api/variant/list";
 import { CheckoutButton } from "@/components/checkout";
+import { contentExtensions } from "@/components/content";
 import { Badge } from "@/components/ui/badge";
 import {
 	Breadcrumb,
@@ -49,34 +37,6 @@ import {
 	formatVND,
 } from "@/lib/utils";
 import { cartCollection, orderCollection } from "@/stores/db";
-
-const extensions = [
-	Document,
-	Paragraph,
-	Text,
-	Bold,
-	Italic,
-	Underline,
-	Heading.configure({ levels: [1, 2, 3, 4, 5, 6] }),
-	Placeholder.configure({
-		placeholder: "Nhập nội dung…",
-	}),
-	TextAlign.configure({
-		types: ["heading", "paragraph"],
-	}),
-	Image,
-	Link.configure({
-		openOnClick: false,
-		autolink: true,
-	}),
-	BulletList,
-	OrderedList,
-	ListItem,
-	UndoRedo,
-	Youtube.configure({
-		nocookie: true,
-	}),
-];
 
 type VariantType = {
 	id: string;
@@ -435,7 +395,7 @@ export function ProductPage() {
 							<div className="typography max-w-none">
 								{renderToReactElement({
 									content: product.content,
-									extensions,
+									extensions: contentExtensions,
 								})}
 							</div>
 						</Activity>

@@ -125,7 +125,7 @@ export function CartPage() {
 								</ItemHeader>
 							</Item>
 							{cart.map((item) => (
-								<Item key={item.id} variant="muted">
+								<Item key={item.id}>
 									<ItemMedia>
 										<Checkbox
 											defaultChecked={item.selected}

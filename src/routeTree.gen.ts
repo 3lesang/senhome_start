@@ -20,6 +20,7 @@ import { Route as blankCheckoutSuccessRouteImport } from './routes/(blank)/check
 import { Route as blankauthSignupRouteImport } from './routes/(blank)/(auth)/signup'
 import { Route as blankauthSigninRouteImport } from './routes/(blank)/(auth)/signin'
 import { Route as appProductsIdRouteImport } from './routes/(app)/products/$id'
+import { Route as appContentsIdRouteImport } from './routes/(app)/contents/$id'
 import { Route as appCollectionsIdRouteImport } from './routes/(app)/collections/$id'
 
 const secondRouteRoute = secondRouteRouteImport.update({
@@ -75,6 +76,11 @@ const appProductsIdRoute = appProductsIdRouteImport.update({
   path: '/products/$id',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appContentsIdRoute = appContentsIdRouteImport.update({
+  id: '/contents/$id',
+  path: '/contents/$id',
+  getParentRoute: () => appRouteRoute,
+} as any)
 const appCollectionsIdRoute = appCollectionsIdRouteImport.update({
   id: '/collections/$id',
   path: '/collections/$id',
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/': typeof appIndexRoute
   '/cart': typeof secondCartRoute
   '/collections/$id': typeof appCollectionsIdRoute
+  '/contents/$id': typeof appContentsIdRoute
   '/products/$id': typeof appProductsIdRoute
   '/signin': typeof blankauthSigninRoute
   '/signup': typeof blankauthSignupRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/': typeof appIndexRoute
   '/cart': typeof secondCartRoute
   '/collections/$id': typeof appCollectionsIdRoute
+  '/contents/$id': typeof appContentsIdRoute
   '/products/$id': typeof appProductsIdRoute
   '/signin': typeof blankauthSigninRoute
   '/signup': typeof blankauthSignupRoute
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/(second)/cart': typeof secondCartRoute
   '/(app)/': typeof appIndexRoute
   '/(app)/collections/$id': typeof appCollectionsIdRoute
+  '/(app)/contents/$id': typeof appContentsIdRoute
   '/(app)/products/$id': typeof appProductsIdRoute
   '/(blank)/(auth)/signin': typeof blankauthSigninRoute
   '/(blank)/(auth)/signup': typeof blankauthSignupRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/'
     | '/cart'
     | '/collections/$id'
+    | '/contents/$id'
     | '/products/$id'
     | '/signin'
     | '/signup'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/'
     | '/cart'
     | '/collections/$id'
+    | '/contents/$id'
     | '/products/$id'
     | '/signin'
     | '/signup'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/(second)/cart'
     | '/(app)/'
     | '/(app)/collections/$id'
+    | '/(app)/contents/$id'
     | '/(app)/products/$id'
     | '/(blank)/(auth)/signin'
     | '/(blank)/(auth)/signup'
@@ -249,6 +261,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appProductsIdRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(app)/contents/$id': {
+      id: '/(app)/contents/$id'
+      path: '/contents/$id'
+      fullPath: '/contents/$id'
+      preLoaderRoute: typeof appContentsIdRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/collections/$id': {
       id: '/(app)/collections/$id'
       path: '/collections/$id'
@@ -262,12 +281,14 @@ declare module '@tanstack/react-router' {
 interface appRouteRouteChildren {
   appIndexRoute: typeof appIndexRoute
   appCollectionsIdRoute: typeof appCollectionsIdRoute
+  appContentsIdRoute: typeof appContentsIdRoute
   appProductsIdRoute: typeof appProductsIdRoute
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
   appIndexRoute: appIndexRoute,
   appCollectionsIdRoute: appCollectionsIdRoute,
+  appContentsIdRoute: appContentsIdRoute,
   appProductsIdRoute: appProductsIdRoute,
 }
 

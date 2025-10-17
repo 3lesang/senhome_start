@@ -47,12 +47,12 @@ export function CollectionPage() {
 				<img
 					src={convertToFileUrl(collection.expand.file)}
 					alt=""
-					className="w-full lg:h-96 object-cover"
+					className="w-full h-32 lg:h-96 object-cover"
 				/>
 			)}
 			<div className="max-w-6xl mx-auto">
-				<Card className="border-0 shadow-none px-0">
-					<CardHeader className="px-0">
+				<Card className="border-0 shadow-none">
+					<CardHeader className="">
 						<CardTitle className="text-2xl font-bold">
 							{collection.name}
 						</CardTitle>
@@ -79,7 +79,7 @@ export function CollectionPage() {
 							</Label>
 						</CardAction>
 					</CardHeader>
-					<CardContent className="grid grid-cols-4 gap-4 px-0">
+					<CardContent className="grid grid-cols-2 lg:grid-cols-4 gap-4">
 						{products?.items.map((item) => (
 							<Card
 								key={item.expand.product.id}
@@ -93,12 +93,12 @@ export function CollectionPage() {
 										<img
 											src={convertToFileUrl(item.expand.product.expand.file[0])}
 											alt=""
-											className="rounded-lg object-contain group-hover:opacity-0 transition-opacity duration-150"
+											className="rounded-lg object-contain group-hover:opacity-0 transition-opacity duration-150 w-full h-full"
 										/>
 										<img
 											src={convertToFileUrl(item.expand.product.expand.file[1])}
 											alt=""
-											className="rounded-lg object-contain opacity-0 group-hover:opacity-100 absolute inset-0 z-20 transition-opacity duration-150"
+											className="rounded-lg object-contain opacity-0 group-hover:opacity-100 absolute inset-0 z-20 transition-opacity duration-150 w-full h-full"
 										/>
 									</Link>
 									<Button

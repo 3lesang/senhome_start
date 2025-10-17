@@ -14,4 +14,11 @@ export const Route = createFileRoute("/(app)/products/$id")({
 		await context.queryClient.ensureQueryData(getVariantsProduct(product.id));
 		return product;
 	},
+	head: ({ loaderData }) => ({
+		meta: [
+			{
+				title: loaderData?.name,
+			},
+		],
+	}),
 });
