@@ -1,21 +1,10 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import {
-	Link,
-	useNavigate,
-	useParams,
-	useSearch,
-} from "@tanstack/react-router";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { Link, useParams } from "@tanstack/react-router";
 import { PercentIcon, ShoppingCartIcon } from "lucide-react";
+import { useState } from "react";
 import { getCollectionnQueryOptions } from "@/api/collection/one";
 import { getProductsCollectionQueryOptions } from "@/api/product/list";
 import { Badge } from "@/components/ui/badge";
-import {
-	Breadcrumb,
-	BreadcrumbItem,
-	BreadcrumbList,
-	BreadcrumbPage,
-	BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -35,12 +24,11 @@ import {
 import { calculateDiscount, convertToFileUrl, formatVND } from "@/lib/utils";
 
 export function CollectionPage() {
-	const navigate = useNavigate();
-	const { id } = useParams({ from: "/(app)/collections/$id" });
-	const { sort } = useSearch({ from: "/(app)/collections/$id" });
+	const [sort, setSort] = useState("-product.created");
 
+	const { id } = useParams({ from: "/(app)/collections/$id" });
 	const { data: collection } = useSuspenseQuery(getCollectionnQueryOptions(id));
-	const { data: products } = useSuspenseQuery(
+	const { data: products } = useQuery(
 		getProductsCollectionQueryOptions({
 			collectionId: collection.id,
 			page: 1,
@@ -50,27 +38,19 @@ export function CollectionPage() {
 	);
 
 	function handleSortChange(value: string) {
-		navigate({
-			to: "/collections/$id",
-			params: { id },
-			search: { sort: value },
-		});
+		setSort(value);
 	}
 
 	return (
-		<main className="min-h-[calc(100vh-474px)] py-4">
+		<main className="min-h-[calc(100vh-474px)]">
+			{collection.expand?.file?.id && (
+				<img
+					src={convertToFileUrl(collection.expand.file)}
+					alt=""
+					className="w-full lg:h-96 object-cover"
+				/>
+			)}
 			<div className="max-w-6xl mx-auto">
-				<Breadcrumb>
-					<BreadcrumbList>
-						<BreadcrumbItem>
-							<Link to="/">Trang chủ</Link>
-						</BreadcrumbItem>
-						<BreadcrumbSeparator />
-						<BreadcrumbItem>
-							<BreadcrumbPage>{collection.name}</BreadcrumbPage>
-						</BreadcrumbItem>
-					</BreadcrumbList>
-				</Breadcrumb>
 				<Card className="border-0 shadow-none px-0">
 					<CardHeader className="px-0">
 						<CardTitle className="text-2xl font-bold">
@@ -100,7 +80,7 @@ export function CollectionPage() {
 						</CardAction>
 					</CardHeader>
 					<CardContent className="grid grid-cols-4 gap-4 px-0">
-						{products.items.map((item) => (
+						{products?.items.map((item) => (
 							<Card
 								key={item.expand.product.id}
 								className="border-0 shadow-none p-0"

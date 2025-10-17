@@ -15,13 +15,7 @@ import Underline from "@tiptap/extension-underline";
 import Youtube from "@tiptap/extension-youtube";
 import { Placeholder, UndoRedo } from "@tiptap/extensions";
 import { renderToReactElement } from "@tiptap/static-renderer";
-import {
-	InfoIcon,
-	MinusIcon,
-	PercentIcon,
-	PlusIcon,
-	ShoppingCartIcon,
-} from "lucide-react";
+import { InfoIcon, MinusIcon, PercentIcon, PlusIcon } from "lucide-react";
 import { Activity, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { getOptionsProduct } from "@/api/option/list";
@@ -99,7 +93,7 @@ export function ProductPage() {
 	const [current, setCurrent] = useState(0);
 	const [variant, setVariant] = useState<VariantType>();
 	const [quantity, setQuantity] = useState(1);
-	const [tab, setTab] = useState<"info" | "review">("info");
+	const [tab, setTab] = useState("info");
 
 	const { id } = useParams({ from: "/(app)/products/$id" });
 	const { data: product } = useSuspenseQuery(getProductQueryOptions(id));
@@ -158,7 +152,11 @@ export function ProductPage() {
 		addToCart();
 		toast.success("Add to cart successfully", {
 			action: (
-				<Button type="button" onClick={() => navigate({ to: "/cart" })}>
+				<Button
+					type="button"
+					onClick={() => navigate({ to: "/cart" })}
+					className="ml-auto"
+				>
 					Xem giỏ hàng
 				</Button>
 			),
@@ -330,7 +328,7 @@ export function ProductPage() {
 								return (
 									<div key={item.id} className="space-y-2">
 										<p className="font-bold">{item.name}</p>
-										<div className="grid grid-cols-3 gap-2">
+										<div className="flex flex-wrap gap-2">
 											{item.values.map((v) => (
 												<Button
 													key={v.id}
@@ -359,7 +357,7 @@ export function ProductPage() {
 								>
 									<MinusIcon />
 								</Button>
-								<span className="w-8 text-center text-sm">{quantity}</span>
+								<span className="w-8 text-center">{quantity}</span>
 								<Button
 									type="button"
 									variant="secondary"
@@ -410,37 +408,31 @@ export function ProductPage() {
 				</div>
 			</section>
 			<section className="mt-8">
-				<div className="sticky top-16 bg-white z-20">
+				<div className="sticky top-0 bg-white z-20">
 					<div className="lg:max-w-6xl mx-auto flex">
-						<Button
-							type="button"
-							variant="link"
-							className={cn(
-								"h-16 rounded-none border-b-2",
-								tab === "info" ? "border-primary" : "border-transparent",
-							)}
-							onClick={() => setTab("info")}
-						>
-							Chi tiết sản phẩm
-						</Button>
-						<Button
-							type="button"
-							variant="link"
-							className={cn(
-								"h-16 rounded-none border-b-2",
-								tab === "review" ? "border-primary" : "border-transparent",
-							)}
-							onClick={() => setTab("review")}
-						>
-							Đánh giá
-						</Button>
+						{[
+							{ label: "Chi tiết sản phẩm", key: "info" },
+							{ label: "Đánh giá", key: "review" },
+						].map((item) => (
+							<Button
+								key={item.key}
+								type="button"
+								variant="link"
+								className={cn(
+									"rounded-none border-b-2 h-14",
+									tab === item.key ? "border-primary" : "border-transparent",
+								)}
+								onClick={() => setTab(item.key)}
+							>
+								{item.label}
+							</Button>
+						))}
 					</div>
-					<Separator />
 				</div>
-				<div className="max-w-5xl mx-auto grid lg:grid-cols-10 mt-8">
-					<div className="lg:col-span-7">
+				<div className="max-w-6xl mx-auto grid lg:grid-cols-12 mt-8">
+					<div className="lg:col-span-12">
 						<Activity mode={tab === "info" ? "visible" : "hidden"}>
-							<div className="typography">
+							<div className="typography max-w-none">
 								{renderToReactElement({
 									content: product.content,
 									extensions,
@@ -450,81 +442,6 @@ export function ProductPage() {
 						<Activity mode="hidden">
 							<div></div>
 						</Activity>
-					</div>
-					<div className="lg:col-span-3 hidden lg:block">
-						<div className="sticky top-36 h-[calc(100vh-160px)] flex flex-col py-4">
-							<div className="space-y-4">
-								{options.map((item) => {
-									return (
-										<div key={item.id} className="space-y-2">
-											<p className="font-bold">{item.name}</p>
-											<div className="grid grid-cols-2 gap-2">
-												{item.values.map((v) => (
-													<Button
-														key={v.id}
-														size="sm"
-														variant={
-															combos[item.id] === v.name
-																? "default"
-																: "secondary"
-														}
-														className=""
-														onClick={() => handleSelect(item.id, v.name)}
-													>
-														{v.name}
-													</Button>
-												))}
-											</div>
-										</div>
-									);
-								})}
-							</div>
-							<div className="flex items-center gap-4 bg-white rounded w-fit mt-4">
-								<Button
-									type="button"
-									variant="secondary"
-									size="icon"
-									onClick={() => setQuantity((q) => (q > 1 ? q - 1 : 1))}
-								>
-									<MinusIcon />
-								</Button>
-								<span className="w-8 text-center text-sm">{quantity}</span>
-								<Button
-									type="button"
-									variant="secondary"
-									size="icon"
-									onClick={() => setQuantity((q) => q + 1)}
-								>
-									<PlusIcon />
-								</Button>
-							</div>
-							<div className="flex-1"></div>
-							<div className="my-2">
-								{variant?.id && (
-									<p className="font-bold text-right">
-										{formatVND(variant?.sale_price * quantity)}
-									</p>
-								)}
-							</div>
-							<div className="flex gap-2 items-center">
-								<Button
-									type="button"
-									size="icon-lg"
-									variant="outline"
-									onClick={handleAddToCart}
-								>
-									<ShoppingCartIcon />
-								</Button>
-								<Button
-									type="button"
-									size="lg"
-									className="flex-1"
-									onClick={handleCheckout}
-								>
-									Đặt hàng
-								</Button>
-							</div>
-						</div>
 					</div>
 				</div>
 			</section>

@@ -92,10 +92,10 @@ export function CheckoutPage() {
 		(acc, cur) => {
 			return {
 				totalPrice: acc.totalPrice + cur.price * cur.quantity,
-				finalPrice: acc.finalPrice + cur.sale_price * cur.quantity,
+				totalSalePrice: acc.totalSalePrice + cur.sale_price * cur.quantity,
 			};
 		},
-		{ totalPrice: 0, finalPrice: 0 },
+		{ totalPrice: 0, totalSalePrice: 0 },
 	);
 
 	const form = useForm<FormValues>({
@@ -323,7 +323,7 @@ export function CheckoutPage() {
 									<CardHeader>
 										<CardTitle>Giỏ hàng</CardTitle>
 									</CardHeader>
-									<ScrollArea className="max-h-96">
+									<ScrollArea className="h-80">
 										<CardContent className="space-y-2">
 											{order?.items.map((item) => (
 												<Item key={item.id} variant="muted">
@@ -367,14 +367,14 @@ export function CheckoutPage() {
 									<CardContent className="text-neutral-600 text-sm space-y-2">
 										<div className="flex justify-between mb-4">
 											<p>Tạm tính</p>
-											<p>{formatVND(orderSumary?.totalPrice)}</p>
+											<p>{formatVND(orderSumary?.totalSalePrice)}</p>
 										</div>
 										<div className="flex justify-between">
 											<p>Giảm giá</p>
 											<p>
 												{formatVND(
 													Number(orderSumary?.totalPrice) -
-														Number(orderSumary?.finalPrice),
+														Number(orderSumary?.totalSalePrice),
 												)}
 											</p>
 										</div>
@@ -387,7 +387,7 @@ export function CheckoutPage() {
 									<CardFooter className="flex justify-between">
 										<p className="font-bold">Thành tiền</p>
 										<p className="font-bold text-lg">
-											{formatVND(orderSumary?.finalPrice)}
+											{formatVND(orderSumary?.totalSalePrice)}
 										</p>
 									</CardFooter>
 								</Card>

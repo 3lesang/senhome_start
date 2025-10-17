@@ -11,8 +11,11 @@ export function getCollectionnQueryOptions(collectionId: string) {
 					name: string;
 					content: string;
 					slug: string;
+					expand: {
+						file: { id: string; collectionName: string; file: string };
+					};
 				}>(COLLECTION_COLLECTION)
-				.getFirstListItem(`slug="${collectionId}"`);
+				.getFirstListItem(`slug="${collectionId}"`, { expand: "file" });
 		},
 	});
 }

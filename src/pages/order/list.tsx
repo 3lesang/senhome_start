@@ -4,7 +4,6 @@ import { ChevronRightIcon, ShoppingCartIcon } from "lucide-react";
 import { Activity } from "react";
 import * as timeago from "timeago.js";
 import vi from "timeago.js/lib/lang/vi";
-import TimeAgo from "timeago-react";
 import { getOrdersQueryOptions } from "@/api/order/list";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -84,8 +83,8 @@ export function ListOrderPage() {
 													</ItemDescription>
 												</ItemContent>
 												<ItemActions>
-													<TimeAgo datetime={item.created} locale="vi" />
-													<Button type="button" variant="ghost" size="icon">
+													<Button type="button" variant="ghost">
+														Xem chi tiết
 														<ChevronRightIcon />
 													</Button>
 												</ItemActions>

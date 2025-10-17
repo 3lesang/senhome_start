@@ -29,12 +29,12 @@ export function CollectionProduct({ id }: CollectionProductProps) {
 							<img
 								src={convertToFileUrl(item.expand.product.expand.file[0])}
 								alt=""
-								className="rounded-lg object-contain group-hover:opacity-0 transition-opacity duration-150"
+								className="rounded-lg object-contain group-hover:opacity-0 transition-opacity duration-150 w-full h-full"
 							/>
 							<img
 								src={convertToFileUrl(item.expand.product.expand.file[1])}
 								alt=""
-								className="rounded-lg object-contain opacity-0 group-hover:opacity-100 absolute inset-0 z-20 transition-opacity duration-150"
+								className="rounded-lg object-contain opacity-0 group-hover:opacity-100 absolute inset-0 z-20 transition-opacity duration-150 h-full w-full"
 							/>
 						</Link>
 						<Button
