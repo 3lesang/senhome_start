@@ -5,7 +5,7 @@ import { Activity } from "react";
 import * as timeago from "timeago.js";
 import vi from "timeago.js/lib/lang/vi";
 import TimeAgo from "timeago-react";
-import { getOrders } from "@/api/order/list";
+import { getOrdersQueryOptions } from "@/api/order/list";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -50,7 +50,7 @@ export function getOrderPayment(key: "cod") {
 }
 
 export function ListOrderPage() {
-	const { data } = useSuspenseQuery(getOrders(checkBrowserId()));
+	const { data } = useSuspenseQuery(getOrdersQueryOptions(checkBrowserId()));
 	return (
 		<main className="bg-neutral-50 h-[calc(100vh-64px)]">
 			<div className="max-w-4xl mx-auto py-8">

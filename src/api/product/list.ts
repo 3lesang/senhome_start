@@ -1,12 +1,23 @@
 import { queryOptions } from "@tanstack/react-query";
-import pocketClient, { COLLECTION_PRODUCT_COLLECTION } from "@/pocketbase";
+import { COLLECTION_PRODUCT_COLLECTION, pocketClient } from "@/pocketbase";
 
-export function getProductsCollectionQueryOptions(collectionId: string) {
+export function getProductsCollectionQueryOptions({
+	collectionId,
+	page,
+	limit,
+	sort,
+}: {
+	collectionId: string;
+	page: number;
+	limit: number;
+	sort: string;
+}) {
 	return queryOptions({
-		queryKey: [COLLECTION_PRODUCT_COLLECTION, collectionId],
+		queryKey: [COLLECTION_PRODUCT_COLLECTION, collectionId, sort],
 		queryFn: () => {
 			return pocketClient
 				.collection<{
+					id: string;
 					expand: {
 						product: {
 							id: string;
@@ -20,9 +31,10 @@ export function getProductsCollectionQueryOptions(collectionId: string) {
 						};
 					};
 				}>(COLLECTION_PRODUCT_COLLECTION)
-				.getList(1, 8, {
+				.getList(page, limit, {
 					filter: `collection="${collectionId}"`,
 					expand: "product.file",
+					sort,
 				});
 		},
 	});

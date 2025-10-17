@@ -1,10 +1,11 @@
 import { queryOptions } from "@tanstack/react-query";
-import pocketClient, {
+import {
 	ORDER_COLLECTION,
 	ORDER_ITEM_COLLECTION,
+	pocketClient,
 } from "@/pocketbase";
 
-export function getOrders(userId: string) {
+export function getOrdersQueryOptions(userId: string) {
 	return queryOptions({
 		queryKey: [ORDER_COLLECTION, userId],
 		queryFn: () => {
@@ -28,7 +29,7 @@ export function getOrders(userId: string) {
 	});
 }
 
-export function getItemsOrder(orderId: string) {
+export function getItemsOrderQueryOptions(orderId: string) {
 	return queryOptions({
 		queryKey: [ORDER_ITEM_COLLECTION, orderId],
 		queryFn: () => {

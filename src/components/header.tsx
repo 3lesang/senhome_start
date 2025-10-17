@@ -6,12 +6,12 @@ import { CartBadge } from "./cart";
 
 export function Header() {
 	return (
-		<header className="sticky top-0 z-50 bg-white px-4">
+		<header className="sticky top-0 z-50 bg-white px-0 lg:px-4">
 			<nav className="max-w-6xl mx-auto flex justify-between items-center h-16">
 				<Link to="/" className="hidden lg:flex items-center gap-1">
-					<img src="/logo.jpg" alt="logo" className="size-8 object-contain" />
-					<p className="text-xl font-bold text-primary">Senhome</p>
+					<img src="/logo.jpg" alt="logo" className="size-12 object-contain" />
 				</Link>
+				<div></div>
 				<div className="flex items-center gap-1">
 					<Button type="button" variant="ghost" className="hidden lg:flex">
 						<SearchIcon />

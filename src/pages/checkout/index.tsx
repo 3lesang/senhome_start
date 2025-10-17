@@ -323,7 +323,7 @@ export function CheckoutPage() {
 									<CardHeader>
 										<CardTitle>Giỏ hàng</CardTitle>
 									</CardHeader>
-									<ScrollArea className="h-96">
+									<ScrollArea className="max-h-96">
 										<CardContent className="space-y-2">
 											{order?.items.map((item) => (
 												<Item key={item.id} variant="muted">

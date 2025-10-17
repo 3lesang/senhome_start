@@ -1,9 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
+import z from "zod";
+import { getCollectionnQueryOptions } from "@/api/collection/one";
+import { getProductsCollectionQueryOptions } from "@/api/product/list";
+import { CollectionPage } from "@/pages/collection/one";
 
-export const Route = createFileRoute("/(app)/collections/$id")({
-	component: RouteComponent,
+const schema = z.object({
+	sort: z.string().default("-product.created"),
 });
 
-function RouteComponent() {
-	return <div>Hello "/(app)/collections/$id"!</div>;
-}
+export const Route = createFileRoute("/(app)/collections/$id")({
+	component: CollectionPage,
+	validateSearch: schema,
+	loaderDeps: ({ search }) => search,
+	loader: async ({ context, params, deps }) => {
+		const collection = await context.queryClient.ensureQueryData(
+			getCollectionnQueryOptions(params.id),
+		);
+
+		await context.queryClient.ensureQueryData(
+			getProductsCollectionQueryOptions({
+				collectionId: collection.id,
+				page: 1,
+				limit: 10,
+				sort: deps.sort,
+			}),
+		);
+		return collection;
+	},
+});

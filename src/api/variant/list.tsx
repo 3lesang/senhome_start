@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import pocketClient, { PRODUCT_VARIANT_COLLECTION } from "@/pocketbase";
+import { PRODUCT_VARIANT_COLLECTION, pocketClient } from "@/pocketbase";
 
 export function getVariantsProduct(productId: string) {
 	return queryOptions({

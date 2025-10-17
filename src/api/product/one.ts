@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import type { JSONContent } from "@tiptap/core";
-import pocketClient, { PRODUCT_COLLECTION } from "@/pocketbase";
+import { PRODUCT_COLLECTION, pocketClient } from "@/pocketbase";
 
 export function getProductQueryOptions(id: string) {
 	return queryOptions({

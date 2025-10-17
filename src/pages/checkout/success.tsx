@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useSearch } from "@tanstack/react-router";
 import { CheckIcon, ServerCrashIcon } from "lucide-react";
+import { getOrderQueryOptions } from "@/api/order/one";
 import { buttonVariants } from "@/components/ui/button";
 import {
 	Empty,
@@ -20,21 +21,10 @@ import {
 } from "@/components/ui/item";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
-import pocketClient, { ORDER_COLLECTION } from "@/pocketbase";
 
 export function OrderSuccessPage() {
 	const { id } = useSearch({ from: "/(blank)/checkout/success" });
-	const { data, isLoading } = useQuery({
-		queryKey: [ORDER_COLLECTION, id],
-		queryFn: () => {
-			return pocketClient
-				.collection<{ id: string; price: number; sale_price: number }>(
-					ORDER_COLLECTION,
-				)
-				.getOne(id);
-		},
-		enabled: !!id,
-	});
+	const { data, isLoading } = useQuery(getOrderQueryOptions(id));
 	if (isLoading)
 		return (
 			<main className="h-screen bg-neutral-50 flex justify-center items-center">

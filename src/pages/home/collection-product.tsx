@@ -12,7 +12,14 @@ interface CollectionProductProps {
 }
 
 export function CollectionProduct({ id }: CollectionProductProps) {
-	const { data } = useQuery(getProductsCollectionQueryOptions(id));
+	const { data } = useQuery(
+		getProductsCollectionQueryOptions({
+			collectionId: id,
+			page: 1,
+			limit: 8,
+			sort: "",
+		}),
+	);
 	return (
 		<div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
 			{data?.items.map((item) => (

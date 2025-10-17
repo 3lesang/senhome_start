@@ -1,8 +1,9 @@
 import z from "zod";
 import { checkBrowserId } from "@/lib/utils";
-import pocketClient, {
+import {
 	ORDER_COLLECTION,
 	ORDER_ITEM_COLLECTION,
+	pocketClient,
 } from "@/pocketbase";
 
 const schema = z.object({
@@ -61,7 +62,9 @@ export async function createOrderHandler(values: CreateOrderPayload) {
 			},
 			browser_id: checkBrowserId(),
 		},
-		payment: values.payment,
+		payment_method: values.payment,
+		payment_status: "pending",
+		shipping_status: "pending",
 		status: values.status,
 		note: values.note,
 		total_price: orderSumary.totalPrice,

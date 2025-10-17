@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
-import pocketClient, { ORDER_COLLECTION } from "@/pocketbase";
+import { ORDER_COLLECTION, pocketClient } from "@/pocketbase";
 
-export function getOrder(orderId: string) {
+export function getOrderQueryOptions(orderId: string) {
 	return queryOptions({
 		queryKey: [ORDER_COLLECTION, orderId],
 		queryFn: () => {
@@ -26,5 +26,6 @@ export function getOrder(orderId: string) {
 				}>(ORDER_COLLECTION)
 				.getOne(orderId);
 		},
+		enabled: !!orderId,
 	});
 }

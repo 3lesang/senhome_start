@@ -17,7 +17,7 @@ export function CartBadge() {
 	const total = getQuantity();
 	if (total === 0) return null;
 	return (
-		<Badge variant="secondary" className="absolute -bottom-2 -right-2 z-10">
+		<Badge variant="secondary" className="absolute bottom-0 right-0 z-10">
 			{total}
 		</Badge>
 	);

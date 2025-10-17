@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import pocketClient, { COLLECTION_COLLECTION } from "@/pocketbase";
+import { COLLECTION_COLLECTION, pocketClient } from "@/pocketbase";
 
 type CollectionDataType = {
 	id: string;

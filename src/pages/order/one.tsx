@@ -1,8 +1,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
 import { MailIcon, PhoneIcon } from "lucide-react";
-import { getItemsOrder } from "@/api/order/list";
-import { getOrder } from "@/api/order/one";
+import { getItemsOrderQueryOptions } from "@/api/order/list";
+import { getOrderQueryOptions } from "@/api/order/one";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,8 +31,8 @@ import { getOrderStatus } from "./list";
 
 export function OneOrderPage() {
 	const { id } = useParams({ from: "/(second)/order/$id" });
-	const { data: order } = useSuspenseQuery(getOrder(id));
-	const { data: items } = useSuspenseQuery(getItemsOrder(order.id));
+	const { data: order } = useSuspenseQuery(getOrderQueryOptions(id));
+	const { data: items } = useSuspenseQuery(getItemsOrderQueryOptions(order.id));
 
 	return (
 		<main className="bg-neutral-50">

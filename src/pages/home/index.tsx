@@ -40,17 +40,17 @@ export function HomePage() {
 					<Carousel
 						plugins={[
 							Autoplay({
-								delay: 2000,
+								delay: 5000,
 							}),
 						]}
 					>
 						<CarouselContent>
 							{heroCollections.items.map((item) => (
-								<CarouselItem key={item.id}>
+								<CarouselItem key={item?.id}>
 									<Link to="/collections/$id" params={{ id: item.slug }}>
-										<div className="h-56 lg:h-[800px] bg-neutral-50">
+										<div className="bg-neutral-50 aspect-auto lg:h-[800px] h-56">
 											<img
-												src={convertToFileUrl(item.expand.file)}
+												src={convertToFileUrl(item.expand?.file)}
 												alt={item.slug}
 												className="w-full h-full object-cover"
 											/>
@@ -59,14 +59,14 @@ export function HomePage() {
 								</CarouselItem>
 							))}
 						</CarouselContent>
-						<CarouselPrevious className="left-2" />
-						<CarouselNext className="right-2" />
+						<CarouselPrevious className="lg:left-56 left-2" />
+						<CarouselNext className="lg:right-56 right-2" />
 					</Carousel>
 				</ClientOnly>
 			</section>
 			{homeCollections.items.map((item) => (
 				<section key={item.id} className="mt-16">
-					{item.expand.file.id && (
+					{item.expand.file?.id && (
 						<div className="h-32 lg:h-96 my-8 relative">
 							<img
 								src={convertToFileUrl(item.expand.file)}
@@ -76,12 +76,15 @@ export function HomePage() {
 						</div>
 					)}
 					<div className="max-w-6xl mx-auto">
-						<Card className="border-0 shadow-none">
-							<CardHeader className="">
-								<CardTitle className="text-xl font-bold">{item.name}</CardTitle>
+						<Card className="border-0 shadow-none px-4 lg:px-0">
+							<CardHeader className="px-0">
+								<CardTitle className="text-2xl font-bold">
+									{item.name}
+								</CardTitle>
 								<CardAction>
 									<Link
-										to="/"
+										to="/collections/$id"
+										params={{ id: item.slug }}
 										className={cn(buttonVariants({ variant: "link" }))}
 									>
 										Xem tất cả
@@ -89,7 +92,7 @@ export function HomePage() {
 									</Link>
 								</CardAction>
 							</CardHeader>
-							<CardContent className="">
+							<CardContent className="px-0">
 								<CollectionProduct id={item.id} />
 							</CardContent>
 						</Card>
