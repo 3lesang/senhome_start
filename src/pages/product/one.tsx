@@ -1,25 +1,40 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ClientOnly, useNavigate, useParams } from "@tanstack/react-router";
+import {
+	ClientOnly,
+	Link,
+	useNavigate,
+	useParams,
+} from "@tanstack/react-router";
 import { createClientOnlyFn } from "@tanstack/react-start";
 import { renderToReactElement } from "@tiptap/static-renderer";
-import { InfoIcon, MinusIcon, PercentIcon, PlusIcon } from "lucide-react";
-import { Activity, useEffect, useState } from "react";
+import { MinusIcon, PercentIcon, PlusIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { getOptionsProduct } from "@/api/option/list";
 import { getProductQueryOptions } from "@/api/product/one";
+import { getReviewsProductQueryOptions } from "@/api/review/list";
 import { getVariantsProduct } from "@/api/variant/list";
 import { CheckoutButton } from "@/components/checkout";
 import { contentExtensions } from "@/components/content";
+import { Rating, RatingButton } from "@/components/kibo-ui/rating";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
-	BreadcrumbLink,
 	BreadcrumbList,
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 import {
 	Carousel,
 	type CarouselApi,
@@ -28,7 +43,15 @@ import {
 	CarouselNext,
 	CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Separator } from "@/components/ui/separator";
+import {
+	Item,
+	ItemActions,
+	ItemContent,
+	ItemDescription,
+	ItemFooter,
+	ItemMedia,
+	ItemTitle,
+} from "@/components/ui/item";
 import {
 	calculateDiscount,
 	checkBrowserId,
@@ -53,12 +76,14 @@ export function ProductPage() {
 	const [current, setCurrent] = useState(0);
 	const [variant, setVariant] = useState<VariantType>();
 	const [quantity, setQuantity] = useState(1);
-	const [tab, setTab] = useState("info");
 
 	const { id } = useParams({ from: "/(app)/products/$id" });
 	const { data: product } = useSuspenseQuery(getProductQueryOptions(id));
 	const { data: options } = useSuspenseQuery(getOptionsProduct(product.id));
 	const { data: variants } = useSuspenseQuery(getVariantsProduct(product.id));
+	const { data: reviews } = useSuspenseQuery(
+		getReviewsProductQueryOptions(product.id),
+	);
 
 	const variantFiles = variants.map((item) => item.expand.file);
 	const files = [...variantFiles, ...product.expand.file];
@@ -86,7 +111,12 @@ export function ProductPage() {
 	}
 
 	function handleAddToCart() {
-		if (!variant?.id) return;
+		if (!variant?.id) {
+			toast.warning("Vui lòng chọn loại sản phẩm", {
+				position: "bottom-center",
+			});
+			return;
+		}
 		const data = {
 			id: variant.id ?? product.id,
 			name: product.name,
@@ -110,21 +140,28 @@ export function ProductPage() {
 			cartCollection.insert(data);
 		});
 		addToCart();
-		toast.success("Add to cart successfully", {
+		toast.success("Đã thêm vào giỏ hàng", {
 			action: (
 				<Button
 					type="button"
+					size="sm"
 					onClick={() => navigate({ to: "/cart" })}
 					className="ml-auto"
 				>
 					Xem giỏ hàng
 				</Button>
 			),
+			position: "bottom-center",
 		});
 	}
 
 	function handleCheckout() {
-		if (!variant?.id) return;
+		if (!variant?.id) {
+			toast.warning("Vui lòng chọn loại sản phẩm", {
+				position: "bottom-center",
+			});
+			return;
+		}
 		const id = checkBrowserId();
 		const addOrder = createClientOnlyFn(() => {
 			const item = {
@@ -177,19 +214,23 @@ export function ProductPage() {
 	}, [api]);
 
 	return (
-		<main className="py-8">
-			<section className="max-w-6xl mx-auto">
-				<Breadcrumb className="mb-8">
-					<BreadcrumbList>
-						<BreadcrumbItem>
-							<BreadcrumbLink href="/">Trang chủ</BreadcrumbLink>
+		<main>
+			<section className="bg-neutral-50">
+				<Breadcrumb className="py-1 max-w-6xl mx-auto">
+					<BreadcrumbList className="flex-nowrap">
+						<BreadcrumbItem className="whitespace-nowrap">
+							<Link to="/">Trang chủ</Link>
 						</BreadcrumbItem>
 						<BreadcrumbSeparator />
 						<BreadcrumbItem>
-							<BreadcrumbPage>{product.name}</BreadcrumbPage>
+							<BreadcrumbPage className="line-clamp-1">
+								{product.name}
+							</BreadcrumbPage>
 						</BreadcrumbItem>
 					</BreadcrumbList>
 				</Breadcrumb>
+			</section>
+			<section className="lg:max-w-6xl mx-auto lg:my-8">
 				<div className="grid grid-cols-1 lg:grid-cols-2">
 					<div className="space-y-2">
 						<ClientOnly>
@@ -197,7 +238,7 @@ export function ProductPage() {
 								<CarouselContent>
 									{files.map((item, index) => (
 										<CarouselItem key={`${item?.id}-${index}`}>
-											<div className="w-full h-full lg:rounded-md bg-neutral-50 overflow-hidden aspect-square">
+											<div className="w-full h-full bg-neutral-50 overflow-hidden aspect-square">
 												{item?.id && (
 													<img
 														src={convertToFileUrl(item)}
@@ -219,7 +260,7 @@ export function ProductPage() {
 									<div
 										key={`${item?.id}-${index}`}
 										className={cn(
-											"size-16 aspect-square bg-neutral-50 border-2 lg:rounded-md relative",
+											"size-16 aspect-square bg-neutral-50 border-2 relative",
 											current === index
 												? "border-primary"
 												: "border-transparent",
@@ -234,7 +275,7 @@ export function ProductPage() {
 											<img
 												src={convertToFileUrl(item)}
 												alt="file"
-												className="w-full h-full object-contain lg:rounded-md"
+												className="w-full h-full object-contain"
 											/>
 										)}
 									</div>
@@ -242,56 +283,61 @@ export function ProductPage() {
 							</div>
 						</div>
 					</div>
-					<div className="lg:pl-8">
-						<p className="text-2xl font-light">{product.name}</p>
-						<div className="my-8">
-							<div className="flex items-center space-x-2">
-								<Badge variant="secondary">
-									{variant?.id
-										? calculateDiscount(variant?.price, variant?.sale_price)
-										: calculateDiscount(
-												variants[0].price,
-												variants[0].sale_price,
-											)}
-									<PercentIcon />
-								</Badge>
-								{variant?.id ? (
-									<p className="line-through text-neutral-500 text-sm">
-										{formatVND(variant.price)}
-									</p>
-								) : (
-									<p className="line-through text-neutral-500">
-										<span>{formatVND(variants?.[0].price)}</span>
-										<span> - </span>
-										<span>
-											{formatVND(variants?.[variants.length - 1].price)}
-										</span>
-									</p>
-								)}
-							</div>
-							<p className="text-3xl font-bold">
-								{variant?.id ? (
-									<span>{formatVND(variant.sale_price)}</span>
-								) : (
-									<>
-										<span>{formatVND(variants?.[0].sale_price)}</span>
-										<span> - </span>
-										<span>
-											{formatVND(variants?.[variants.length - 1].sale_price)}
-										</span>
-									</>
-								)}
-							</p>
-						</div>
-						<div className="space-y-8">
+					<Card className="border-0 shadow-none">
+						<CardHeader>
+							<CardTitle className="text-xl lg:text-2xl font-light">
+								{product.name}
+							</CardTitle>
+							<CardDescription className="text-primary">
+								<div className="flex items-center space-x-2">
+									<Badge variant="secondary">
+										{variant?.id
+											? calculateDiscount(variant?.price, variant?.sale_price)
+											: calculateDiscount(
+													variants[0].price,
+													variants[0].sale_price,
+												)}
+										<PercentIcon />
+									</Badge>
+									{variant?.id ? (
+										<p className="line-through text-neutral-500 text-sm">
+											{formatVND(variant.price)}
+										</p>
+									) : (
+										<p className="line-through text-neutral-500">
+											<span>{formatVND(variants?.[0].price)}</span>
+											<span> - </span>
+											<span>
+												{formatVND(variants?.[variants.length - 1].price)}
+											</span>
+										</p>
+									)}
+								</div>
+								<p className="text-3xl font-bold">
+									{variant?.id ? (
+										<span>{formatVND(variant.sale_price)}</span>
+									) : (
+										<>
+											<span>{formatVND(variants?.[0].sale_price)}</span>
+											<span> - </span>
+											<span>
+												{formatVND(variants?.[variants.length - 1].sale_price)}
+											</span>
+										</>
+									)}
+								</p>
+							</CardDescription>
+						</CardHeader>
+						<CardContent className="space-y-4">
 							{options.map((item) => {
 								return (
-									<div key={item.id} className="space-y-2">
-										<p className="font-bold">{item.name}</p>
-										<div className="flex flex-wrap gap-2">
+									<div key={item.id} className="space-y-4">
+										<p className="font-semibold">{item.name}</p>
+										<div className="flex flex-wrap gap-4">
 											{item.values.map((v) => (
 												<Button
 													key={v.id}
+													size="sm"
 													variant={
 														combos[item.id] === v.name ? "default" : "secondary"
 													}
@@ -305,44 +351,36 @@ export function ProductPage() {
 									</div>
 								);
 							})}
-						</div>
-						<div className="mt-8 space-y-4">
-							<p className="font-bold">Số lượng</p>
-							<div className="flex items-center gap-4 bg-white rounded w-fit">
-								<Button
-									type="button"
-									variant="secondary"
-									size="icon"
-									onClick={() => setQuantity((q) => (q > 1 ? q - 1 : 1))}
-								>
-									<MinusIcon />
-								</Button>
-								<span className="w-8 text-center">{quantity}</span>
-								<Button
-									type="button"
-									variant="secondary"
-									size="icon"
-									onClick={() => setQuantity((q) => q + 1)}
-								>
-									<PlusIcon />
-								</Button>
+							<div className="space-y-4">
+								<p className="font-semibold">Số lượng</p>
+								<div className="flex items-center gap-4 bg-white rounded w-fit">
+									<Button
+										type="button"
+										variant="secondary"
+										size="icon-sm"
+										onClick={() => setQuantity((q) => (q > 1 ? q - 1 : 1))}
+									>
+										<MinusIcon />
+									</Button>
+									<span className="w-8 text-center">{quantity}</span>
+									<Button
+										type="button"
+										variant="secondary"
+										size="icon-sm"
+										onClick={() => setQuantity((q) => q + 1)}
+									>
+										<PlusIcon />
+									</Button>
+								</div>
 							</div>
-							<Separator />
-							<div className="flex justify-between my-4">
-								<p className="font-bold">Số lượng sản phẩm</p>
+							<div className="flex justify-between">
+								<p className="font-semibold">Giá tiền</p>
 								<p className="font-bold text-lg">
 									{variant?.id && formatVND(variant?.sale_price * quantity)}
 								</p>
 							</div>
-						</div>
-						<Badge
-							variant="secondary"
-							className={cn(variant?.id ? "opacity-0" : "opacity-100")}
-						>
-							<InfoIcon />
-							Vui lòng chọn loại sản phẩm
-						</Badge>
-						<div className="flex gap-2 items-center w-full mt-8">
+						</CardContent>
+						<CardFooter className="flex gap-2 items-center">
 							<Button
 								type="button"
 								size="lg"
@@ -350,7 +388,7 @@ export function ProductPage() {
 								className="flex-1"
 								onClick={handleAddToCart}
 							>
-								Thêm vào giỏ hàng
+								Thêm vào giỏ
 							</Button>
 							<ClientOnly>
 								<CheckoutButton />
@@ -363,47 +401,61 @@ export function ProductPage() {
 							>
 								Đặt hàng
 							</Button>
-						</div>
-					</div>
+						</CardFooter>
+					</Card>
 				</div>
 			</section>
-			<section className="mt-8">
-				<div className="sticky top-0 bg-white z-20">
-					<div className="lg:max-w-6xl mx-auto flex">
-						{[
-							{ label: "Chi tiết sản phẩm", key: "info" },
-							{ label: "Đánh giá", key: "review" },
-						].map((item) => (
-							<Button
-								key={item.key}
-								type="button"
-								variant="link"
-								className={cn(
-									"rounded-none border-b-2 h-14",
-									tab === item.key ? "border-primary" : "border-transparent",
-								)}
-								onClick={() => setTab(item.key)}
-							>
-								{item.label}
-							</Button>
+			<section className="bg-neutral-50 my-8">
+				<Card className="max-w-6xl mx-auto border-0 shadow-none bg-transparent">
+					<CardHeader className="lg:px-0">
+						<CardTitle>Thông tin sản phẩm</CardTitle>
+					</CardHeader>
+					<CardContent className="lg:px-0">
+						<div className="typography max-w-none">
+							{renderToReactElement({
+								content: product.content,
+								extensions: contentExtensions,
+							})}
+						</div>
+					</CardContent>
+				</Card>
+			</section>
+			<section className="my-8">
+				<Card className="bg-transparent max-w-6xl mx-auto border-0 shadow-none">
+					<CardHeader className="lg:px-0">
+						<CardTitle>Đánh giá</CardTitle>
+					</CardHeader>
+					<CardContent className="lg:px-0 space-y-4">
+						{reviews?.items.map((item) => (
+							<Item key={item.id} variant="muted">
+								<ItemMedia>
+									<Avatar>
+										<AvatarImage
+											src={convertToFileUrl(item.expand.user.expand.avatar)}
+										/>
+										<AvatarFallback>{item.expand.user.name[0]}</AvatarFallback>
+									</Avatar>
+								</ItemMedia>
+								<ItemContent>
+									<ItemTitle>{item.expand.user.name}</ItemTitle>
+									<ItemDescription>
+										<Rating defaultValue={item.rating} readOnly>
+											{[1, 2, 3, 4, 5].map((value) => (
+												<RatingButton key={value} size={16} />
+											))}
+										</Rating>
+									</ItemDescription>
+								</ItemContent>
+								<ItemActions />
+								<ItemFooter>
+									<div>
+										<p>{item.content}</p>
+									</div>
+								</ItemFooter>
+							</Item>
 						))}
-					</div>
-				</div>
-				<div className="max-w-6xl mx-auto grid lg:grid-cols-12 mt-8">
-					<div className="lg:col-span-12">
-						<Activity mode={tab === "info" ? "visible" : "hidden"}>
-							<div className="typography max-w-none">
-								{renderToReactElement({
-									content: product.content,
-									extensions: contentExtensions,
-								})}
-							</div>
-						</Activity>
-						<Activity mode="hidden">
-							<div></div>
-						</Activity>
-					</div>
-				</div>
+					</CardContent>
+				</Card>
 			</section>
 		</main>
 	);

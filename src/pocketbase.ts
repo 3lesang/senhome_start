@@ -4,6 +4,7 @@ export const PRODUCT_COLLECTION = "sen_products";
 export const PRODUCT_VARIANT_COLLECTION = "sen_product_variants";
 export const PRODUCT_OPTION_COLLECTION = "sen_product_options";
 export const PRODUCT_OPTION_VALUE_COLLECTION = "sen_product_option_values";
+export const PRODUCT_REVIEW_COLLECTION = "sen_product_reviews";
 export const CATEGORY_COLLECTION = "sen_categories";
 export const COLLECTION_COLLECTION = "sen_collections";
 export const COLLECTION_PRODUCT_COLLECTION = "sen_collection_products";

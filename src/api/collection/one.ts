@@ -11,6 +11,7 @@ export function getCollectionnQueryOptions(collectionId: string) {
 					name: string;
 					content: string;
 					slug: string;
+					seo: { title: string; description: string };
 					expand: {
 						file: { id: string; collectionName: string; file: string };
 					};

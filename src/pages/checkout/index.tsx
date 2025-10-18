@@ -16,6 +16,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
+	CardDescription,
 	CardFooter,
 	CardHeader,
 	CardTitle,
@@ -39,7 +40,6 @@ import {
 } from "@/components/ui/item";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
@@ -93,9 +93,10 @@ export function CheckoutPage() {
 			return {
 				totalPrice: acc.totalPrice + cur.price * cur.quantity,
 				totalSalePrice: acc.totalSalePrice + cur.sale_price * cur.quantity,
+				totalQuantiy: acc.totalQuantiy + cur.quantity,
 			};
 		},
-		{ totalPrice: 0, totalSalePrice: 0 },
+		{ totalPrice: 0, totalSalePrice: 0, totalQuantiy: 0 },
 	);
 
 	const form = useForm<FormValues>({
@@ -139,10 +140,10 @@ export function CheckoutPage() {
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(handleSubmit)}>
-				<main className="bg-neutral-50 min-h-screen py-8 px-4">
+				<main className="lg:bg-neutral-50 min-h-screen py-8">
 					<div className="max-w-6xl mx-auto">
 						<div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-							<div className="lg:col-span-12">
+							<div className="lg:col-span-12 px-4 lg:px-0">
 								<Item variant="muted">
 									<ItemMedia>
 										<Button type="button" variant="ghost" size="icon-sm">
@@ -318,88 +319,93 @@ export function CheckoutPage() {
 									</CardContent>
 								</Card>
 							</div>
-							<div className="lg:col-span-5 space-y-8">
+							<div className="lg:col-span-5 space-y-8 pb-64 lg:pb-0">
 								<Card className="border-0 shadow-none">
 									<CardHeader>
 										<CardTitle>Giỏ hàng</CardTitle>
+										<CardDescription>
+											{orderSumary?.totalQuantiy} sản phẩm
+										</CardDescription>
 									</CardHeader>
-									<ScrollArea className="h-80">
-										<CardContent className="space-y-2">
-											{order?.items.map((item) => (
-												<Item key={item.id} variant="muted">
-													<ItemMedia>
-														<Avatar className="rounded-md">
-															<AvatarImage src={item.thumbnail} />
-															<AvatarFallback />
-														</Avatar>
-													</ItemMedia>
-													<ItemContent>
-														<ItemTitle className="line-clamp-2">
-															<Link
-																to="/products/$id"
-																params={{ id: item.slug }}
-																className="hover:underline"
-															>
-																{item.name}
-															</Link>
-														</ItemTitle>
-														<ItemDescription className="space-x-2">
-															{item.combos.split(",").map((item) => (
-																<Badge key={item} variant="secondary">
-																	{item}
-																</Badge>
-															))}
-															<Badge>Số lượng {item.quantity}</Badge>
-														</ItemDescription>
-													</ItemContent>
-													<ItemActions>
-														{formatVND(item.sale_price)}
-													</ItemActions>
-												</Item>
-											))}
-										</CardContent>
-									</ScrollArea>
+									<CardContent className="space-y-2">
+										{order?.items.map((item) => (
+											<Item key={item.id} variant="muted">
+												<ItemMedia>
+													<Avatar className="rounded-md">
+														<AvatarImage src={item.thumbnail} />
+														<AvatarFallback />
+													</Avatar>
+												</ItemMedia>
+												<ItemContent>
+													<ItemTitle className="line-clamp-2">
+														<Link
+															to="/products/$id"
+															params={{ id: item.slug }}
+															className="hover:underline"
+														>
+															{item.name}
+														</Link>
+													</ItemTitle>
+													<ItemDescription className="space-x-2">
+														{item.combos.split(",").map((item) => (
+															<Badge key={item} variant="secondary">
+																{item}
+															</Badge>
+														))}
+														<Badge>Số lượng {item.quantity}</Badge>
+													</ItemDescription>
+												</ItemContent>
+												<ItemActions>
+													<div>
+														<p className="font-bold">
+															{formatVND(item.sale_price)}
+														</p>
+														<p className="text-xs text-neutral-500 line-through">
+															{formatVND(item.price)}
+														</p>
+													</div>
+												</ItemActions>
+											</Item>
+										))}
+									</CardContent>
 								</Card>
-								<Card className="border-0 shadow-none">
+								<Card className="border-0 shadow-none fixed bottom-0 right-0 left-0 lg:static">
 									<CardHeader>
 										<CardTitle>Chi tiết thanh toán</CardTitle>
 									</CardHeader>
 									<CardContent className="text-neutral-600 text-sm space-y-2">
 										<div className="flex justify-between mb-4">
-											<p>Tạm tính</p>
+											<p>Tổng tiền hàng</p>
 											<p>{formatVND(orderSumary?.totalSalePrice)}</p>
 										</div>
 										<div className="flex justify-between">
 											<p>Giảm giá</p>
-											<p>
-												{formatVND(
-													Number(orderSumary?.totalPrice) -
-														Number(orderSumary?.totalSalePrice),
-												)}
-											</p>
+											<p></p>
 										</div>
 										<div className="flex justify-between">
 											<p>Phí giao hàng</p>
 											<p>Miễn phí</p>
 										</div>
+										<Separator />
+										<div className="flex justify-between">
+											<p className="font-bold">Thành tiền</p>
+											<p className="font-bold text-lg">
+												{formatVND(orderSumary?.totalSalePrice)}
+											</p>
+										</div>
 									</CardContent>
-									<Separator />
-									<CardFooter className="flex justify-between">
-										<p className="font-bold">Thành tiền</p>
-										<p className="font-bold text-lg">
-											{formatVND(orderSumary?.totalSalePrice)}
-										</p>
+									<CardFooter>
+										<Button
+											type="submit"
+											size="lg"
+											className="w-full"
+											disabled={!form.formState.isValid || isPending}
+										>
+											{isPending && <Spinner />}
+											Đặt hàng
+										</Button>
 									</CardFooter>
 								</Card>
-								<Button
-									type="submit"
-									size="lg"
-									className="w-full"
-									disabled={!form.formState.isValid || isPending}
-								>
-									{isPending && <Spinner />}
-									Đặt hàng
-								</Button>
 							</div>
 						</div>
 					</div>

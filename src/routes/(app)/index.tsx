@@ -13,4 +13,12 @@ export const Route = createFileRoute("/(app)/")({
 			getCollectionsHeroQueryOptions(),
 		);
 	},
+	head: () => ({
+		meta: [
+			{
+				title:
+					"Senhome | Kiến Tạo Nét Đẹp Không Gian Sống - Tự hào sản xuất tại Việt Nam ",
+			},
+		],
+	}),
 });

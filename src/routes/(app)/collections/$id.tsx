@@ -19,4 +19,10 @@ export const Route = createFileRoute("/(app)/collections/$id")({
 		);
 		return collection;
 	},
+	head: ({ loaderData }) => ({
+		meta: [
+			{ name: "description", content: loaderData?.seo.description },
+			{ title: loaderData?.seo.title },
+		],
+	}),
 });

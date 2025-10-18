@@ -14,6 +14,7 @@ export function getProductQueryOptions(id: string) {
 					content: JSONContent;
 					price: number;
 					sale_price: number;
+					seo: { title: string; description: string };
 					expand: {
 						file: { id: string; collectionName: string; file: string }[];
 					};
