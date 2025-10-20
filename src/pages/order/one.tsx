@@ -30,7 +30,7 @@ import { convertToFileUrl, formatVND } from "@/lib/utils";
 import { getOrderStatus } from "./list";
 
 export function OneOrderPage() {
-	const { id } = useParams({ from: "/(second)/order/$id" });
+	const { id } = useParams({ from: "/(app)/order/$id" });
 	const { data: order } = useSuspenseQuery(getOrderQueryOptions(id));
 	const { data: items } = useSuspenseQuery(getItemsOrderQueryOptions(order.id));
 

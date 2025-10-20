@@ -18,6 +18,7 @@ export function getProductQueryOptions(id: string) {
 					expand: {
 						file: { id: string; collectionName: string; file: string }[];
 					};
+					category: string;
 				}>(PRODUCT_COLLECTION)
 				.getFirstListItem(`slug="${id}"`, {
 					expand: "file",

@@ -75,12 +75,10 @@ export function HomePage() {
 							/>
 						</div>
 					)}
-					<div className="max-w-6xl mx-auto">
+					<div className="container mx-auto">
 						<Card className="border-0 shadow-none px-4 lg:px-0">
 							<CardHeader className="px-0">
-								<CardTitle className="text-2xl font-bold">
-									{item.name}
-								</CardTitle>
+								<CardTitle className="text-xl font-bold">{item.name}</CardTitle>
 								<CardAction>
 									<Link
 										to="/collections/$id"
@@ -92,7 +90,7 @@ export function HomePage() {
 									</Link>
 								</CardAction>
 							</CardHeader>
-							<CardContent className="px-0">
+							<CardContent className="grid grid-cols-2 lg:grid-cols-5 gap-5 px-0">
 								<CollectionProduct id={item.id} />
 							</CardContent>
 						</Card>

@@ -42,7 +42,7 @@ export function CollectionPage() {
 	}
 
 	return (
-		<main className="min-h-[calc(100vh-474px)]">
+		<main className="">
 			{collection.expand?.file?.id && (
 				<img
 					src={convertToFileUrl(collection.expand.file)}
@@ -50,9 +50,9 @@ export function CollectionPage() {
 					className="w-full h-32 lg:h-96 object-cover"
 				/>
 			)}
-			<div className="max-w-6xl mx-auto">
+			<div className="container mx-auto">
 				<Card className="border-0 shadow-none">
-					<CardHeader className="">
+					<CardHeader className="px-0">
 						<CardTitle className="text-2xl font-bold">
 							{collection.name}
 						</CardTitle>
@@ -79,7 +79,7 @@ export function CollectionPage() {
 							</Label>
 						</CardAction>
 					</CardHeader>
-					<CardContent className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+					<CardContent className="grid grid-cols-2 lg:grid-cols-5 gap-4 px-0">
 						{products?.items.map((item) => (
 							<Card
 								key={item.expand.product.id}

@@ -10,7 +10,7 @@ export function Footer() {
 
 	return (
 		<footer className="py-8 lg:py-16 bg-neutral-50 px-4 lg:px-8">
-			<div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2">
+			<div className="container mx-auto grid grid-cols-1 lg:grid-cols-2">
 				<div>
 					<p className="font-bold text-xl mb-8">{store.name}</p>
 					<div className="space-y-2 text-neutral-800">

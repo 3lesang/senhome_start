@@ -1,20 +1,15 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import {
-	ClientOnly,
-	Link,
-	useNavigate,
-	useParams,
-} from "@tanstack/react-router";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { createClientOnlyFn } from "@tanstack/react-start";
 import { renderToReactElement } from "@tiptap/static-renderer";
-import { MinusIcon, PercentIcon, PlusIcon } from "lucide-react";
+import { MinusIcon, PlusIcon, ShoppingCartIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { getOptionsProduct } from "@/api/option/list";
+import { getProductsCategoryQueryOptions } from "@/api/product/list";
 import { getProductQueryOptions } from "@/api/product/one";
 import { getReviewsProductQueryOptions } from "@/api/review/list";
 import { getVariantsProduct } from "@/api/variant/list";
-import { CheckoutButton } from "@/components/checkout";
 import { contentExtensions } from "@/components/content";
 import { Rating, RatingButton } from "@/components/kibo-ui/rating";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -22,8 +17,8 @@ import { Badge } from "@/components/ui/badge";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
+	BreadcrumbLink,
 	BreadcrumbList,
-	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
@@ -44,15 +39,6 @@ import {
 	CarouselPrevious,
 } from "@/components/ui/carousel";
 import {
-	Item,
-	ItemActions,
-	ItemContent,
-	ItemDescription,
-	ItemFooter,
-	ItemMedia,
-	ItemTitle,
-} from "@/components/ui/item";
-import {
 	calculateDiscount,
 	checkBrowserId,
 	cn,
@@ -69,13 +55,14 @@ type VariantType = {
 	thumbnail: string;
 };
 
-export function ProductPage() {
+export function OneProductPage() {
 	const navigate = useNavigate();
 	const [combos, setCombos] = useState<Record<string, string>>({});
 	const [api, setApi] = useState<CarouselApi>();
 	const [current, setCurrent] = useState(0);
-	const [variant, setVariant] = useState<VariantType>();
 	const [quantity, setQuantity] = useState(1);
+	const [collapse, setCollapse] = useState(true);
+	const [variant, setVariant] = useState<VariantType>();
 
 	const { id } = useParams({ from: "/(app)/products/$id" });
 	const { data: product } = useSuspenseQuery(getProductQueryOptions(id));
@@ -83,6 +70,10 @@ export function ProductPage() {
 	const { data: variants } = useSuspenseQuery(getVariantsProduct(product.id));
 	const { data: reviews } = useSuspenseQuery(
 		getReviewsProductQueryOptions(product.id),
+	);
+
+	const { data: productsCategory } = useQuery(
+		getProductsCategoryQueryOptions(product.category),
 	);
 
 	const variantFiles = variants.map((item) => item.expand.file);
@@ -203,6 +194,10 @@ export function ProductPage() {
 		navigate({ to: "/checkout" });
 	}
 
+	const price = variant?.price ?? product.price;
+	const sale_price = variant?.sale_price ?? product.sale_price;
+	const discount = calculateDiscount(price, sale_price);
+
 	useEffect(() => {
 		if (!api) {
 			return;
@@ -213,250 +208,417 @@ export function ProductPage() {
 		});
 	}, [api]);
 
+	useEffect(() => {
+		const variant = variants[variants.length - 1];
+		const comboKeys = variant.combos.split(",");
+		const newCombo: Record<string, string> = {};
+		for (const comboKey of comboKeys) {
+			const option = options.find((item) =>
+				item.values.map((v) => v.name).includes(comboKey),
+			);
+			if (option?.id) {
+				newCombo[option?.id] = comboKey;
+			}
+		}
+		setCombos(newCombo);
+		setVariant({
+			id: variant.id,
+			price: variant.price,
+			sale_price: variant.sale_price,
+			thumbnail: convertToFileUrl(variant.expand.file),
+			combos: variant.combos,
+		});
+	}, [variants, options]);
+
 	return (
-		<main>
-			<section className="bg-neutral-50">
-				<Breadcrumb className="py-1 max-w-6xl mx-auto">
-					<BreadcrumbList className="flex-nowrap">
-						<BreadcrumbItem className="whitespace-nowrap">
-							<Link to="/">Trang chủ</Link>
+		<main className="bg-neutral-50">
+			<div className="container mx-auto">
+				<Breadcrumb className="py-4 font-light">
+					<BreadcrumbList>
+						<BreadcrumbItem>
+							<BreadcrumbLink href="/">Trang chủ</BreadcrumbLink>
 						</BreadcrumbItem>
 						<BreadcrumbSeparator />
 						<BreadcrumbItem>
-							<BreadcrumbPage className="line-clamp-1">
-								{product.name}
-							</BreadcrumbPage>
+							<p>{product.name}</p>
 						</BreadcrumbItem>
 					</BreadcrumbList>
 				</Breadcrumb>
-			</section>
-			<section className="lg:max-w-6xl mx-auto lg:my-8">
-				<div className="grid grid-cols-1 lg:grid-cols-2">
-					<div className="space-y-2">
-						<ClientOnly>
-							<Carousel setApi={setApi}>
-								<CarouselContent>
-									{files.map((item, index) => (
-										<CarouselItem key={`${item?.id}-${index}`}>
-											<div className="w-full h-full bg-neutral-50 overflow-hidden aspect-square">
-												{item?.id && (
-													<img
-														src={convertToFileUrl(item)}
-														alt="file"
-														className="object-contain w-full h-full"
-													/>
-												)}
+				<div className="grid grid-cols-12 gap-4">
+					<div className="col-span-9">
+						<div className="grid grid-cols-12 gap-4">
+							<div className="col-span-4">
+								<Card className="border-0 shadow-none sticky top-8">
+									<CardContent>
+										<Carousel setApi={setApi}>
+											<CarouselContent>
+												{files.map((item, index) => (
+													<CarouselItem key={`${item?.id}-${index}`}>
+														<div className="w-full h-full bg-neutral-50 overflow-hidden aspect-square">
+															{item?.id && (
+																<img
+																	src={convertToFileUrl(item)}
+																	alt="file"
+																	className="object-contain w-full h-full"
+																/>
+															)}
+														</div>
+													</CarouselItem>
+												))}
+											</CarouselContent>
+											<CarouselPrevious className="left-2" />
+											<CarouselNext className="right-2" />
+										</Carousel>
+										<div className="overflow-scroll">
+											<div className="flex gap-2">
+												{files.map((item, index) => (
+													<div
+														key={`${item?.id}-${index}`}
+														className={cn(
+															"size-12 aspect-square bg-neutral-50 border-2 relative",
+															current === index
+																? "border-primary"
+																: "border-transparent",
+														)}
+													>
+														<button
+															type="button"
+															className="absolute inset-0 hover:cursor-pointer"
+															onClick={() => api?.scrollTo(index)}
+														/>
+														{item?.id && (
+															<img
+																src={convertToFileUrl(item)}
+																alt="file"
+																className="w-full h-full object-contain"
+															/>
+														)}
+													</div>
+												))}
 											</div>
-										</CarouselItem>
-									))}
-								</CarouselContent>
-								<CarouselPrevious className="left-2" />
-								<CarouselNext className="right-2" />
-							</Carousel>
-						</ClientOnly>
-						<div className="overflow-x-scroll">
-							<div className="flex gap-2">
-								{files.map((item, index) => (
-									<div
-										key={`${item?.id}-${index}`}
-										className={cn(
-											"size-16 aspect-square bg-neutral-50 border-2 relative",
-											current === index
-												? "border-primary"
-												: "border-transparent",
-										)}
-									>
-										<button
-											type="button"
-											className="absolute inset-0 hover:cursor-pointer"
-											onClick={() => api?.scrollTo(index)}
-										/>
-										{item?.id && (
-											<img
-												src={convertToFileUrl(item)}
-												alt="file"
-												className="w-full h-full object-contain"
-											/>
-										)}
-									</div>
-								))}
+										</div>
+									</CardContent>
+								</Card>
+							</div>
+							<div className="col-span-8 space-y-4">
+								<Card className="border-0 shadow-none">
+									<CardHeader>
+										<CardTitle>
+											<p className="text-xl font-semibold">{product.name}</p>
+										</CardTitle>
+										<CardDescription>
+											<Rating defaultValue={5} readOnly>
+												{[1, 2, 3, 4, 5].map((value) => (
+													<RatingButton
+														key={value}
+														size={14}
+														className="text-primary"
+													/>
+												))}
+											</Rating>
+											<div className="space-x-2">
+												<span className="text-2xl font-bold text-primary">
+													{formatVND(sale_price)}
+												</span>
+												<Badge variant="secondary">-{discount}%</Badge>
+												<span className="text-sm line-through text-neutral-500">
+													{formatVND(price)}
+												</span>
+											</div>
+										</CardDescription>
+									</CardHeader>
+									<CardContent>
+										<div className="space-y-2">
+											{options.map((item) => {
+												return (
+													<div key={item.id} className="space-y-2">
+														<p className="text-sm font-medium">{item.name}</p>
+														<div className="flex flex-wrap gap-2">
+															{item.values.map((v) => (
+																<Button
+																	key={v.id}
+																	variant="outline"
+																	size="sm"
+																	className={cn(
+																		combos[item.id] === v.name &&
+																			"ring-2 ring-primary",
+																	)}
+																	onClick={() => handleSelect(item.id, v.name)}
+																>
+																	{v.name}
+																</Button>
+															))}
+														</div>
+													</div>
+												);
+											})}
+										</div>
+									</CardContent>
+								</Card>
+								<Card className="border-0 shadow-none">
+									<CardHeader>
+										<CardTitle>Mô tả sản phẩm</CardTitle>
+									</CardHeader>
+									<CardContent>
+										<div className={cn(collapse && "max-h-96 overflow-hidden")}>
+											<div className="typography max-w-none">
+												{renderToReactElement({
+													content: product.content,
+													extensions: contentExtensions,
+												})}
+											</div>
+										</div>
+										<div className="flex items-center justify-center pt-8 relative bg-white">
+											<button
+												type="button"
+												className="text-sm cursor-pointer"
+												onClick={() => setCollapse((prev) => !prev)}
+											>
+												{collapse ? "Xem thêm" : "Thu gọn"}
+											</button>
+										</div>
+									</CardContent>
+								</Card>
+							</div>
+							<div className="col-span-12 space-y-4">
+								<Card className="border-0 shadow-none">
+									<CardHeader>
+										<CardTitle>Khách hàng đánh giá</CardTitle>
+									</CardHeader>
+									<CardContent>
+										<div className="flex mb-4 gap-8">
+											<div>
+												<p className="font-medium text-sm mb-8">Tổng quan</p>
+												<div className="flex gap-4">
+													<p className="font-bold text-2xl">4.8</p>
+													<Rating defaultValue={5} readOnly>
+														{[1, 2, 3, 4, 5].map((value) => (
+															<RatingButton
+																key={value}
+																className="text-yellow-300"
+															/>
+														))}
+													</Rating>
+												</div>
+												<p className="text-neutral-400 font-light text-sm">
+													({reviews.totalItems} đánh giá)
+												</p>
+											</div>
+											<div>
+												<p className="font-medium text-sm mb-4">
+													Tất cả hình ảnh (73)
+												</p>
+												<div>
+													<img
+														src="https://salt.tikicdn.com/cache/w200/ts/review/a3/55/43/44e002c9222d65f099f830a5440385b0.jpg"
+														alt=""
+														className="size-20 rounded"
+													/>
+												</div>
+											</div>
+										</div>
+										<div className="mb-8">
+											<p className="text-sm font-medium mb-4">Lọc theo</p>
+											<div className="flex gap-2">
+												<Button
+													className="rounded-full font-light"
+													variant="outline"
+													size="sm"
+												>
+													Mới nhất
+												</Button>
+												<Button
+													className="rounded-full font-light"
+													variant="outline"
+													size="sm"
+												>
+													Có hình ảnh
+												</Button>
+												<Button
+													className="rounded-full font-light"
+													variant="outline"
+													size="sm"
+												>
+													5 sao
+												</Button>
+												<Button
+													className="rounded-full font-light"
+													variant="outline"
+													size="sm"
+												>
+													4 sao
+												</Button>
+												<Button
+													className="rounded-full font-light"
+													variant="outline"
+													size="sm"
+												>
+													3 sao
+												</Button>
+												<Button
+													className="rounded-full font-light"
+													variant="outline"
+													size="sm"
+												>
+													2 sao
+												</Button>
+												<Button
+													className="rounded-full font-light"
+													variant="outline"
+													size="sm"
+												>
+													1 sao
+												</Button>
+											</div>
+										</div>
+										<div className="space-y-2">
+											{reviews.items.map((item) => (
+												<div key={item.id} className="my-2">
+													<div className="flex gap-2 items-center">
+														<Avatar>
+															<AvatarImage
+																src={convertToFileUrl(
+																	item.expand.user.expand.avatar,
+																)}
+															></AvatarImage>
+															<AvatarFallback>
+																{item.expand.user.name[0]}
+															</AvatarFallback>
+														</Avatar>
+														<p className="font-medium">
+															{item.expand.user.name}
+														</p>
+													</div>
+													<Rating defaultValue={item.rating} readOnly>
+														{[1, 2, 3, 4, 5].map((value) => (
+															<RatingButton
+																key={value}
+																size={16}
+																className="text-yellow-300"
+															/>
+														))}
+													</Rating>
+													<p className="text-sm">{item.content}</p>
+												</div>
+											))}
+										</div>
+									</CardContent>
+								</Card>
+								<Card className="border-0 shadow-none">
+									<CardHeader>
+										<CardTitle>Sản phẩm tương tự</CardTitle>
+									</CardHeader>
+									<CardContent className="grid grid-cols-6 gap-4">
+										{productsCategory?.items.map((item) => (
+											<Card key={item.id} className="border-0 shadow-none p-0">
+												<div className="aspect-square bg-neutral-50 rounded-md relative group">
+													<Link to="/products/$id" params={{ id: item.slug }}>
+														<img
+															src={convertToFileUrl(item.expand.file[0])}
+															alt=""
+															className="rounded object-contain group-hover:opacity-0 transition-opacity duration-150 w-full h-full"
+														/>
+														<img
+															src={convertToFileUrl(item.expand.file[1])}
+															alt=""
+															className="rounded object-contain opacity-0 group-hover:opacity-100 absolute inset-0 z-20 transition-opacity duration-150 h-full w-full"
+														/>
+													</Link>
+													<Button
+														type="submit"
+														size="icon-sm"
+														variant="secondary"
+														className="absolute right-2 bottom-2 z-30"
+													>
+														<ShoppingCartIcon />
+													</Button>
+												</div>
+												<CardContent className="px-0 space-y-1">
+													<p className="line-clamp-2 text-sm font-light hover:underline">
+														<Link to="/products/$id" params={{ id: item.slug }}>
+															{item.name}
+														</Link>
+													</p>
+													<div className="flex items-center space-x-2">
+														<Badge variant="secondary">
+															-{calculateDiscount(item.price, item.sale_price)}%
+														</Badge>
+														<p className="line-through text-xs text-neutral-700">
+															{formatVND(item.price)}
+														</p>
+													</div>
+													<p className="text-lg font-bold">
+														{formatVND(item.sale_price)}
+													</p>
+												</CardContent>
+											</Card>
+										))}
+									</CardContent>
+								</Card>
 							</div>
 						</div>
 					</div>
-					<Card className="border-0 shadow-none">
-						<CardHeader>
-							<CardTitle className="text-xl lg:text-2xl font-light">
-								{product.name}
-							</CardTitle>
-							<CardDescription className="text-primary">
-								<div className="flex items-center space-x-2">
-									<Badge variant="secondary">
-										{variant?.id
-											? calculateDiscount(variant?.price, variant?.sale_price)
-											: calculateDiscount(
-													variants[0].price,
-													variants[0].sale_price,
-												)}
-										<PercentIcon />
-									</Badge>
-									{variant?.id ? (
-										<p className="line-through text-neutral-500 text-sm">
-											{formatVND(variant.price)}
-										</p>
-									) : (
-										<p className="line-through text-neutral-500">
-											<span>{formatVND(variants?.[0].price)}</span>
-											<span> - </span>
-											<span>
-												{formatVND(variants?.[variants.length - 1].price)}
-											</span>
-										</p>
-									)}
+					<div className="col-span-3">
+						<Card className="border-0 shadow-none sticky top-8">
+							<CardContent className="space-y-4">
+								<div className="flex gap-2 items-center">
+									<img src={variant?.thumbnail} alt="" className="size-10" />
+									{variant?.combos}
 								</div>
-								<p className="text-3xl font-bold">
-									{variant?.id ? (
-										<span>{formatVND(variant.sale_price)}</span>
-									) : (
-										<>
-											<span>{formatVND(variants?.[0].sale_price)}</span>
-											<span> - </span>
-											<span>
-												{formatVND(variants?.[variants.length - 1].sale_price)}
-											</span>
-										</>
-									)}
-								</p>
-							</CardDescription>
-						</CardHeader>
-						<CardContent className="space-y-4">
-							{options.map((item) => {
-								return (
-									<div key={item.id} className="space-y-4">
-										<p className="font-semibold">{item.name}</p>
-										<div className="flex flex-wrap gap-4">
-											{item.values.map((v) => (
-												<Button
-													key={v.id}
-													size="sm"
-													variant={
-														combos[item.id] === v.name ? "default" : "secondary"
-													}
-													className=""
-													onClick={() => handleSelect(item.id, v.name)}
-												>
-													{v.name}
-												</Button>
-											))}
-										</div>
+								<div className="space-y-4">
+									<p className="font-semibold">Số lượng</p>
+									<div className="flex items-center">
+										<Button
+											type="button"
+											size="icon"
+											variant="outline"
+											onClick={() => setQuantity((q) => (q > 1 ? q - 1 : 1))}
+										>
+											<MinusIcon />
+										</Button>
+										<div className="w-16 text-center">{quantity}</div>
+										<Button
+											type="button"
+											size="icon"
+											variant="outline"
+											onClick={() => setQuantity((q) => q + 1)}
+										>
+											<PlusIcon />
+										</Button>
 									</div>
-								);
-							})}
-							<div className="space-y-4">
-								<p className="font-semibold">Số lượng</p>
-								<div className="flex items-center gap-4 bg-white rounded w-fit">
+								</div>
+								<div className="space-y-4">
+									<p className="font-semibold">Tạm tính</p>
+									<p className="font-bold text-xl">
+										{formatVND(Number(variant?.sale_price) * quantity)}
+									</p>
+								</div>
+							</CardContent>
+							<CardFooter>
+								<div className="w-full space-y-2">
 									<Button
 										type="button"
-										variant="secondary"
-										size="icon-sm"
-										onClick={() => setQuantity((q) => (q > 1 ? q - 1 : 1))}
+										size="lg"
+										className="w-full"
+										onClick={handleCheckout}
 									>
-										<MinusIcon />
+										Mua ngay
 									</Button>
-									<span className="w-8 text-center">{quantity}</span>
 									<Button
 										type="button"
-										variant="secondary"
-										size="icon-sm"
-										onClick={() => setQuantity((q) => q + 1)}
+										size="lg"
+										variant="outline"
+										className="w-full"
+										onClick={handleAddToCart}
 									>
-										<PlusIcon />
+										Thêm vào giỏ
 									</Button>
 								</div>
-							</div>
-							<div className="flex justify-between">
-								<p className="font-semibold">Giá tiền</p>
-								<p className="font-bold text-lg">
-									{variant?.id && formatVND(variant?.sale_price * quantity)}
-								</p>
-							</div>
-						</CardContent>
-						<CardFooter className="flex gap-2 items-center">
-							<Button
-								type="button"
-								size="lg"
-								variant="outline"
-								className="flex-1"
-								onClick={handleAddToCart}
-							>
-								Thêm vào giỏ
-							</Button>
-							<ClientOnly>
-								<CheckoutButton />
-							</ClientOnly>
-							<Button
-								type="button"
-								size="lg"
-								className="flex-1"
-								onClick={handleCheckout}
-							>
-								Đặt hàng
-							</Button>
-						</CardFooter>
-					</Card>
+							</CardFooter>
+						</Card>
+					</div>
 				</div>
-			</section>
-			<section className="bg-neutral-50 my-8">
-				<Card className="max-w-6xl mx-auto border-0 shadow-none bg-transparent">
-					<CardHeader className="lg:px-0">
-						<CardTitle>Thông tin sản phẩm</CardTitle>
-					</CardHeader>
-					<CardContent className="lg:px-0">
-						<div className="typography max-w-none">
-							{renderToReactElement({
-								content: product.content,
-								extensions: contentExtensions,
-							})}
-						</div>
-					</CardContent>
-				</Card>
-			</section>
-			<section className="my-8">
-				<Card className="bg-transparent max-w-6xl mx-auto border-0 shadow-none">
-					<CardHeader className="lg:px-0">
-						<CardTitle>Đánh giá</CardTitle>
-					</CardHeader>
-					<CardContent className="lg:px-0 space-y-4">
-						{reviews?.items.map((item) => (
-							<Item key={item.id} variant="muted">
-								<ItemMedia>
-									<Avatar>
-										<AvatarImage
-											src={convertToFileUrl(item.expand.user.expand.avatar)}
-										/>
-										<AvatarFallback>{item.expand.user.name[0]}</AvatarFallback>
-									</Avatar>
-								</ItemMedia>
-								<ItemContent>
-									<ItemTitle>{item.expand.user.name}</ItemTitle>
-									<ItemDescription>
-										<Rating defaultValue={item.rating} readOnly>
-											{[1, 2, 3, 4, 5].map((value) => (
-												<RatingButton key={value} size={16} />
-											))}
-										</Rating>
-									</ItemDescription>
-								</ItemContent>
-								<ItemActions />
-								<ItemFooter>
-									<div>
-										<p>{item.content}</p>
-									</div>
-								</ItemFooter>
-							</Item>
-						))}
-					</CardContent>
-				</Card>
-			</section>
+			</div>
 		</main>
 	);
 }

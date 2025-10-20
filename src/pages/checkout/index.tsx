@@ -140,9 +140,9 @@ export function CheckoutPage() {
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(handleSubmit)}>
-				<main className="lg:bg-neutral-50 min-h-screen py-8">
+				<main className="lg:bg-neutral-50 min-h-screen py-4">
 					<div className="max-w-6xl mx-auto">
-						<div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+						<div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
 							<div className="lg:col-span-12 px-4 lg:px-0">
 								<Item variant="muted">
 									<ItemMedia>
@@ -160,7 +160,7 @@ export function CheckoutPage() {
 									</ItemActions>
 								</Item>
 							</div>
-							<div className="lg:col-span-7 space-y-8">
+							<div className="lg:col-span-7 space-y-4">
 								<Card className="border-0 shadow-none">
 									<CardHeader>
 										<CardTitle>Thông tin giao hàng</CardTitle>
@@ -319,7 +319,7 @@ export function CheckoutPage() {
 									</CardContent>
 								</Card>
 							</div>
-							<div className="lg:col-span-5 space-y-8 pb-64 lg:pb-0">
+							<div className="lg:col-span-5 space-y-4 pb-64 lg:pb-0">
 								<Card className="border-0 shadow-none">
 									<CardHeader>
 										<CardTitle>Giỏ hàng</CardTitle>

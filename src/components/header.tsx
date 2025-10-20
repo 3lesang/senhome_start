@@ -1,5 +1,5 @@
 import { ClientOnly, Link } from "@tanstack/react-router";
-import { CircleUserIcon, SearchIcon, ShoppingBagIcon } from "lucide-react";
+import { SearchIcon, ShoppingBagIcon, UserIcon } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CartBadge } from "./cart";
@@ -7,9 +7,9 @@ import { CartBadge } from "./cart";
 export function Header() {
 	return (
 		<header className="bg-white px-4">
-			<nav className="max-w-6xl mx-auto flex justify-between items-center h-16">
+			<nav className="container mx-auto flex justify-between items-center h-16">
 				<Link to="/" className="hidden lg:flex items-center gap-1">
-					<img src="/logo.jpg" alt="logo" className="size-12 object-contain" />
+					<img src="/logo.jpg" alt="logo" className="size-16 object-contain" />
 				</Link>
 				<div></div>
 				<div className="flex items-center gap-1">
@@ -21,8 +21,8 @@ export function Header() {
 						to="/signup"
 						className={cn(buttonVariants({ variant: "ghost" }))}
 					>
-						<CircleUserIcon />
-						Đăng ký
+						<UserIcon />
+						Tài khoản
 					</Link>
 					<Link
 						to="/cart"

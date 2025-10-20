@@ -51,7 +51,7 @@ export function getOrderPayment(key: "cod") {
 export function ListOrderPage() {
 	const { data } = useSuspenseQuery(getOrdersQueryOptions(checkBrowserId()));
 	return (
-		<main className="bg-neutral-50 h-[calc(100vh-64px)]">
+		<main className="bg-neutral-50">
 			<div className="max-w-4xl mx-auto py-8">
 				<Activity mode={data.totalItems > 0 ? "visible" : "hidden"}>
 					<Card className="bg-transparent border-0 shadow-none">

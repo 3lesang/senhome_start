@@ -13,7 +13,6 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
-	CardDescription,
 	CardFooter,
 	CardHeader,
 	CardTitle,
@@ -32,8 +31,6 @@ import {
 	ItemActions,
 	ItemContent,
 	ItemDescription,
-	ItemFooter,
-	ItemHeader,
 	ItemMedia,
 	ItemTitle,
 } from "@/components/ui/item";
@@ -66,16 +63,18 @@ export function CartPage() {
 		})),
 	);
 
-	const cartSumary = cart.reduce(
-		(acc, cur) => {
-			return {
-				totalPrice: acc.totalPrice + cur.price * cur.quantity,
-				totalSalePrice: acc.totalSalePrice + cur.sale_price * cur.quantity,
-				totalQuantity: acc.totalQuantity + cur.quantity,
-			};
-		},
-		{ totalPrice: 0, totalSalePrice: 0, totalQuantity: 0 },
-	);
+	const cartSumary = cart
+		.filter((item) => item.selected)
+		.reduce(
+			(acc, cur) => {
+				return {
+					totalPrice: acc.totalPrice + cur.price * cur.quantity,
+					totalSalePrice: acc.totalSalePrice + cur.sale_price * cur.quantity,
+					totalQuantity: acc.totalQuantity + cur.quantity,
+				};
+			},
+			{ totalPrice: 0, totalSalePrice: 0, totalQuantity: 0 },
+		);
 
 	function handlePayment() {
 		const selectedCart = cart.filter((item) => item.selected);
@@ -130,113 +129,96 @@ export function CartPage() {
 	}
 
 	return (
-		<main className="lg:bg-neutral-50 flex-1">
-			<div className="max-w-6xl mx-auto lg:py-8">
-				<div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-64 lg:pb-0">
-					<div className="lg:col-span-8">
-						<Card className="border-0 shadow-none">
-							<CardHeader>
-								<CardTitle>Giỏ hàng</CardTitle>
-								<CardDescription>
-									{cartSumary?.totalQuantity} sản phẩm
-								</CardDescription>
-							</CardHeader>
-							<CardContent className="space-y-4">
-								{cart.map((item) => (
-									<Item key={item.id} variant="muted">
-										<ItemHeader>
-											<Checkbox
-												defaultChecked={item.selected}
-												className="bg-white"
-												onCheckedChange={(checked) => {
-													cartCollection.update(item.id, (cart) => {
-														cart.selected = checked as boolean;
-													});
-												}}
-											/>
-										</ItemHeader>
-										<ItemMedia>
-											<Avatar className="rounded">
-												<AvatarImage src={item.thumbnail} />
-												<AvatarFallback>CN</AvatarFallback>
-											</Avatar>
-										</ItemMedia>
-										<ItemContent>
-											<ItemTitle>
-												<Link
-													to="/products/$id"
-													params={{ id: item.slug }}
-													className="hover:underline line-clamp-1"
-												>
-													{item.name}
-												</Link>
-											</ItemTitle>
-											<ItemDescription className="space-x-1">
-												{item.combos?.split(",").map((item) => (
-													<Badge key={item} variant="secondary">
-														{item}
-													</Badge>
-												))}
-											</ItemDescription>
-										</ItemContent>
-										<ItemActions>
-											<div className="space-x-2">
-												<p className="font-bold">
-													{formatVND(item.sale_price)}
-												</p>
-												<p className="line-through text-xs text-neutral-500">
-													{formatVND(item.price)}
-												</p>
-											</div>
-											<Button
-												type="button"
-												variant="outline"
-												size="icon-sm"
-												onClick={() => {
-													cartCollection.delete(item.id);
-												}}
-											>
-												<Trash2Icon />
-											</Button>
-										</ItemActions>
-										<ItemFooter>
-											<div className="flex items-center">
-												<Button
-													type="button"
-													variant="outline"
-													size="icon-sm"
-													onClick={() => {
-														if (item.quantity === 1) return;
-														cartCollection.update(item.id, (cart) => {
-															cart.quantity -= 1;
-														});
-													}}
-												>
-													<MinusIcon />
-												</Button>
-												<span className="w-10 text-center">
-													{item.quantity}
-												</span>
-												<Button
-													type="button"
-													variant="outline"
-													size="icon-sm"
-													onClick={() => {
-														cartCollection.update(item.id, (cart) => {
-															cart.quantity += 1;
-														});
-													}}
-												>
-													<PlusIcon />
-												</Button>
-											</div>
-										</ItemFooter>
-									</Item>
-								))}
-							</CardContent>
-						</Card>
+		<main className="lg:bg-neutral-50">
+			<div className="container mx-auto lg:py-4">
+				<p className="font-semibold text-xl mb-4 uppercase">Giỏ Hàng</p>
+				<div className="grid grid-cols-1 lg:grid-cols-12 gap-4 pb-64 lg:pb-0">
+					<div className="lg:col-span-9 space-y-4">
+						{cart.map((item) => (
+							<Item key={item.id} className="bg-white">
+								<ItemMedia>
+									<Checkbox
+										defaultChecked={item.selected}
+										className="bg-white"
+										onCheckedChange={(checked) => {
+											cartCollection.update(item.id, (cart) => {
+												cart.selected = checked as boolean;
+											});
+										}}
+									/>
+									<Avatar className="rounded">
+										<AvatarImage src={item.thumbnail} />
+										<AvatarFallback>CN</AvatarFallback>
+									</Avatar>
+								</ItemMedia>
+								<ItemContent>
+									<ItemTitle>
+										<Link
+											to="/products/$id"
+											params={{ id: item.slug }}
+											className="hover:underline line-clamp-1"
+										>
+											{item.name}
+										</Link>
+									</ItemTitle>
+									<ItemDescription className="space-x-1">
+										{item.combos?.split(",").map((item) => (
+											<Badge key={item} variant="secondary">
+												{item}
+											</Badge>
+										))}
+									</ItemDescription>
+								</ItemContent>
+								<ItemActions className="space-x-4">
+									<div className="flex items-center">
+										<Button
+											type="button"
+											variant="outline"
+											size="icon-sm"
+											onClick={() => {
+												if (item.quantity === 1) return;
+												cartCollection.update(item.id, (cart) => {
+													cart.quantity -= 1;
+												});
+											}}
+										>
+											<MinusIcon />
+										</Button>
+										<span className="w-10 text-center">{item.quantity}</span>
+										<Button
+											type="button"
+											variant="outline"
+											size="icon-sm"
+											onClick={() => {
+												cartCollection.update(item.id, (cart) => {
+													cart.quantity += 1;
+												});
+											}}
+										>
+											<PlusIcon />
+										</Button>
+									</div>
+									<div className="space-x-2">
+										<p className="font-bold">{formatVND(item.sale_price)}</p>
+										<p className="line-through text-xs text-neutral-500">
+											{formatVND(item.price)}
+										</p>
+									</div>
+									<Button
+										type="button"
+										variant="outline"
+										size="icon-sm"
+										onClick={() => {
+											cartCollection.delete(item.id);
+										}}
+									>
+										<Trash2Icon />
+									</Button>
+								</ItemActions>
+							</Item>
+						))}
 					</div>
-					<div className="lg:col-span-4">
+					<div className="lg:col-span-3">
 						<Card className="border-0 shadow-none fixed bottom-0 right-0 left-0 lg:static">
 							<CardHeader>
 								<CardTitle>Chi tiết thanh toán</CardTitle>
@@ -269,7 +251,7 @@ export function CartPage() {
 									onClick={handlePayment}
 									className="w-full"
 								>
-									Đặt hàng
+									Mua Hàng
 								</Button>
 							</CardFooter>
 						</Card>

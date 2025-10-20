@@ -3,10 +3,10 @@ import { getOptionsProduct } from "@/api/option/list";
 import { getProductQueryOptions } from "@/api/product/one";
 import { getReviewsProductQueryOptions } from "@/api/review/list";
 import { getVariantsProduct } from "@/api/variant/list";
-import { ProductPage } from "@/pages/product/one";
+import { OneProductPage } from "@/pages/product/one";
 
 export const Route = createFileRoute("/(app)/products/$id")({
-	component: ProductPage,
+	component: OneProductPage,
 	loader: async ({ context, params }) => {
 		const product = await context.queryClient.ensureQueryData(
 			getProductQueryOptions(params.id),
