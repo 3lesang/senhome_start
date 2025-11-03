@@ -1,17 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-	getCollectionsHeroQueryOptions,
-	getCollectionsHomeQueryOptions,
-} from "@/api/collection/list";
 import { HomePage } from "@/pages/home";
+import {
+	getHeroCollectionsQueryOptions,
+	getHomeCollectionsQueryOptions,
+} from "@/queries/collection";
 
 export const Route = createFileRoute("/(app)/")({
 	component: HomePage,
 	loader: async ({ context }) => {
-		await context.queryClient.ensureQueryData(getCollectionsHomeQueryOptions());
-		return context.queryClient.ensureQueryData(
-			getCollectionsHeroQueryOptions(),
-		);
+		await context.queryClient.ensureQueryData(getHeroCollectionsQueryOptions);
+		await context.queryClient.ensureQueryData(getHomeCollectionsQueryOptions);
 	},
 	head: () => ({
 		meta: [

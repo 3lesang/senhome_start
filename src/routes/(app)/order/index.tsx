@@ -1,14 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { getOrdersQueryOptions } from "@/api/order/list";
-import { checkBrowserId } from "@/lib/utils";
 import { ListOrderPage } from "@/pages/order/list";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/(app)/order/")({
-	ssr: false,
-	component: ListOrderPage,
-	loader: ({ context }) => {
-		return context.queryClient.ensureQueryData(
-			getOrdersQueryOptions(checkBrowserId()),
-		)
-	},
+  component: ListOrderPage,
 });

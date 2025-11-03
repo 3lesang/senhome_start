@@ -83,8 +83,8 @@ const appCollectionsIdRoute = appCollectionsIdRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof appIndexRoute
   '/cart': typeof appCartRoute
+  '/': typeof appIndexRoute
   '/collections/$id': typeof appCollectionsIdRoute
   '/contents/$id': typeof appContentsIdRoute
   '/order/$id': typeof appOrderIdRoute
@@ -126,8 +126,8 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | '/cart'
+    | '/'
     | '/collections/$id'
     | '/contents/$id'
     | '/order/$id'
@@ -178,8 +178,8 @@ declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/(app)': {
       id: '/(app)'
-      path: '/'
-      fullPath: '/'
+      path: ''
+      fullPath: ''
       preLoaderRoute: typeof appRouteRouteImport
       parentRoute: typeof rootRouteImport
     }

@@ -1,0 +1,15 @@
+export const PRODUCT_QUERY_KEY = "products";
+export const PRODUCT_VARIANT_QUERY_KEY = "product_variants";
+export const PRODUCT_OPTION_QUERY_KEY = "product_options";
+export const PRODUCT_OPTION_VALUE_QUERY_KEY = "product_option_values";
+export const PRODUCT_REVIEW_QUERY_KEY = "product_reviews";
+export const CATEGORY_QUERY_KEY = "categories";
+export const COLLECTION_QUERY_KEY = "collections";
+export const COLLECTION_PRODUCT_QUERY_KEY = "collection_products";
+export const ORDER_QUERY_KEY = "orders";
+export const ORDER_ITEM_QUERY_KEY = "order_items";
+export const USER_QUERY_KEY = "users";
+export const FILE_QUERY_KEY = "files";
+export const STORE_QUERY_KEY = "store";
+export const MENU_QUERY_KEY = "menus";
+export const STORE_PAGE_QUERY_KEY = "pages";

@@ -6,7 +6,7 @@ import { CartBadge } from "./cart";
 
 export function Header() {
 	return (
-		<header className="bg-white px-4">
+		<header className="bg-white px-4 sticky top-0 z-50">
 			<nav className="container mx-auto flex justify-between items-center h-16">
 				<Link to="/" className="hidden lg:flex items-center gap-1">
 					<img src="/logo.jpg" alt="logo" className="size-16 object-contain" />
