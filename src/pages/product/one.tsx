@@ -242,10 +242,10 @@ export function OneProductPage() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-9">
-            <div className="grid grid-cols-12 gap-4">
-              <div className="col-span-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          <div className="lg:col-span-9">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+              <div className="lg:col-span-4">
                 <Card className="border-0 shadow-none sticky top-20">
                   <CardContent>
                     <Carousel setApi={setApi}>
@@ -298,7 +298,7 @@ export function OneProductPage() {
                   </CardContent>
                 </Card>
               </div>
-              <div className="col-span-8 space-y-4">
+              <div className="lg:col-span-8 space-y-4">
                 <Card className="border-0 shadow-none">
                   <CardHeader>
                     <CardTitle>
@@ -344,13 +344,13 @@ export function OneProductPage() {
                   </CardContent>
                 </Card>
               </div>
-              <div className="col-span-12 space-y-4">
+              <div className="lg:col-span-12 space-y-4">
                 <Card className="border-0 shadow-none">
                   <CardHeader>
                     <CardTitle>Khách hàng đánh giá</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex mb-4 gap-8">
+                    <div className="flex flex-col lg:flex-row mb-4 gap-8">
                       <div>
                         <p className="font-medium text-sm mb-8">Tổng quan</p>
                         <div className="flex gap-4">
@@ -383,7 +383,7 @@ export function OneProductPage() {
                     </div>
                     <div className="mb-8">
                       <p className="text-sm font-medium mb-4">Lọc theo</p>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 flex-wrap">
                         <Button
                           className="rounded-full font-light"
                           variant="outline"
@@ -522,9 +522,9 @@ export function OneProductPage() {
               </div>
             </div>
           </div>
-          <div className="col-span-3">
+          <div className="fixed bottom-0 right-0 left-0 lg:static lg:col-span-3">
             <Card className="border-0 shadow-none sticky top-20">
-              <CardContent className="space-y-4">
+              <CardContent className="hidden lg:block space-y-4">
                 <div className="flex gap-2 items-center">
                   <img
                     src={convertToFileUrl(variant?.file)}
@@ -565,24 +565,28 @@ export function OneProductPage() {
                 </div>
               </CardContent>
               <CardFooter>
-                <div className="w-full space-y-2">
-                  <Button
-                    type="button"
-                    size="lg"
-                    className="w-full"
-                    onClick={handleCheckout}
-                  >
-                    Mua ngay
-                  </Button>
-                  <Button
-                    type="button"
-                    size="lg"
-                    variant="outline"
-                    className="w-full"
-                    onClick={handleAddToCart}
-                  >
-                    Thêm vào giỏ
-                  </Button>
+                <div className="flex lg:flex-col w-full gap-2">
+                  <div className="flex-1">
+                    <Button
+                      type="button"
+                      size="lg"
+                      className="w-full"
+                      onClick={handleCheckout}
+                    >
+                      Mua ngay
+                    </Button>
+                  </div>
+                  <div className="flex-1">
+                    <Button
+                      type="button"
+                      size="lg"
+                      variant="outline"
+                      className="w-full"
+                      onClick={handleAddToCart}
+                    >
+                      Thêm vào giỏ
+                    </Button>
+                  </div>
                 </div>
               </CardFooter>
             </Card>
