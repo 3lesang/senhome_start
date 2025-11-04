@@ -5,6 +5,6 @@
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
   "vars": {
-    "MY_VAR": "Hello from Cloudflare"
+    "VITE_API_URL": "https://api.senhome.vn/api/v1"
   }
 }
