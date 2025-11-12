@@ -9,7 +9,7 @@ export function Header() {
     <header className="bg-white px-4 sticky top-0 z-50">
       <nav className="container mx-auto flex justify-between items-center h-16">
         <Link to="/" className="lg:flex items-center gap-1">
-          <img src="/logo.jpg" alt="logo" className="size-16 object-contain" />
+          <img src="/logo512.png" alt="logo" className="size-16 object-cover" />
         </Link>
         <div></div>
         <div className="flex items-center gap-1">
