@@ -1,13 +1,15 @@
+import { getMenuItemQueryOptions, getMenuQueryOptions } from "@/queries/menu";
+import { getStoreQueryOptions } from "@/queries/store";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { MailIcon, MapPinIcon, PhoneIcon } from "lucide-react";
-import { getOneMenuQueryOptions } from "@/api/menu/one";
-import { getStoreQueryOptions } from "@/queries/store";
 
 export function Footer() {
   const getStoreQuery = useSuspenseQuery(getStoreQueryOptions());
-  const { data: menu } = useSuspenseQuery(getOneMenuQueryOptions());
-
+  const getFooterMenuQuery = useSuspenseQuery(getMenuQueryOptions("footer"));
+  const getMenuItemQuery = useSuspenseQuery(
+    getMenuItemQueryOptions(getFooterMenuQuery.data?.id ?? 0),
+  );
   return (
     <footer className="py-8 lg:py-16 bg-neutral-50 px-4 lg:px-8">
       <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2">
@@ -43,15 +45,14 @@ export function Footer() {
         </div>
         <div className="mt-16 grid grid-cols-2">
           <div className="space-y-4">
-            {menu.items.map((item) => (
-              <p
-                key={item.id}
-                className="text-sm text-neutral-800 hover:underline"
+            {getMenuItemQuery.data.map((i) => (
+              <Link
+                to="/contents/$id"
+                params={{ id: i.url }}
+                className="text-sm"
               >
-                <Link to="/contents/$id" params={{ id: item.url }}>
-                  {item.title}
-                </Link>
-              </p>
+                {i.name}
+              </Link>
             ))}
           </div>
         </div>

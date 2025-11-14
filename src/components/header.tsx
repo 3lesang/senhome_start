@@ -1,17 +1,42 @@
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+import { cn } from "@/lib/utils";
+import { getMenuItemQueryOptions, getMenuQueryOptions } from "@/queries/menu";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ClientOnly, Link } from "@tanstack/react-router";
 import { SearchIcon, ShoppingBagIcon, UserIcon } from "lucide-react";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { CartBadge } from "./cart";
 
 export function Header() {
+  const getFooterMenuQuery = useSuspenseQuery(getMenuQueryOptions("header"));
+  const getMenuItemQuery = useSuspenseQuery(
+    getMenuItemQueryOptions(getFooterMenuQuery.data?.id ?? 0),
+  );
   return (
     <header className="bg-white px-4 sticky top-0 z-50">
       <nav className="container mx-auto flex justify-between items-center h-16">
         <Link to="/" className="lg:flex items-center gap-1">
           <img src="/logo512.png" alt="logo" className="size-16 object-cover" />
         </Link>
-        <div></div>
+        <NavigationMenu>
+          <NavigationMenuList>
+            {getMenuItemQuery.data.map((i) => (
+              <NavigationMenuItem key={i.name}>
+                <NavigationMenuTrigger>{i.name}</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <NavigationMenuLink>Link</NavigationMenuLink>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
         <div className="flex items-center gap-1">
           <Button type="button" variant="ghost" className="hidden lg:flex">
             <SearchIcon />

@@ -139,7 +139,7 @@ const ListReview = ({ id }: { id: number }) => {
                   f && (
                     <img
                       key={f}
-                      className="size-24 object-contain"
+                      className="size-20 object-cover rounded"
                       src={convertToFileUrl(f)}
                     />
                   ),
