@@ -17,7 +17,7 @@ export function ContentPage() {
   return (
     <main className="py-8">
       <div className="max-w-4xl mx-auto">
-        <div className="typography">
+        <div className="typography max-w-none">
           {renderToReactElement({
             content: getPageContentQuery.data,
             extensions: contentExtensions,

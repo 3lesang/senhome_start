@@ -27,14 +27,29 @@ export function Header() {
         </Link>
         <NavigationMenu>
           <NavigationMenuList>
-            {getMenuItemQuery.data.map((i) => (
-              <NavigationMenuItem key={i.name}>
-                <NavigationMenuTrigger>{i.name}</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <NavigationMenuLink>Link</NavigationMenuLink>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            ))}
+            {getMenuItemQuery.data.map((menu) => {
+              if (!menu.items.length) {
+                return (
+                  <NavigationMenuItem key={menu.name}>
+                    <NavigationMenuLink asChild>
+                      <Link to={menu.url}>{menu.name}</Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                );
+              }
+              return (
+                <NavigationMenuItem key={menu.name}>
+                  <NavigationMenuTrigger>{menu.name}</NavigationMenuTrigger>
+                  <NavigationMenuContent className="min-w-max">
+                    {menu.items.map((item) => (
+                      <NavigationMenuLink key={item.name} asChild>
+                        <Link to={item.url}>{item.name}</Link>
+                      </NavigationMenuLink>
+                    ))}
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              );
+            })}
           </NavigationMenuList>
         </NavigationMenu>
         <div className="flex items-center gap-1">
