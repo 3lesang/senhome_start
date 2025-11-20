@@ -23,7 +23,7 @@ export function Header() {
     <header className="bg-white px-4 sticky top-0 z-50">
       <nav className="container mx-auto flex justify-between items-center h-16">
         <Link to="/" className="lg:flex items-center gap-1">
-          <img src="/logo512.png" alt="logo" className="size-16 object-cover" />
+          <img src="/logo512.webp" alt="logo" className="size-16 object-cover" />
         </Link>
         <NavigationMenu>
           <NavigationMenuList>
@@ -53,7 +53,7 @@ export function Header() {
           </NavigationMenuList>
         </NavigationMenu>
         <div className="flex items-center gap-1">
-          <Button type="button" variant="ghost" className="hidden lg:flex">
+          <Button type="button" variant="secondary" className="hidden lg:flex">
             <SearchIcon />
             Tìm kiếm sản phẩm...
           </Button>

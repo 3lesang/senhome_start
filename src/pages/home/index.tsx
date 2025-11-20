@@ -97,18 +97,22 @@ export function HomePage() {
                 {item.products?.map((p) => (
                   <Card key={p.id} className="border-0 shadow-none p-0">
                     <div className="aspect-square bg-neutral-50 rounded-md relative group">
-                      <Link to="/products/$id" params={{ id: p.slug }}>
+                      <Link to="/products/$id" params={{ id: p.slug }} className="group-hover:opacity-0 transition-opacity duration-150">
                         <img
                           src={convertToFileUrl(p.files?.[0])}
                           alt=""
-                          className="rounded object-contain group-hover:opacity-0 transition-opacity duration-150 w-full h-full"
+                          className="rounded aspect-square object-contain"
                         />
+                      </Link>
+                      <Link to="/products/$id" params={{ id: p.slug }} className="opacity-0 group-hover:opacity-100 absolute inset-0 z-20 transition-opacity duration-150">
                         <img
                           src={convertToFileUrl(p.files?.[1])}
                           alt=""
-                          className="rounded object-contain opacity-0 group-hover:opacity-100 absolute inset-0 z-20 transition-opacity duration-150 h-full w-full"
+                          className="rounded aspect-square object-contain"
                         />
                       </Link>
+
+
                       <Button
                         type="submit"
                         size="icon-sm"
