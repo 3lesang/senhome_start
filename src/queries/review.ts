@@ -1,6 +1,6 @@
+import { queryOptions } from "@tanstack/react-query";
 import axiosClient from "@/axios";
 import { PRODUCT_REVIEW_QUERY_KEY } from "@/constants";
-import { queryOptions } from "@tanstack/react-query";
 
 type ReviewData = {
   id: number;

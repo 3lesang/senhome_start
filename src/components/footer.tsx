@@ -1,62 +1,99 @@
-import { getMenuItemQueryOptions, getMenuQueryOptions } from "@/queries/menu";
-import { getStoreQueryOptions } from "@/queries/store";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { MailIcon, MapPinIcon, PhoneIcon } from "lucide-react";
+import { convertToFileUrl } from "@/lib/utils";
+import { getMenuItemQueryOptions, getMenuQueryOptions } from "@/queries/menu";
+import { getStoreQueryOptions } from "@/queries/store";
+import { Separator } from "./ui/separator";
 
 export function Footer() {
-  const getStoreQuery = useSuspenseQuery(getStoreQueryOptions());
-  const getFooterMenuQuery = useSuspenseQuery(getMenuQueryOptions("footer"));
-  const getMenuItemQuery = useSuspenseQuery(
-    getMenuItemQueryOptions(getFooterMenuQuery.data?.id ?? 0),
-  );
-  return (
-    <footer className="py-8 lg:py-16 bg-neutral-50 px-4 lg:px-8">
-      <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2">
-        <div>
-          <div className="mb-8">
-            <p className="font-bold text-xl">{getStoreQuery.data.name}</p>
-            <p className="text-sm text-neutral-800">
-              {getStoreQuery.data.description}
-            </p>
-          </div>
-          <div className="space-y-2 text-neutral-800">
-            <div className="flex items-center space-x-2">
-              <MapPinIcon className="size-4 inline" />
-              <p className="text-sm">{getStoreQuery.data.address}</p>
-            </div>
-            <div className="flex items-center space-x-2">
-              <MailIcon className="size-4 inline" />
-              <p className="text-sm">{getStoreQuery.data.email}</p>
-            </div>
-            <div className="flex items-center space-x-2">
-              <PhoneIcon className="size-4 inline" />
-              <p className="text-sm">{getStoreQuery.data.phone}</p>
-            </div>
-            <img
-              src="/LnLVN_logoSaleNoti_240916.png"
-              alt=""
-              className="w-72 object-cover"
-            />
-            <p className="text-sm">
-              © {new Date().getFullYear()}. All rights reserved.
-            </p>
-          </div>
-        </div>
-        <div className="mt-16 grid grid-cols-2">
-          <div className="space-y-4">
-            {getMenuItemQuery.data.map((i) => (
-              <Link
-                to="/contents/$id"
-                params={{ id: i.url }}
-                className="text-sm"
-              >
-                {i.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
+	const getStoreQuery = useSuspenseQuery(getStoreQueryOptions());
+	const getFooterMenuQuery = useSuspenseQuery(getMenuQueryOptions("footer"));
+	const getMenuItemQuery = useSuspenseQuery(
+		getMenuItemQueryOptions(getFooterMenuQuery.data?.id ?? 0),
+	);
+
+	return (
+		<footer className="py-16 bg-neutral-50">
+			<div className="container mx-auto">
+				<div className="grid grid-cols-4 gap-8">
+					{getMenuItemQuery.data.map((i) => {
+						return (
+							<ul key={i.name} className="space-y-4">
+								<li className="whitespace-nowrap font-bold">{i.name}</li>
+								{i.items.map((c) => (
+									<li key={c.name}>
+										<Link
+											to="/contents/$id"
+											params={{ id: c.url }}
+											className="text-sm block whitespace-nowrap font-light"
+										>
+											{c.name}
+										</Link>
+									</li>
+								))}
+							</ul>
+						);
+					})}
+				</div>
+				<Separator className="my-8" />
+				<div className="flex justify-between gap-8 text-sm font-light">
+					<img
+						src={convertToFileUrl(getStoreQuery.data.logo)}
+						alt="logo"
+						className="size-16 object-cover"
+					/>
+					<div className="">
+						<p className="">{getStoreQuery.data.name}</p>
+						<p className="text-neutral-800">{getStoreQuery.data.description}</p>
+					</div>
+					<div className="space-y-2 text-neutral-800">
+						<div className="flex items-center space-x-2">
+							<MapPinIcon className="size-4 min-w-4 inline" />
+							<p>{getStoreQuery.data.address}</p>
+						</div>
+						<div className="flex items-center space-x-2">
+							<MailIcon className="size-4 inline" />
+							<p>{getStoreQuery.data.email}</p>
+						</div>
+						<div className="flex items-center space-x-2">
+							<PhoneIcon className="size-4 inline" />
+							<p>{getStoreQuery.data.phone}</p>
+						</div>
+					</div>
+					<div className="flex gap-2 items-center">
+						{getStoreQuery.data.certificates.map((c) => (
+							<a key={c.id} href={c.url} target="_blank">
+								<img
+									src={convertToFileUrl(c.file_url)}
+									alt=""
+									className="w-72 object-cover"
+								/>
+							</a>
+						))}
+					</div>
+				</div>
+			</div>
+			<div className="fixed bottom-8 right-2 space-y-4">
+				{getStoreQuery.data.zalo && (
+					<a href={getStoreQuery.data.zalo} target="_blank" className="block">
+						<img
+							src="/zalo_logo.png"
+							alt="zalo"
+							className="size-14 rounded-full object-cover"
+						/>
+					</a>
+				)}
+				{getStoreQuery.data.hotline && (
+					<a href={`tel:${getStoreQuery.data.hotline}`} className="block">
+						<img
+							src="/tel-phone-icon-5.png"
+							alt=""
+							className="size-14 rounded-full"
+						/>
+					</a>
+				)}
+			</div>
+		</footer>
+	);
 }

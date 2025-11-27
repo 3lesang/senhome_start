@@ -119,8 +119,8 @@ export function CartPage() {
 						<EmptyDescription>Hãy tìm những gì bạn yêu thích.</EmptyDescription>
 					</EmptyHeader>
 					<EmptyContent>
-						<Link to="/" className={cn(buttonVariants())}>
-							Mua sắm
+						<Link to="/" className={cn(buttonVariants(), "uppercase")}>
+							Mua sắm ngay
 						</Link>
 					</EmptyContent>
 				</Empty>

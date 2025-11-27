@@ -1,4 +1,5 @@
-import { OneProductPage } from "@/pages/product/one";
+import { createFileRoute } from "@tanstack/react-router";
+import { ProductPage } from "@/pages/product/one";
 import {
   getProductBySlugQueryOptions,
   getProductContentQueryOptions,
@@ -7,10 +8,9 @@ import {
   getOverviewByProductQueryOptions,
   getReviewsByProductQueryOptions,
 } from "@/queries/review";
-import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/(app)/products/$id")({
-  component: OneProductPage,
+  component: ProductPage,
   loader: async ({ context, params }) => {
     const product = await context.queryClient.ensureQueryData(
       getProductBySlugQueryOptions(params.id),

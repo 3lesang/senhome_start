@@ -1,9 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface ProductOptionsProps {
-  data: { id: string; name: string; values: { id: string; name: string }[] }[];
+  data: { id: number; name: string; values: { id: number; name: string }[] }[];
   onChange?: (value: Record<string, string>) => void;
   value?: Record<string, string>;
 }
@@ -22,7 +21,7 @@ export const ProductOptions = ({
     onChange?.(nextOptions);
   }
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       {data.map((o) => {
         return (
           <div key={o.id} className="space-y-2">
@@ -31,11 +30,8 @@ export const ProductOptions = ({
               {o.values.map((v) => (
                 <Button
                   key={v.id}
-                  variant="outline"
-                  size="sm"
-                  className={cn(
-                    options[o.name] === v.name && "ring-2 ring-primary",
-                  )}
+                  variant={options[o.name] === v.name ? "default":"secondary"}
+                  className="rounded-full"
                   onClick={() => handleSelect(o.name, v.name)}
                 >
                   {v.name}

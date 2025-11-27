@@ -1,8 +1,8 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { useIntersectionObserver } from "@uidotdev/usehooks";
 import axios from "axios";
 import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useIntersectionObserver } from "usehooks-ts";
 import { Button } from "@/components/ui/button";
 import {
 	Popover,
@@ -26,7 +26,7 @@ export function ProvinceSelect({ value, onChange }: ProvinceSelectProps) {
 	const [open, setOpen] = useState(false);
 	const [state, setState] = useState(value);
 
-	const { isIntersecting, ref } = useIntersectionObserver({
+	const [ref, entry] = useIntersectionObserver({
 		threshold: 0.5,
 	});
 
@@ -59,10 +59,10 @@ export function ProvinceSelect({ value, onChange }: ProvinceSelectProps) {
 	}
 
 	useEffect(() => {
-		if (hasNextPage && isIntersecting) {
+		if (hasNextPage && entry?.isIntersecting) {
 			fetchNextPage();
 		}
-	}, [fetchNextPage, hasNextPage, isIntersecting]);
+	}, [fetchNextPage, hasNextPage, entry?.isIntersecting]);
 
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
