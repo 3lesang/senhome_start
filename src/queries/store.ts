@@ -12,6 +12,12 @@ type StoreData = {
 	hotline: string;
 	logo: string;
 	certificates: { id: string; url: string; file_url: string }[];
+	social: {
+		facebook: string;
+		youtube: string;
+		instagram: string;
+		tiktok: string;
+	};
 };
 
 export function getStoreQueryOptions() {

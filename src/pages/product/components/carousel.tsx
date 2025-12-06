@@ -32,7 +32,7 @@ const CarouselImage = ({ value, data, onChange }: CarouselImageProps) => {
 	}, [value]);
 	return (
 		<div className="relative">
-			<div className="overflow-auto no-scrollbar ">
+			<div className="overflow-auto">
 				<div className="flex gap-2">
 					{data.map((f, index) => (
 						<button

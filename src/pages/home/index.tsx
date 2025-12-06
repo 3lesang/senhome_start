@@ -66,16 +66,15 @@ function HomeContent() {
 					className="h-full w-full object-contain"
 				/>
 			)}
-			<div className="container mx-auto">
+			<div className="lg:container lg:mx-auto px-4">
 				<div className="flex justify-between items-center mb-8">
 					<p className="text-2xl font-bold">{item.name}</p>
 					<Link
 						to="/collections/$id"
 						params={{ id: item.slug }}
-						className={cn(buttonVariants({ variant: "link" }))}
+						className={cn(buttonVariants({ variant: "link" }), "underline")}
 					>
-						Xem tất cả
-						<ArrowRightIcon />
+						Xem thêm
 					</Link>
 				</div>
 				<div className="grid grid-cols-2 lg:grid-cols-4 gap-5 px-0">

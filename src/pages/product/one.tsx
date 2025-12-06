@@ -44,12 +44,13 @@ export function ProductPage() {
 	const discount = calculateDiscount(price, sale_price);
 
 	const variantFiles = variants.map((v) => v.file);
-	const files = [...variantFiles, ...getProductQuery.data.files];
+	const files = [...getProductQuery.data.files, ...variantFiles];
 
 	function handleOptionsChange(value: Record<string, string>) {
 		const index = variants.findIndex((v) => _.isEqual(v.options, value));
 		if (index === -1) return;
-		carouselRef.current?.scrollTo(index);
+		const scrollToIndex = getProductQuery.data.files.length + index;
+		carouselRef.current?.scrollTo(scrollToIndex);
 		setVariant(variants[index]);
 	}
 
@@ -151,7 +152,7 @@ export function ProductPage() {
 						<BreadcrumbItem>{getProductQuery.data.name}</BreadcrumbItem>
 					</BreadcrumbList>
 				</Breadcrumb>
-				<div className="max-w-6xl mx-auto grid grid-cols-2 py-8">
+				<div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 py-8">
 					<ProductCarousel ref={carouselRef} data={files} />
 					<div className="px-8">
 						<ProductInfo

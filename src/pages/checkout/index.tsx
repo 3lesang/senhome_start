@@ -130,7 +130,7 @@ function CheckoutDiscount({
 }: CheckoutDiscountProps) {
 	const getDiscountsQuery = useSuspenseQuery(getDiscountsQueryOptions());
 
-	const discounts = getDiscountsQuery.data.filter(
+	const discounts = getDiscountsQuery.data?.filter(
 		(d) => d.discount_type === "code",
 	);
 
@@ -185,60 +185,66 @@ function CheckoutDiscount({
 			<CardHeader>
 				<CardTitle>Mã khuyến mãi</CardTitle>
 			</CardHeader>
-			<CardContent>
-				<RadioGroup
-					className="flex gap-2 overflow-x-auto"
-					onValueChange={handleSelect}
-				>
-					{discounts?.map((d, index) => {
-						const [condition] = d.conditions;
-						const isValid =
-							condition.condition_type === "order_amount" &&
-							Number(orderSalePrice) >= Number(condition.value);
+			<CardContent className="">
+				{discounts?.length > 0 && (
+					<RadioGroup
+						className="flex gap-2 overflow-x-auto mb-4"
+						onValueChange={handleSelect}
+					>
+						{discounts?.map((d, index) => {
+							const [condition] = d.conditions;
+							const isValid =
+								condition.condition_type === "order_amount" &&
+								Number(orderSalePrice) >= Number(condition.value);
 
-						return (
-							<div key={d.id} className="space-y-1">
-								<FieldLabel key={d.id} className="border-none overflow-hidden">
-									<Field
-										orientation="horizontal"
-										className="w-80 h-20 bg-neutral-50"
+							return (
+								<div key={d.id} className="space-y-1">
+									<FieldLabel
+										key={d.id}
+										className="border-none overflow-hidden"
 									>
-										<FieldContent>
-											<FieldTitle>{d.code}</FieldTitle>
-											<FieldDescription className="line-clamp-2 text-xs">
-												{d.description}
-											</FieldDescription>
-										</FieldContent>
-										<RadioGroupItem
-											disabled={!isValid}
-											value={index.toString()}
-										/>
-									</Field>
-								</FieldLabel>
-								{!isValid && (
-									<p className="text-xs">
-										Đơn hàng chưa thỏa mãn điều kiện áp dụng mã
-									</p>
-								)}
-							</div>
-						);
-					})}
-				</RadioGroup>
+										<Field
+											orientation="horizontal"
+											className="w-80 h-20 bg-neutral-50"
+										>
+											<FieldContent>
+												<FieldTitle>{d.code}</FieldTitle>
+												<FieldDescription className="line-clamp-2 text-xs">
+													{d.description}
+												</FieldDescription>
+											</FieldContent>
+											<RadioGroupItem
+												disabled={!isValid}
+												value={index.toString()}
+											/>
+										</Field>
+									</FieldLabel>
+									{!isValid && (
+										<p className="text-xs">
+											Đơn hàng chưa thỏa mãn điều kiện áp dụng mã
+										</p>
+									)}
+								</div>
+							);
+						})}
+					</RadioGroup>
+				)}
+
+				<div className="flex justify-between w-full gap-4">
+					<Input
+						placeholder="Nhập mã khuyến mãi"
+						value={code}
+						onChange={(e) => handleCodeInput(e.currentTarget.value)}
+					/>
+					<Button
+						type="button"
+						className="rounded-full cursor-pointer"
+						onClick={handleCodeApply}
+					>
+						Áp dụng
+					</Button>
+				</div>
 			</CardContent>
-			<CardFooter className="flex justify-between w-full gap-4">
-				<Input
-					placeholder="Nhập mã khuyến mãi"
-					value={code}
-					onChange={(e) => handleCodeInput(e.currentTarget.value)}
-				/>
-				<Button
-					type="button"
-					className="rounded-full cursor-pointer"
-					onClick={handleCodeApply}
-				>
-					Áp dụng
-				</Button>
-			</CardFooter>
 		</Card>
 	);
 }

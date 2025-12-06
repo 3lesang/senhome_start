@@ -14,10 +14,10 @@ export function CollectionPage() {
 
 	return (
 		<main>
-			<div className="container mx-auto py-8">
-				<div className="flex justify-between items-center mb-8">
+			<div className="container mx-auto py-8 px-4">
+				<div className="lg:flex justify-between items-center mb-8">
 					<p className="text-2xl font-bold">{getCollectionQuery.data.name}</p>
-					<div className="flex gap-2">
+					<div className="flex gap-2 overflow-auto">
 						<Button type="button" variant="secondary" className="rounded-full">
 							Mới nhất
 						</Button>

@@ -1,7 +1,16 @@
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ClientOnly, Link } from "@tanstack/react-router";
 import { useAtom } from "jotai";
-import { SearchIcon, ShoppingCartIcon, UserIcon } from "lucide-react";
+import {
+	ChevronDown,
+	ChevronRight,
+	ChevronRightIcon,
+	MenuIcon,
+	SearchIcon,
+	ShoppingCartIcon,
+	UserIcon,
+} from "lucide-react";
 import {
 	customerAtom,
 	SIGN_UP_TYPE,
@@ -23,13 +32,28 @@ import { cn } from "@/lib/utils";
 import { getDiscountsQueryOptions } from "@/queries/discount";
 import { getMenuItemQueryOptions, getMenuQueryOptions } from "@/queries/menu";
 import { CartBadge } from "./cart";
+import {
+	Sheet,
+	SheetContent,
+	SheetDescription,
+	SheetHeader,
+	SheetTitle,
+	SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { useState } from "react";
+import { useMediaQuery } from "@uidotdev/usehooks";
 
 function Discount() {
 	const hidden = useScrollHide(50);
 	const getDiscountsQuery = useSuspenseQuery(getDiscountsQueryOptions());
-	const [codeDiscount] = getDiscountsQuery.data.filter(
-		(d) => d.discount_type === "code",
-	);
+	const [codeDiscount] =
+		getDiscountsQuery.data?.filter((d) => d.discount_type === "code") ?? [];
+
 	if (!codeDiscount) return null;
 	return (
 		<div
@@ -78,59 +102,146 @@ function AuthButton() {
 	);
 }
 
-export function Header() {
+function NavMenu() {
+	const getFooterMenuQuery = useSuspenseQuery(getMenuQueryOptions("header"));
+	const getMenuItemQuery = useSuspenseQuery(
+		getMenuItemQueryOptions(getFooterMenuQuery.data?.id ?? 0),
+	);
+	return (
+		<NavigationMenu>
+			<NavigationMenuList>
+				{getMenuItemQuery.data.map((topLevel, idx) => (
+					<NavigationMenuItem key={idx}>
+						<NavigationMenuTrigger className="text-base font-medium">
+							{topLevel.name}
+						</NavigationMenuTrigger>
+						<NavigationMenuContent className="">
+							<div className="w-[800px] p-6">
+								<div className="grid grid-cols-3 gap-8">
+									{topLevel.items.map((category, catIdx) => (
+										<div key={catIdx} className="space-y-3">
+											<div className="font-semibold text-gray-900 pb-2 border-b border-gray-200">
+												{category.name}
+											</div>
+											{category.items && category.items.length > 0 && (
+												<ul className="space-y-2">
+													{category.items.map((item, itemIdx) => (
+														<li key={itemIdx}>
+															<NavigationMenuLink asChild>
+																<a
+																	href={item.url || "#"}
+																	className="block px-3 py-2 rounded-md text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+																>
+																	<div className="flex items-center justify-between">
+																		<span>{item.name}</span>
+																		{item.items && item.items.length > 0 && (
+																			<ChevronRightIcon className="w-4 h-4" />
+																		)}
+																	</div>
+																</a>
+															</NavigationMenuLink>
+														</li>
+													))}
+												</ul>
+											)}
+										</div>
+									))}
+								</div>
+							</div>
+						</NavigationMenuContent>
+					</NavigationMenuItem>
+				))}
+			</NavigationMenuList>
+		</NavigationMenu>
+	);
+}
+
+const MenuItem = ({ item, level = 0 }) => {
+	const [isOpen, setIsOpen] = useState(false);
+	const hasChildren = item.items && item.items.length > 0;
+
+	if (!hasChildren) {
+		return (
+			<div
+				className="py-2 px-4 hover:bg-gray-100 cursor-pointer rounded-md transition-colors"
+				style={{ paddingLeft: `${(level + 1) * 16}px` }}
+			>
+				<span className="text-sm text-gray-700">{item.name}</span>
+			</div>
+		);
+	}
+
+	return (
+		<Collapsible open={isOpen} onOpenChange={setIsOpen}>
+			<CollapsibleTrigger className="w-full">
+				<div
+					className="flex items-center py-2 px-4 hover:bg-gray-100 cursor-pointer rounded-md transition-colors"
+					style={{ paddingLeft: `${level * 16}px` }}
+				>
+					{isOpen ? (
+						<ChevronDown className="w-4 h-4 mr-2 flex-shrink-0" />
+					) : (
+						<ChevronRight className="w-4 h-4 mr-2 flex-shrink-0" />
+					)}
+					<span className="text-sm font-medium text-gray-800">{item.name}</span>
+				</div>
+			</CollapsibleTrigger>
+			<CollapsibleContent>
+				<div className="mt-1">
+					{item.items.map((child, index) => (
+						<MenuItem key={index} item={child} level={level + 1} />
+					))}
+				</div>
+			</CollapsibleContent>
+		</Collapsible>
+	);
+};
+
+function Bugger() {
 	const getFooterMenuQuery = useSuspenseQuery(getMenuQueryOptions("header"));
 	const getMenuItemQuery = useSuspenseQuery(
 		getMenuItemQueryOptions(getFooterMenuQuery.data?.id ?? 0),
 	);
 
 	return (
-		<header className="sticky top-0 z-50 overflow-hidden">
+		<Sheet>
+			<SheetTrigger asChild>
+				<Button type="button" size="icon" variant="ghost" className="lg:hidden">
+					<MenuIcon />
+				</Button>
+			</SheetTrigger>
+			<SheetContent side="left">
+				<SheetHeader>
+					<SheetTitle></SheetTitle>
+					<SheetDescription></SheetDescription>
+				</SheetHeader>
+				<div className="px-2">
+					{getMenuItemQuery.data.map((item, index) => (
+						<MenuItem key={index} item={item} />
+					))}
+				</div>
+			</SheetContent>
+		</Sheet>
+	);
+}
+
+export function Header() {
+	const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
+	return (
+		<header className="sticky top-0 z-50">
 			<div className="bg-white">
 				<nav className="container mx-auto flex justify-between items-center h-16">
+					{isSmallDevice && <Bugger />}
 					<Link to="/" className="lg:flex items-center gap-1">
 						<img
-							src="/logo512.webp"
+							src="/logo512.png"
 							alt="logo"
-							className="size-16 object-cover"
+							className="size-12 lg:size-16 object-cover"
 						/>
 					</Link>
-					<NavigationMenu>
-						<NavigationMenuList>
-							{getMenuItemQuery.data.map((menu) => {
-								if (!menu.items.length) {
-									return (
-										<NavigationMenuItem
-											key={menu.name}
-											className="rounded-full"
-										>
-											<NavigationMenuLink asChild>
-												<Link to={menu.url}>{menu.name}</Link>
-											</NavigationMenuLink>
-										</NavigationMenuItem>
-									);
-								}
-								return (
-									<NavigationMenuItem key={menu.name}>
-										<NavigationMenuTrigger className="rounded-full">
-											{menu.name}
-										</NavigationMenuTrigger>
-										<NavigationMenuContent className="min-w-max">
-											{menu.items.map((item) => (
-												<NavigationMenuLink
-													key={item.name}
-													asChild
-													className="rounded-full"
-												>
-													<Link to={item.url}>{item.name}</Link>
-												</NavigationMenuLink>
-											))}
-										</NavigationMenuContent>
-									</NavigationMenuItem>
-								);
-							})}
-						</NavigationMenuList>
-					</NavigationMenu>
+					<div className="hidden lg:block">
+						<NavMenu />
+					</div>
 					<div className="flex items-center gap-1">
 						<Button
 							type="button"

@@ -63,7 +63,7 @@ export function SigninForm() {
 				e.preventDefault();
 				form.handleSubmit();
 			}}
-			className="w-[464px] mx-auto"
+			className="lg:w-[464px] mx-auto"
 		>
 			<div className="grid grid-cols-2 gap-4">
 				<form.Field name="phone">
