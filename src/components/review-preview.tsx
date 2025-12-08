@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/a11y/noStaticElementInteractions: <explanation> */
 /** biome-ignore-all lint/a11y/useKeyWithClickEvents: <explanation> */
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { type Ref, useEffect, useImperativeHandle, useState } from "react";
 import {
 	Carousel,
 	type CarouselApi,
@@ -12,6 +12,12 @@ import { convertToFileUrl } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { Dialog, DialogClose, DialogContent } from "./ui/dialog";
 
+export type PreviewRefProps = {
+	api: CarouselApi;
+	setOpen: (value: boolean) => void;
+	setCurrent: (value: number) => void;
+};
+
 interface ModalProps {
 	render?: ({
 		setOpen,
@@ -21,9 +27,10 @@ interface ModalProps {
 		setCurrent: (value: number) => void;
 	}) => React.ReactNode;
 	data?: string[];
+	ref?: Ref<PreviewRefProps>;
 }
 
-export function ReviewPreview({ render, data }: ModalProps) {
+export function ReviewPreview({ ref, render, data }: ModalProps) {
 	const [open, setOpen] = useState(false);
 	const [api, setApi] = useState<CarouselApi>();
 	const [current, setCurrent] = useState(0);
@@ -35,6 +42,8 @@ export function ReviewPreview({ render, data }: ModalProps) {
 	function handlerPrevious() {
 		api?.scrollPrev();
 	}
+
+	useImperativeHandle(ref, () => ({ api, setOpen, setCurrent }));
 
 	useEffect(() => {
 		api?.scrollTo(current, true);
@@ -93,17 +102,19 @@ export function ReviewPreview({ render, data }: ModalProps) {
 						<ChevronRightIcon />
 					</Button>
 				</div>
-				<div className="flex gap-4 w-full max-w-6xl mx-auto">
+				<div className="flex gap-4 w-full max-w-6xl mx-auto overflow-x-auto">
 					{data?.map((f, index) => (
-						<div key={f} className="size-16 lg:size-24 bg-white">
-							<img
-								src={convertToFileUrl(f)}
-								alt=""
-								className="object-contain size-full cursor-pointer"
-								onClick={() => {
-									api?.scrollTo(index);
-								}}
-							/>
+						<div key={f} className="">
+							<div className="size-16 lg:size-24 bg-white">
+								<img
+									src={convertToFileUrl(f)}
+									alt=""
+									className="object-contain size-full cursor-pointer"
+									onClick={() => {
+										api?.scrollTo(index);
+									}}
+								/>
+							</div>
 						</div>
 					))}
 				</div>

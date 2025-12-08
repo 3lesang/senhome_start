@@ -1,4 +1,15 @@
-import { type Ref, useEffect, useImperativeHandle, useState } from "react";
+/** biome-ignore-all lint/a11y/useKeyWithClickEvents: <explanation> */
+import {
+	type Ref,
+	useEffect,
+	useImperativeHandle,
+	useState,
+	useRef,
+} from "react";
+import {
+	type PreviewRefProps,
+	ReviewPreview,
+} from "@/components/review-preview";
 import {
 	Carousel,
 	type CarouselApi,
@@ -59,6 +70,7 @@ const CarouselImage = ({ value, data, onChange }: CarouselImageProps) => {
 
 export const ProductCarousel = ({ data, ref }: ProductCarouselProps) => {
 	const [api, setApi] = useState<CarouselApi>();
+	const prevewRef = useRef<PreviewRefProps>(null);
 
 	useImperativeHandle(ref, () => api);
 	const [current, setCurrent] = useState(0);
@@ -75,18 +87,24 @@ export const ProductCarousel = ({ data, ref }: ProductCarouselProps) => {
 	function handleClick(value: number) {
 		api?.scrollTo(value);
 	}
+
 	return (
 		<div className="space-y-2">
+			<ReviewPreview data={data} ref={prevewRef} />
 			<Carousel setApi={setApi}>
 				<CarouselContent>
-					{data.map((f) => (
+					{data.map((f, index) => (
 						<CarouselItem key={f}>
-							<div className="w-full h-full bg-neutral-50 overflow-hidden aspect-square">
+							<div className="w-full h-full bg-neutral-50 overflow-hidden aspect-square cursor-pointer">
 								{f && (
 									<img
 										src={convertToFileUrl(f)}
 										alt="file"
 										className="object-contain w-full h-full"
+										onClick={() => {
+											prevewRef.current?.setOpen(true);
+											prevewRef.current?.setCurrent(index);
+										}}
 									/>
 								)}
 							</div>
