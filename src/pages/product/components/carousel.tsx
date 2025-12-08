@@ -81,7 +81,7 @@ export const ProductCarousel = ({ data, ref }: ProductCarouselProps) => {
 				<CarouselContent>
 					{data.map((f) => (
 						<CarouselItem key={f}>
-							<div className="w-full h-full bg-neutral-50 rounded-2xl overflow-hidden aspect-square">
+							<div className="w-full h-full bg-neutral-50 overflow-hidden aspect-square">
 								{f && (
 									<img
 										src={convertToFileUrl(f)}

@@ -14,21 +14,24 @@ type InfoData = {
 
 interface ProductInfoProps {
 	data: InfoData;
+	onReviewClick?: () => void;
 }
 
-export function ProductInfo({ data }: ProductInfoProps) {
+export function ProductInfo({ data, onReviewClick }: ProductInfoProps) {
 	return (
 		<div>
 			<p className="text-2xl font-semibold mb-2">{data.name}</p>
-			<div className="flex gap-2">
+			{/** biome-ignore lint/a11y/noStaticElementInteractions: <explanation> */}
+			{/** biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+			<div className="flex gap-2" onClick={onReviewClick} >
 				<Rating defaultValue={data.averageRating} readOnly>
 					{[1, 2, 3, 4, 5].map((value) => (
 						<RatingButton key={value} size={14} />
 					))}
 				</Rating>
-				<p className="text-sm text-gray-500">{data?.totalReviews} đánh giá</p>
+				<p className="text-sm text-gray-500 cursor-pointer hover:underline">{data?.totalReviews} đánh giá</p>
 			</div>
-			<Separator className="my-2"/>
+			<Separator className="my-2" />
 			<div className="space-x-2 mt-8">
 				<span className="text-2xl font-bold">{formatVND(data.salePrice)}</span>
 				<Badge variant="secondary">-{data.discount}%</Badge>

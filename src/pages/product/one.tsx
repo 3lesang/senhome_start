@@ -39,6 +39,8 @@ export function ProductPage() {
 	const [variant, setVariant] = useState(variants[0]);
 	const [quantity, setQuantity] = useState(1);
 	const carouselRef = useRef<CarouselApi>(null);
+	const reviewSectionRef = useRef<HTMLDivElement>(null);
+
 	const price = variant?.origin_price ?? getProductQuery.data.origin_price;
 	const sale_price = variant?.sale_price ?? getProductQuery.data.sale_price;
 	const discount = calculateDiscount(price, sale_price);
@@ -144,17 +146,17 @@ export function ProductPage() {
 		<main>
 			<div className="py-8">
 				<Breadcrumb className="max-w-6xl mx-auto">
-					<BreadcrumbList className="text-sm">
+					<BreadcrumbList className="text-sm flex-nowrap">
 						<BreadcrumbItem>
-							<BreadcrumbLink href="/">Trang chủ</BreadcrumbLink>
+							<BreadcrumbLink href="/" className="whitespace-nowrap">Trang chủ</BreadcrumbLink>
 						</BreadcrumbItem>
 						<BreadcrumbSeparator />
-						<BreadcrumbItem>{getProductQuery.data.name}</BreadcrumbItem>
+						<BreadcrumbItem className="line-clamp-1">{getProductQuery.data.name}</BreadcrumbItem>
 					</BreadcrumbList>
 				</Breadcrumb>
 				<div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 py-8">
 					<ProductCarousel ref={carouselRef} data={files} />
-					<div className="px-8">
+					<div className="px-4">
 						<ProductInfo
 							data={{
 								name: getProductQuery.data.name,
@@ -163,6 +165,11 @@ export function ProductPage() {
 								discount: discount,
 								originPrice: price,
 								salePrice: sale_price,
+							}}
+							onReviewClick={() => {
+								reviewSectionRef.current?.scrollIntoView({
+									behavior: "smooth",
+								});
 							}}
 						/>
 						<ProductDiscount />
@@ -220,7 +227,9 @@ export function ProductPage() {
 				</div>
 			</div>
 			<ProductContent slug={product.slug} />
-			<ProductReview id={product.id} />
+			<div ref={reviewSectionRef}>
+				<ProductReview id={product.id} />
+			</div>
 		</main>
 	);
 }

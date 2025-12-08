@@ -1,14 +1,16 @@
+/** biome-ignore-all lint/a11y/noStaticElementInteractions: <explanation> */
+/** biome-ignore-all lint/a11y/useKeyWithClickEvents: <explanation> */
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { memo, useState } from "react";
 import { Rating, RatingButton } from "@/components/kibo-ui/rating";
+import { ReviewPreview } from "@/components/review-preview";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn, convertToFileUrl } from "@/lib/utils";
+import { convertToFileUrl } from "@/lib/utils";
 import {
 	getOverviewByProductQueryOptions,
 	getReviewsByProductQueryOptions,
 } from "@/queries/review";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { memo, useState } from "react";
 
 const ReviewOverview = ({ id }: { id: number }) => {
 	const getOverviewQuery = useSuspenseQuery(
@@ -36,13 +38,13 @@ const ReviewOverview = ({ id }: { id: number }) => {
 				<p className="font-medium text-sm mb-4">
 					Tất cả hình ảnh ({getOverviewQuery.data.total_files})
 				</p>
-				<div className="flex gap-2">
+				<div className="grid grid-cols-4 lg:grid-cols-12 gap-2">
 					{getOverviewQuery.data.files?.map((f) => (
 						<img
 							key={f}
 							src={convertToFileUrl(f)}
 							alt=""
-							className="size-20 rounded object-cover"
+							className="aspect-square rounded object-cover"
 						/>
 					))}
 				</div>
@@ -69,7 +71,7 @@ const ListReview = ({ id }: { id: number }) => {
 	return (
 		<div>
 			<p className="text-sm font-medium mb-4">Lọc theo</p>
-			<div className="flex gap-2 flex-wrap">
+			<div className="flex gap-2 flex-wrap mb-4">
 				<Button
 					type="button"
 					variant={params.sort_flag ? "default" : "secondary"}
@@ -113,41 +115,51 @@ const ListReview = ({ id }: { id: number }) => {
 					</Button>
 				))}
 			</div>
-			<div className="space-y-2">
+			<div className="space-y-4">
 				{getReviewsQuery.data?.data?.map((item) => (
-					<div key={item.id} className="my-2">
-						<div className="flex gap-2 items-center">
-							<Avatar>
-								<AvatarImage
-									src={convertToFileUrl(item?.customer?.avatar)}
-								></AvatarImage>
-								<AvatarFallback>U</AvatarFallback>
-							</Avatar>
-							<p className="font-medium">{item?.customer?.name}</p>
+					<div key={item.id} className="">
+						<div>
+							<div className="flex gap-2 items-center">
+								<Avatar>
+									<AvatarImage
+										src={convertToFileUrl(item?.customer?.avatar)}
+									></AvatarImage>
+									<AvatarFallback>U</AvatarFallback>
+								</Avatar>
+								<p className="text-sm">{item?.customer?.name}</p>
+							</div>
+							<Rating defaultValue={item.rating} readOnly>
+								{[1, 2, 3, 4, 5].map((value) => (
+									<RatingButton
+										key={value}
+										size={16}
+										className="text-yellow-300"
+									/>
+								))}
+							</Rating>
 						</div>
-						<Rating defaultValue={item.rating} readOnly>
-							{[1, 2, 3, 4, 5].map((value) => (
-								<RatingButton
-									key={value}
-									size={16}
-									className="text-yellow-300"
-								/>
-							))}
-						</Rating>
-						<div className="flex gap-2">
-							{item.files.map(
-								(f) =>
-									f && (
-										<img
-											key={f}
-											className="size-20 object-cover rounded"
-											src={convertToFileUrl(f)}
-											alt=""
-										/>
-									),
-							)}
-						</div>
-						<p className="text-sm">{item.comment}</p>
+						<p className="text-sm mb-4">{item.comment}</p>
+						<ReviewPreview
+							data={item.files}
+							render={({ setOpen, setCurrent }) => {
+								return (
+									<div className="flex gap-2">
+										{item.files.map((f, index) => (
+											<img
+												key={f}
+												className="size-20 object-cover rounded cursor-pointer"
+												src={convertToFileUrl(f)}
+												alt=""
+												onClick={() => {
+													setOpen(true);
+													setCurrent(index);
+												}}
+											/>
+										))}
+									</div>
+								);
+							}}
+						/>
 					</div>
 				))}
 			</div>
@@ -157,7 +169,7 @@ const ListReview = ({ id }: { id: number }) => {
 
 export const ProductReview = memo(({ id }: { id: number }) => {
 	return (
-		<div className="container mx-auto py-16">
+		<div className="container mx-auto py-16 px-4">
 			<p className="uppercase font-bold text-2xl">Đánh giá sản phẩm</p>
 			<ReviewOverview id={id} />
 			<ListReview id={id} />

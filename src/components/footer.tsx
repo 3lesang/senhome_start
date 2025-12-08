@@ -8,10 +8,10 @@ import { Separator } from "./ui/separator";
 
 function getSocialIcon(key: string) {
 	const icons: Record<string, string> = {
-		facebook: "/facebook.svg",
+		facebook: "/Facebook_Logo_Primary.png",
 		zalo: "/zalo.svg",
-		youtube: "/youtube.svg",
-		instagram: "/instagram.svg",
+		youtube: "/yt_icon_red_digital.png",
+		instagram: "/Instagram_Glyph_Gradient.png",
 		tiktok: "/tiktok.svg",
 	};
 	return icons[key];
