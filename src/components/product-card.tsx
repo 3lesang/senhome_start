@@ -14,6 +14,13 @@ import {
 	DrawerTitle,
 } from "@/components/ui/drawer";
 import {
+	Item,
+	ItemContent,
+	ItemDescription,
+	ItemMedia,
+	ItemTitle,
+} from "@/components/ui/item";
+import {
 	calculateDiscount,
 	checkBrowserId,
 	convertToFileUrl,
@@ -21,16 +28,6 @@ import {
 } from "@/lib/utils";
 import { cartCollection, orderCollection } from "@/stores/db";
 import { ButtonGroup } from "./ui/button-group";
-import {
-	Item,
-	ItemActions,
-	ItemContent,
-	ItemDescription,
-	ItemFooter,
-	ItemHeader,
-	ItemMedia,
-	ItemTitle,
-} from "@/components/ui/item";
 
 type ProductOption = {
 	id: number;
@@ -123,14 +120,16 @@ export function ProductCard({ data }: ProductCardProps) {
 			id: variant?.id.toString() ?? data.id.toString(),
 			name: data.name,
 			slug: data.slug,
-			price: variant?.origin_price,
-			sale_price: variant?.sale_price,
+			price: variant?.origin_price ?? 0,
+			sale_price: variant?.sale_price ?? 0,
 			thumbnail: variant?.file ?? "",
 			quantity: 1,
-			combos: Object.values(variant?.options).join(", "),
+			combos: variant?.options
+				? Object.values(variant?.options).join(", ")
+				: "",
 			selected: true,
 			product: data.id.toString(),
-			variant: variant?.id.toString(),
+			variant: variant?.id.toString() ?? "",
 		};
 		const addToCart = createClientOnlyFn(() => {
 			const exist = cartCollection.get(data.id.toString());
@@ -158,14 +157,16 @@ export function ProductCard({ data }: ProductCardProps) {
 				id: variant?.id.toString() ?? data.id.toString(),
 				name: data.name,
 				slug: data.slug,
-				price: variant?.origin_price,
-				sale_price: variant?.sale_price,
+				price: variant?.origin_price ?? 0,
+				sale_price: variant?.sale_price ?? 0,
 				thumbnail: variant?.file ?? "",
 				quantity: 1,
-				combos: Object.values(variant?.options).join(", "),
+				combos: variant?.options
+					? Object.values(variant?.options).join(", ")
+					: "",
 				selected: true,
 				product: data.id.toString(),
-				variant: variant?.id.toString(),
+				variant: variant?.id.toString() ?? "",
 			};
 			const order = orderCollection.get(id);
 			if (order?.id) {
@@ -281,7 +282,9 @@ export function ProductCard({ data }: ProductCardProps) {
 									<ItemTitle>{data.name}</ItemTitle>
 									<ItemDescription>{}</ItemDescription>
 								</ItemContent>
-								<p className="font-bold text-lg">{formatVND(variant.sale_price)}</p>
+								<p className="font-bold text-lg">
+									{formatVND(variant.sale_price)}
+								</p>
 							</Item>
 						)}
 						<ProductOptions

@@ -9,6 +9,7 @@ import { Separator } from "./ui/separator";
 function getSocialIcon(key: string) {
 	const icons: Record<string, string> = {
 		facebook: "/facebook.svg",
+		zalo: "/zalo.svg",
 		youtube: "/youtube.svg",
 		instagram: "/instagram.svg",
 		tiktok: "/tiktok.svg",
@@ -41,7 +42,9 @@ export function Footer() {
 											{c.name}
 										</Link>
 										{c.items.map((i) => (
-											<p className="text-sm font-light" key={i.name}>{i.name}</p>
+											<p className="text-sm font-light" key={i.name}>
+												{i.name}
+											</p>
 										))}
 									</li>
 								))}
@@ -50,16 +53,22 @@ export function Footer() {
 					})}
 					<div className="space-y-4">
 						<p className="whitespace-nowrap font-bold uppercase">Kết nối</p>
-						<div className="flex gap-2">
+						<div className="space-y-4">
 							{Object.entries(getStoreQuery.data.social).map(
 								([key, value]) =>
 									value && (
-										<a key={key} href={value} target="_blank">
+										<a
+											key={key}
+											href={value}
+											target="_blank"
+											className="flex gap-2 items-start hover:underline"
+										>
 											<img
 												src={getSocialIcon(key)}
 												alt={key}
 												className="size-8"
 											/>
+											<span className="text-sm font-light">{key}</span>
 										</a>
 									),
 							)}

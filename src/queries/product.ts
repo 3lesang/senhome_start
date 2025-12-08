@@ -68,3 +68,32 @@ export function getOptionsByProductQueryOptions(productID: string) {
 		},
 	});
 }
+
+type PaginationResponse<T> = {
+	data: T[];
+	page: number;
+	page_size: number;
+	total_items: number;
+	total_pages: number;
+};
+
+type SearchProductData = {
+	id: number;
+	name: string;
+	slug: string;
+	origin_price: number;
+	sale_price: number;
+	file: string;
+};
+
+export function getSearchProductsQueryOptions(query: string) {
+	return queryOptions({
+		queryKey: [PRODUCT_QUERY_KEY, query],
+		queryFn: () => {
+			return axiosClient.get<PaginationResponse<SearchProductData>>("/search", {
+				params: { keyword: query },
+			});
+		},
+		enabled: !!query,
+	});
+}
