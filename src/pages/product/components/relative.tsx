@@ -17,6 +17,16 @@ import {
 	CarouselNext,
 	CarouselPrevious,
 } from "@/components/ui/carousel";
+import {
+	Item,
+	ItemActions,
+	ItemContent,
+	ItemDescription,
+	ItemFooter,
+	ItemHeader,
+	ItemMedia,
+	ItemTitle,
+} from "@/components/ui/item";
 
 interface RelativeProductsProps {
 	productID: number;
@@ -31,7 +41,10 @@ export function RelativeProducts({ productID }: RelativeProductsProps) {
 			<Carousel>
 				<CarouselContent>
 					{getProductsQuery.data?.map((item) => (
-						<CarouselItem key={item.id} className="lg:basis-1/2 lg:max-w-[600px]">
+						<CarouselItem
+							key={item.id}
+							className="lg:basis-1/2 lg:max-w-[600px]"
+						>
 							<div className="relative h-[300px] lg:h-[600px] bg-neutral-50">
 								<img
 									src={convertToFileUrl(item?.file)}
@@ -54,21 +67,28 @@ export function RelativeProducts({ productID }: RelativeProductsProps) {
 												</button>
 											</HoverCardTrigger>
 											<HoverCardContent>
-												<Link
-													to="/products/$id"
-													params={{ id: spot.product.slug }}
-													className={cn(buttonVariants({ variant: "link" }))}
-												>
-													<Avatar>
-														<AvatarImage
-															src={convertToFileUrl(spot.product.file)}
-														/>
-													</Avatar>
-													<div>
-														<p>{spot.product.name}</p>
-														<p>{formatVND(spot.product.sale_price)}</p>
-													</div>
-												</Link>
+												<Item>
+													<ItemMedia>
+														<Avatar>
+															<AvatarImage
+																src={convertToFileUrl(spot.product.file)}
+															/>
+														</Avatar>
+													</ItemMedia>
+													<ItemContent>
+														<ItemTitle>
+															<Link
+																to="/products/$id"
+																params={{ id: spot.product.slug }}
+															>
+																<p className="hover:underline">{spot.product.name}</p>
+															</Link>
+														</ItemTitle>
+														<ItemDescription>
+															<p>{formatVND(spot.product.sale_price)}</p>
+														</ItemDescription>
+													</ItemContent>
+												</Item>
 											</HoverCardContent>
 										</HoverCard>
 									</div>
