@@ -27,7 +27,7 @@ export function AccountLayout() {
 			icon: ShoppingCartIcon,
 		},
 		{
-			to: "/account/order",
+			to: "/account/voucher",
 			name: "Ví Voucher",
 			icon: PercentIcon,
 		},

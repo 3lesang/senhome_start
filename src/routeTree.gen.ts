@@ -20,6 +20,8 @@ import { Route as blankCheckoutSuccessRouteImport } from './routes/(blank)/check
 import { Route as appProductsIdRouteImport } from './routes/(app)/products/$id'
 import { Route as appContentsIdRouteImport } from './routes/(app)/contents/$id'
 import { Route as appCollectionsIdRouteImport } from './routes/(app)/collections/$id'
+import { Route as appAccountVoucherRouteImport } from './routes/(app)/account/voucher'
+import { Route as appAccountOrderRouteImport } from './routes/(app)/account/order'
 import { Route as appAccountInfoRouteImport } from './routes/(app)/account/info'
 
 const blankRouteRoute = blankRouteRouteImport.update({
@@ -75,6 +77,16 @@ const appCollectionsIdRoute = appCollectionsIdRouteImport.update({
   path: '/collections/$id',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appAccountVoucherRoute = appAccountVoucherRouteImport.update({
+  id: '/voucher',
+  path: '/voucher',
+  getParentRoute: () => appAccountRouteRoute,
+} as any)
+const appAccountOrderRoute = appAccountOrderRouteImport.update({
+  id: '/order',
+  path: '/order',
+  getParentRoute: () => appAccountRouteRoute,
+} as any)
 const appAccountInfoRoute = appAccountInfoRouteImport.update({
   id: '/info',
   path: '/info',
@@ -87,6 +99,8 @@ export interface FileRoutesByFullPath {
   '/signup': typeof appSignupRoute
   '/': typeof appIndexRoute
   '/account/info': typeof appAccountInfoRoute
+  '/account/order': typeof appAccountOrderRoute
+  '/account/voucher': typeof appAccountVoucherRoute
   '/collections/$id': typeof appCollectionsIdRoute
   '/contents/$id': typeof appContentsIdRoute
   '/products/$id': typeof appProductsIdRoute
@@ -99,6 +113,8 @@ export interface FileRoutesByTo {
   '/signup': typeof appSignupRoute
   '/': typeof appIndexRoute
   '/account/info': typeof appAccountInfoRoute
+  '/account/order': typeof appAccountOrderRoute
+  '/account/voucher': typeof appAccountVoucherRoute
   '/collections/$id': typeof appCollectionsIdRoute
   '/contents/$id': typeof appContentsIdRoute
   '/products/$id': typeof appProductsIdRoute
@@ -114,6 +130,8 @@ export interface FileRoutesById {
   '/(app)/signup': typeof appSignupRoute
   '/(app)/': typeof appIndexRoute
   '/(app)/account/info': typeof appAccountInfoRoute
+  '/(app)/account/order': typeof appAccountOrderRoute
+  '/(app)/account/voucher': typeof appAccountVoucherRoute
   '/(app)/collections/$id': typeof appCollectionsIdRoute
   '/(app)/contents/$id': typeof appContentsIdRoute
   '/(app)/products/$id': typeof appProductsIdRoute
@@ -128,6 +146,8 @@ export interface FileRouteTypes {
     | '/signup'
     | '/'
     | '/account/info'
+    | '/account/order'
+    | '/account/voucher'
     | '/collections/$id'
     | '/contents/$id'
     | '/products/$id'
@@ -140,6 +160,8 @@ export interface FileRouteTypes {
     | '/signup'
     | '/'
     | '/account/info'
+    | '/account/order'
+    | '/account/voucher'
     | '/collections/$id'
     | '/contents/$id'
     | '/products/$id'
@@ -154,6 +176,8 @@ export interface FileRouteTypes {
     | '/(app)/signup'
     | '/(app)/'
     | '/(app)/account/info'
+    | '/(app)/account/order'
+    | '/(app)/account/voucher'
     | '/(app)/collections/$id'
     | '/(app)/contents/$id'
     | '/(app)/products/$id'
@@ -245,6 +269,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appCollectionsIdRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(app)/account/voucher': {
+      id: '/(app)/account/voucher'
+      path: '/voucher'
+      fullPath: '/account/voucher'
+      preLoaderRoute: typeof appAccountVoucherRouteImport
+      parentRoute: typeof appAccountRouteRoute
+    }
+    '/(app)/account/order': {
+      id: '/(app)/account/order'
+      path: '/order'
+      fullPath: '/account/order'
+      preLoaderRoute: typeof appAccountOrderRouteImport
+      parentRoute: typeof appAccountRouteRoute
+    }
     '/(app)/account/info': {
       id: '/(app)/account/info'
       path: '/info'
@@ -257,10 +295,14 @@ declare module '@tanstack/react-router' {
 
 interface appAccountRouteRouteChildren {
   appAccountInfoRoute: typeof appAccountInfoRoute
+  appAccountOrderRoute: typeof appAccountOrderRoute
+  appAccountVoucherRoute: typeof appAccountVoucherRoute
 }
 
 const appAccountRouteRouteChildren: appAccountRouteRouteChildren = {
   appAccountInfoRoute: appAccountInfoRoute,
+  appAccountOrderRoute: appAccountOrderRoute,
+  appAccountVoucherRoute: appAccountVoucherRoute,
 }
 
 const appAccountRouteRouteWithChildren = appAccountRouteRoute._addFileChildren(
