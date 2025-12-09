@@ -39,14 +39,25 @@ const ReviewOverview = ({ id }: { id: number }) => {
 					Tất cả hình ảnh ({getOverviewQuery.data.total_files})
 				</p>
 				<div className="grid grid-cols-4 lg:grid-cols-12 gap-2">
-					{getOverviewQuery.data.files?.map((f) => (
-						<img
-							key={f}
-							src={convertToFileUrl(f)}
-							alt=""
-							className="aspect-square rounded object-cover"
-						/>
-					))}
+					<ReviewPreview
+						data={getOverviewQuery.data.data}
+						render={({ setOpen, setCurrentReview }) => {
+							return getOverviewQuery.data.data?.map((r, idxReview) =>
+								r.files.map((f) => (
+									<img
+										key={f}
+										src={convertToFileUrl(f)}
+										alt=""
+										className="aspect-square rounded object-contain cursor-pointer"
+										onClick={() => {
+											setOpen(true);
+											setCurrentReview(idxReview);
+										}}
+									/>
+								)),
+							);
+						}}
+					/>
 				</div>
 			</div>
 		</div>
@@ -140,14 +151,21 @@ const ListReview = ({ id }: { id: number }) => {
 						</div>
 						<p className="text-sm mb-4">{item.comment}</p>
 						<ReviewPreview
-							data={item.files}
+							data={[
+								{
+									files: item.files,
+									comment: item.comment,
+									rating: item.rating,
+									customer: item.customer,
+								},
+							]}
 							render={({ setOpen, setCurrent }) => {
 								return (
 									<div className="flex gap-2">
 										{item.files.map((f, index) => (
 											<img
 												key={f}
-												className="size-20 object-cover rounded cursor-pointer"
+												className="size-20 object-contain rounded cursor-pointer"
 												src={convertToFileUrl(f)}
 												alt=""
 												onClick={() => {
@@ -169,8 +187,8 @@ const ListReview = ({ id }: { id: number }) => {
 
 export const ProductReview = memo(({ id }: { id: number }) => {
 	return (
-		<div className="container mx-auto py-16 px-4">
-			<p className="uppercase font-bold text-2xl">Đánh giá sản phẩm</p>
+		<div className="container mx-auto py-16 px-4 lg:px-0">
+			<p className="uppercase font-bold text-2xl mb-4">Đánh giá sản phẩm</p>
 			<ReviewOverview id={id} />
 			<ListReview id={id} />
 		</div>

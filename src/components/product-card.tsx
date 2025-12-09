@@ -54,10 +54,6 @@ type ProductCardData = {
 	variants: ProductVariant[];
 };
 
-interface ProductCardProps {
-	data: ProductCardData;
-}
-
 interface ProductOptionsProps {
 	data: { id: number; name: string; values: { id: number; name: string }[] }[];
 	onChange?: (value: Record<string, string>) => void;
@@ -101,7 +97,12 @@ const ProductOptions = ({ value, data, onChange }: ProductOptionsProps) => {
 const ADD_TO_CART = 1;
 const CHECKOUT = 2;
 
-export function ProductCard({ data }: ProductCardProps) {
+interface ProductCardProps {
+	data: ProductCardData;
+	hasAction?: boolean;
+}
+
+export function ProductCard({ data, hasAction = true }: ProductCardProps) {
 	const navigate = useNavigate();
 	const [open, setOpen] = useState(false);
 	const [firstFile, secondFile] = data.files;
@@ -220,31 +221,33 @@ export function ProductCard({ data }: ProductCardProps) {
 							className="rounded aspect-square object-contain"
 						/>
 					</Link>
-					<div className="flex items-center gap-2 absolute right-2 bottom-2 z-30">
-						<ButtonGroup>
-							<Button
-								type="button"
-								size="icon"
-								className="cursor-pointer rounded-full"
-								onClick={() => {
-									setMode(ADD_TO_CART);
-									setOpen(true);
-								}}
-							>
-								<ShoppingCartIcon />
-							</Button>
-							<Button
-								type="button"
-								className="cursor-pointer rounded-full"
-								onClick={() => {
-									setMode(CHECKOUT);
-									setOpen(true);
-								}}
-							>
-								Mua ngay
-							</Button>
-						</ButtonGroup>
-					</div>
+					{hasAction && (
+						<div className="flex items-center gap-2 absolute right-2 bottom-2 z-30">
+							<ButtonGroup>
+								<Button
+									type="button"
+									size="icon"
+									className="cursor-pointer rounded-full"
+									onClick={() => {
+										setMode(ADD_TO_CART);
+										setOpen(true);
+									}}
+								>
+									<ShoppingCartIcon />
+								</Button>
+								<Button
+									type="button"
+									className="cursor-pointer rounded-full"
+									onClick={() => {
+										setMode(CHECKOUT);
+										setOpen(true);
+									}}
+								>
+									Mua ngay
+								</Button>
+							</ButtonGroup>
+						</div>
+					)}
 				</div>
 				<CardContent className="px-0 space-y-1">
 					<p className="line-clamp-2 text-sm font-light hover:underline">

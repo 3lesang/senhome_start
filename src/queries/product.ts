@@ -23,6 +23,7 @@ type ProductData = {
 		sale_price: number;
 		options: Record<string, string>;
 	}[];
+	category_id: number;
 };
 
 export function getProductBySlugQueryOptions(slug: string) {
@@ -30,6 +31,26 @@ export function getProductBySlugQueryOptions(slug: string) {
 		queryKey: [PRODUCT_QUERY_KEY, slug],
 		queryFn: async () => {
 			const res = await axiosClient.get<ProductData>(`/products/slug/${slug}`);
+			return res.data;
+		},
+	});
+}
+
+type PaginationResponse<T> = {
+	data: T[];
+	page: number;
+	page_size: number;
+	total_items: number;
+	total_pages: number;
+};
+
+export function getProductByCategoryQueryOptions(categoryId: number) {
+	return queryOptions({
+		queryKey: [PRODUCT_QUERY_KEY, categoryId],
+		queryFn: async () => {
+			const res = await axiosClient.get<PaginationResponse<ProductData>>(
+				`/products/categories/${categoryId}`,
+			);
 			return res.data;
 		},
 	});
@@ -68,14 +89,6 @@ export function getOptionsByProductQueryOptions(productID: string) {
 		},
 	});
 }
-
-type PaginationResponse<T> = {
-	data: T[];
-	page: number;
-	page_size: number;
-	total_items: number;
-	total_pages: number;
-};
 
 type SearchProductData = {
 	id: number;

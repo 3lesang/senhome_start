@@ -23,7 +23,7 @@ export function ProductInfo({ data, onReviewClick }: ProductInfoProps) {
 			<p className="text-2xl font-semibold mb-2">{data.name}</p>
 			{/** biome-ignore lint/a11y/noStaticElementInteractions: <explanation> */}
 			{/** biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
-			<div className="flex gap-2" onClick={onReviewClick} >
+			<div className="flex gap-2 w-fit" onClick={onReviewClick}>
 				<Rating defaultValue={data.averageRating} readOnly>
 					{[1, 2, 3, 4, 5].map((value) => (
 						<RatingButton key={value} size={14} />

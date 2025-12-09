@@ -25,6 +25,7 @@ import { ProductDiscount } from "./components/discount";
 import { ProductInfo } from "./components/info";
 import { ProductOptions } from "./components/option";
 import { ProductReview } from "./components/review";
+import { ProductSuggest } from "./components/suggest";
 
 export function ProductPage() {
 	const navigate = useNavigate();
@@ -148,10 +149,14 @@ export function ProductPage() {
 				<Breadcrumb className="max-w-6xl mx-auto">
 					<BreadcrumbList className="text-sm flex-nowrap">
 						<BreadcrumbItem>
-							<BreadcrumbLink href="/" className="whitespace-nowrap">Trang chủ</BreadcrumbLink>
+							<BreadcrumbLink href="/" className="whitespace-nowrap">
+								Trang chủ
+							</BreadcrumbLink>
 						</BreadcrumbItem>
 						<BreadcrumbSeparator />
-						<BreadcrumbItem className="line-clamp-1">{getProductQuery.data.name}</BreadcrumbItem>
+						<BreadcrumbItem className="line-clamp-1">
+							{getProductQuery.data.name}
+						</BreadcrumbItem>
 					</BreadcrumbList>
 				</Breadcrumb>
 				<div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 py-8">
@@ -174,8 +179,8 @@ export function ProductPage() {
 						/>
 						<ProductDiscount />
 						<ProductOptions
-							value={variant.options}
-							data={getProductQuery.data.options}
+							value={variant?.options}
+							data={getProductQuery.data?.options}
 							onChange={handleOptionsChange}
 						/>
 						<div className="mt-8 space-y-4">
@@ -230,6 +235,7 @@ export function ProductPage() {
 			<div ref={reviewSectionRef}>
 				<ProductReview id={product.id} />
 			</div>
+			<ProductSuggest productId={product.id} categoryId={product.category_id} />
 		</main>
 	);
 }
