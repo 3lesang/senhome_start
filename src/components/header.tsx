@@ -11,6 +11,7 @@ import {
 	SearchIcon,
 	ShoppingCartIcon,
 	UserIcon,
+	XIcon,
 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -56,6 +57,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 import { getSearchProductsQueryOptions } from "@/queries/product";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
+import { ScrollArea } from "./ui/scroll-area";
 
 function Discount() {
 	const hidden = useScrollHide(50);
@@ -242,56 +244,68 @@ function SearchInput() {
 	if (open) {
 		return (
 			<div className="z-50 fixed inset-0">
-				<div className="absolute z-30 left-0 right-0 bg-white py-2">
-					<InputGroup className="h-12 rounded-full container mx-auto">
-						<InputGroupInput
-							placeholder="Tìm kiếm sản phẩm..."
-							autoFocus
-							onChange={(e) => setQuery(e.currentTarget.value)}
-						/>
-						<InputGroupAddon>
-							<SearchIcon />
-						</InputGroupAddon>
-					</InputGroup>
+				<div className="absolute z-30 left-0 right-0 bg-white py-2 px-4">
+					<div className="flex items-center gap-2">
+						<InputGroup className="h-12 rounded-full container mx-auto">
+							<InputGroupInput
+								placeholder="Tìm kiếm sản phẩm..."
+								autoFocus
+								onChange={(e) => setQuery(e.currentTarget.value)}
+							/>
+							<InputGroupAddon>
+								<SearchIcon />
+							</InputGroupAddon>
+						</InputGroup>
+						<Button
+							type="button"
+							size="icon"
+							variant="outline"
+							onClick={() => setOpen(false)}
+						>
+							<XIcon />
+						</Button>
+					</div>
 					{!getSearchProductsQuery.isLoading && (
 						<div className="container mx-auto mt-4 space-y-4">
 							<p className="font-bold">Kết quả tìm kiếm</p>
-							<div className="grid grid-cols-12 gap-2">
-								{getSearchProductsQuery.data?.data.data?.map((p) => (
-									<Card
-										key={p.id}
-										className="border-0 shadow-none rounded-2xl overflow-hidden"
-									>
-										<img
-											src={convertToFileUrl(p.file)}
-											alt=""
-											className="aspect-square object-contain"
-										/>
-										<CardContent className="px-0 space-y-1">
-											<p className="line-clamp-2 text-sm font-light hover:underline">
-												<Link
-													to="/products/$id"
-													params={{ id: p.slug }}
-													onClick={() => setOpen(false)}
-												>
-													{p.name}
-												</Link>
-											</p>
-											<div className="flex items-center space-x-2">
-												<Badge variant="secondary">
-													-{calculateDiscount(p.origin_price, p.sale_price)}%
-												</Badge>
-												<p className="line-through text-xs text-neutral-700">
-													{formatVND(p.origin_price)}
+							<ScrollArea className="h-screen lg:h-fit">
+								<div className="grid grid-cols-2 lg:grid-cols-12 gap-2">
+									{getSearchProductsQuery.data?.data.data?.map((p) => (
+										<Card
+											key={p.id}
+											className="border-0 shadow-none rounded-2xl overflow-hidden"
+										>
+											<img
+												src={convertToFileUrl(p.file)}
+												alt=""
+												className="aspect-square object-contain"
+											/>
+											<CardContent className="px-0 space-y-1">
+												<p className="line-clamp-2 text-sm font-light hover:underline">
+													<Link
+														to="/products/$id"
+														params={{ id: p.slug }}
+														onClick={() => setOpen(false)}
+													>
+														{p.name}
+													</Link>
 												</p>
-											</div>
-											<p className="text-lg font-bold">
-												{formatVND(p.sale_price)}
-											</p>
-										</CardContent>
-									</Card>
-								))}
-							</div>
+												<div className="flex items-center space-x-2">
+													<Badge variant="secondary">
+														-{calculateDiscount(p.origin_price, p.sale_price)}%
+													</Badge>
+													<p className="line-through text-xs text-neutral-700">
+														{formatVND(p.origin_price)}
+													</p>
+												</div>
+												<p className="text-lg font-bold">
+													{formatVND(p.sale_price)}
+												</p>
+											</CardContent>
+										</Card>
+									))}
+								</div>
+							</ScrollArea>
 						</div>
 					)}
 				</div>
@@ -308,7 +322,7 @@ function SearchInput() {
 		<Button
 			type="button"
 			variant="outline"
-			className="hidden lg:flex rounded-full h-12 w-72 justify-start"
+			className="rounded-full h-12 lg:w-72 justify-start"
 			onClick={() => setOpen(true)}
 		>
 			<SearchIcon />

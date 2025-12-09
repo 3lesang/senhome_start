@@ -24,6 +24,7 @@ import { ProductContent } from "./components/content";
 import { ProductDiscount } from "./components/discount";
 import { ProductInfo } from "./components/info";
 import { ProductOptions } from "./components/option";
+import { RelativeProducts } from "./components/relative";
 import { ProductReview } from "./components/review";
 import { ProductSuggest } from "./components/suggest";
 
@@ -232,6 +233,7 @@ export function ProductPage() {
 				</div>
 			</div>
 			<ProductContent slug={product.slug} />
+			<RelativeProducts productID={product.id} />
 			<div ref={reviewSectionRef}>
 				<ProductReview id={product.id} />
 			</div>

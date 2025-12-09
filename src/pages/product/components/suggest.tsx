@@ -17,7 +17,7 @@ export const ProductSuggest = ({
 	if (!getProductByCategoryQuery.data?.data?.length) return;
 
 	return (
-		<div className="container mx-auto py-16">
+		<div className="container mx-auto py-16 px-4 lg:px-0">
 			<p className="uppercase font-bold text-2xl mb-4">Sản phẩm tương tự</p>
 			<div className="grid grid-cols-2 lg:grid-cols-4 gap-4 px-0">
 				{getProductByCategoryQuery.data.data?.map(
