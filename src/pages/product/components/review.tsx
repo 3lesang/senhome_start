@@ -2,8 +2,8 @@
 /** biome-ignore-all lint/a11y/useKeyWithClickEvents: <explanation> */
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { memo, useState } from "react";
-import { Rating, RatingButton } from "@/components/kibo-ui/rating";
 import { ReviewPreview } from "@/components/review-preview";
+import { Rating } from "@/components/shadcnblocks/rating";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { convertToFileUrl } from "@/lib/utils";
@@ -24,11 +24,7 @@ const ReviewOverview = ({ id }: { id: number }) => {
 					<p className="font-bold text-2xl">
 						{getOverviewQuery.data.average_rating}
 					</p>
-					<Rating defaultValue={getOverviewQuery.data.average_rating} readOnly>
-						{[1, 2, 3, 4, 5].map((value) => (
-							<RatingButton key={value} className="text-yellow-300" />
-						))}
-					</Rating>
+					<Rating rate={getOverviewQuery.data.average_rating} />
 				</div>
 				<p className="text-neutral-400 font-light text-sm">
 					({getOverviewQuery.data.total_reviews} đánh giá)
@@ -139,15 +135,7 @@ const ListReview = ({ id }: { id: number }) => {
 								</Avatar>
 								<p className="text-sm">{item?.customer?.name}</p>
 							</div>
-							<Rating defaultValue={item.rating} readOnly>
-								{[1, 2, 3, 4, 5].map((value) => (
-									<RatingButton
-										key={value}
-										size={16}
-										className="text-yellow-300"
-									/>
-								))}
-							</Rating>
+							<Rating rate={item.rating} className="w-24" />
 						</div>
 						<p className="text-sm mb-4">{item.comment}</p>
 						<ReviewPreview

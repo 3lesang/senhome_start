@@ -1,4 +1,4 @@
-import { Rating, RatingButton } from "@/components/kibo-ui/rating";
+import { Rating } from "@/components/shadcnblocks/rating";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { formatVND } from "@/lib/utils";
@@ -24,12 +24,10 @@ export function ProductInfo({ data, onReviewClick }: ProductInfoProps) {
 			{/** biome-ignore lint/a11y/noStaticElementInteractions: <explanation> */}
 			{/** biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
 			<div className="flex gap-2 w-fit" onClick={onReviewClick}>
-				<Rating defaultValue={data.averageRating} readOnly>
-					{[1, 2, 3, 4, 5].map((value) => (
-						<RatingButton key={value} size={14} />
-					))}
-				</Rating>
-				<p className="text-sm text-gray-500 cursor-pointer hover:underline">{data?.totalReviews} đánh giá</p>
+				<Rating rate={data.averageRating} className="cursor-pointer" />
+				<p className="text-sm text-gray-500 cursor-pointer hover:underline">
+					{data?.totalReviews} đánh giá
+				</p>
 			</div>
 			<Separator className="my-2" />
 			<div className="space-x-2 mt-8">

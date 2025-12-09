@@ -80,14 +80,14 @@ export function ReviewPreview({ ref, render, data }: ModalProps) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			{render?.({ setOpen, setCurrent, setCurrentReview })}
-			<DialogContent className="min-w-7xl">
+			<DialogContent className="lg:min-w-7xl">
 				<DialogHeader>
 					<DialogTitle></DialogTitle>
 					<DialogDescription></DialogDescription>
 				</DialogHeader>
 				<Separator />
-				<div className="grid grid-cols-12">
-					<div className="col-span-6">
+				<div className="grid grid-cols-1 lg:grid-cols-2">
+					<div className="col-span-1">
 						<Carousel setApi={setApi}>
 							<CarouselContent className="">
 								{review?.files.map((i) => (
@@ -120,7 +120,7 @@ export function ReviewPreview({ ref, render, data }: ModalProps) {
 							</Button>
 						</Carousel>
 					</div>
-					<div className="col-span-6 bg-white px-4">
+					<div className="col-span-1 bg-white px-4">
 						<div className="flex gap-2 items-center">
 							<Avatar>
 								{review?.customer.avatar && (
