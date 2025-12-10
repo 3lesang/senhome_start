@@ -15,6 +15,7 @@ import {
 	InputGroupInput,
 } from "@/components/ui/input-group";
 import { toast } from "sonner";
+import { Spinner } from "./ui/spinner";
 
 const schema = z.object({
 	phone: z.string().min(1, "Phone is requied"),
@@ -104,7 +105,9 @@ export function SigninForm() {
 				type="submit"
 				className="cursor-pointer rounded-full w-full mt-8 uppercase"
 				size="lg"
+				disabled={signupMutation.isPending}
 			>
+				{signupMutation.isPending && <Spinner />}
 				Đăng nhập
 			</Button>
 		</form>

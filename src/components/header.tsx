@@ -332,12 +332,13 @@ function SearchInput() {
 }
 
 export function Header() {
-	const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 	return (
 		<header className="sticky top-0 z-50">
 			<div className="bg-white">
 				<nav className="container mx-auto flex justify-between items-center h-16">
-					{isSmallDevice && <MobileMenu />}
+					<div className="lg:hidden">
+						<MobileMenu />
+					</div>
 					<Link to="/" className="lg:flex items-center gap-1">
 						<img
 							src="/logo512.png"
