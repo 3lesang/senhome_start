@@ -1,9 +1,3 @@
-import { Link, useNavigate } from "@tanstack/react-router";
-import { createClientOnlyFn } from "@tanstack/react-start";
-import _ from "lodash";
-import { ShoppingCartIcon } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,6 +21,12 @@ import {
 	formatVND,
 } from "@/lib/utils";
 import { cartCollection, orderCollection } from "@/stores/db";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { createClientOnlyFn } from "@tanstack/react-start";
+import _ from "lodash";
+import { ShoppingCartIcon } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 import { ButtonGroup } from "./ui/button-group";
 
 type ProductOption = {
@@ -200,7 +200,7 @@ export function ProductCard({ data, hasAction = true }: ProductCardProps) {
 			<Card key={data.id} className="border-0 shadow-none p-0">
 				<div className="aspect-square bg-neutral-50 rounded-md relative group">
 					<Link
-						to="/products/$id"
+						to="/product/$id"
 						params={{ id: data.slug }}
 						className="group-hover:opacity-0 transition-opacity duration-150"
 					>
@@ -211,7 +211,7 @@ export function ProductCard({ data, hasAction = true }: ProductCardProps) {
 						/>
 					</Link>
 					<Link
-						to="/products/$id"
+						to="/product/$id"
 						params={{ id: data.slug }}
 						className="opacity-0 group-hover:opacity-100 absolute inset-0 z-20 transition-opacity duration-150"
 					>
@@ -251,7 +251,7 @@ export function ProductCard({ data, hasAction = true }: ProductCardProps) {
 				</div>
 				<CardContent className="px-0 space-y-1">
 					<p className="line-clamp-2 text-sm font-light hover:underline">
-						<Link to="/products/$id" params={{ id: data.slug }}>
+						<Link to="/product/$id" params={{ id: data.slug }}>
 							{data.name}
 						</Link>
 					</p>

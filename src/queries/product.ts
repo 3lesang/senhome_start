@@ -1,6 +1,6 @@
-import { queryOptions } from "@tanstack/react-query";
 import axiosClient from "@/axios";
 import { PRODUCT_QUERY_KEY } from "@/constants";
+import { queryOptions } from "@tanstack/react-query";
 
 type ProductData = {
 	id: number;
@@ -11,6 +11,8 @@ type ProductData = {
 	meta_description: string;
 	origin_price: number;
 	sale_price: number;
+	stock: number;
+	sku: string;
 	options: {
 		id: number;
 		name: string;
@@ -21,6 +23,8 @@ type ProductData = {
 		file: string;
 		origin_price: number;
 		sale_price: number;
+		stock: number;
+		sku: string
 		options: Record<string, string>;
 	}[];
 	category_id: number;

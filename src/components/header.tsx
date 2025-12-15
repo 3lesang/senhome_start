@@ -1,22 +1,6 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { ClientOnly, Link } from "@tanstack/react-router";
-import { useMediaQuery } from "@uidotdev/usehooks";
-import { useAtom } from "jotai";
 import {
-	ChevronDown,
-	ChevronRight,
-	ChevronRightIcon,
-	MenuIcon,
-	SearchIcon,
-	ShoppingCartIcon,
-	UserIcon,
-	XIcon,
-} from "lucide-react";
-import { useState } from "react";
-import {
-	customerAtom,
 	SIGN_UP_TYPE,
+	customerAtom,
 	setAuthTypeAtom,
 	setOpenAtom,
 	tokenAtom,
@@ -52,11 +36,26 @@ import {
 } from "@/lib/utils";
 import { getDiscountsQueryOptions } from "@/queries/discount";
 import { getMenuItemQueryOptions, getMenuQueryOptions } from "@/queries/menu";
-import { CartBadge } from "./cart";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 import { getSearchProductsQueryOptions } from "@/queries/product";
-import { Card, CardContent } from "./ui/card";
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { ClientOnly, Link } from "@tanstack/react-router";
+import { useAtom } from "jotai";
+import {
+	ChevronDown,
+	ChevronRight,
+	ChevronRightIcon,
+	MenuIcon,
+	SearchIcon,
+	ShoppingCartIcon,
+	UserIcon,
+	XIcon,
+} from "lucide-react";
+import { useState } from "react";
+import { CartBadge } from "./cart";
 import { Badge } from "./ui/badge";
+import { Card, CardContent } from "./ui/card";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 import { ScrollArea } from "./ui/scroll-area";
 
 function Discount() {
@@ -68,9 +67,8 @@ function Discount() {
 	if (!codeDiscount) return null;
 	return (
 		<div
-			className={`transition-all duration-150 overflow-hidden ${
-				hidden ? "max-h-0" : "max-h-12"
-			}`}
+			className={`transition-all duration-150 overflow-hidden ${hidden ? "max-h-0" : "max-h-12"
+				}`}
 		>
 			<div className="bg-primary text-white py-2">
 				<p className="font-bold uppercase text-center text-xs">
@@ -283,7 +281,7 @@ function SearchInput() {
 											<CardContent className="px-0 space-y-1">
 												<p className="line-clamp-2 text-sm font-light hover:underline">
 													<Link
-														to="/products/$id"
+														to="/product/$id"
 														params={{ id: p.slug }}
 														onClick={() => setOpen(false)}
 													>

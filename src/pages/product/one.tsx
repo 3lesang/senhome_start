@@ -1,10 +1,3 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "@tanstack/react-router";
-import { createClientOnlyFn } from "@tanstack/react-start";
-import _ from "lodash";
-import { MinusIcon, PlusIcon, ShoppingCartIcon } from "lucide-react";
-import { useRef, useState } from "react";
-import { toast } from "sonner";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -19,6 +12,13 @@ import { calculateDiscount, checkBrowserId } from "@/lib/utils";
 import { getProductBySlugQueryOptions } from "@/queries/product";
 import { getOverviewByProductQueryOptions } from "@/queries/review";
 import { cartCollection, orderCollection } from "@/stores/db";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "@tanstack/react-router";
+import { createClientOnlyFn } from "@tanstack/react-start";
+import _ from "lodash";
+import { MinusIcon, PlusIcon, ShoppingCartIcon } from "lucide-react";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
 import { ProductCarousel } from "./components/carousel";
 import { ProductContent } from "./components/content";
 import { ProductDiscount } from "./components/discount";
@@ -30,7 +30,7 @@ import { ProductSuggest } from "./components/suggest";
 
 export function ProductPage() {
 	const navigate = useNavigate();
-	const { id } = useParams({ from: "/(app)/products/$id" });
+	const { id } = useParams({ from: "/(app)/product/$id" });
 	const getProductQuery = useSuspenseQuery(getProductBySlugQueryOptions(id));
 	const product = getProductQuery.data;
 	const variants = product.variants;
@@ -60,18 +60,23 @@ export function ProductPage() {
 
 	function handleAddToCart() {
 		const product = getProductQuery.data;
+		const isQuantityValid = variant?.id ? quantity <= variant.stock : quantity <= product.stock
+		if (!isQuantityValid) {
+			toast.error("Không đủ số lượng sản phẩm")
+			return
+		}
 		const data = {
-			id: variant.id.toString() ?? product.id.toString(),
+			id: variant?.id.toString() ?? product.id.toString(),
 			name: product.name,
 			slug: product.slug,
-			price: variant.origin_price,
-			sale_price: variant.sale_price,
-			thumbnail: variant.file,
+			price: variant?.origin_price ?? product.origin_price,
+			sale_price: variant?.sale_price ?? product.sale_price,
+			thumbnail: variant?.file ?? product.files[0],
 			quantity,
-			combos: Object.values(variant.options).join(", "),
+			combos: variant?.options ? Object.values(variant.options).join(", ") : "",
 			selected: true,
 			product: product.id.toString(),
-			variant: variant?.id.toString(),
+			variant: variant?.id.toString() ?? "",
 		};
 		const addToCart = createClientOnlyFn(() => {
 			const exist = cartCollection.get(data.id);
@@ -95,20 +100,24 @@ export function ProductPage() {
 	function handleCheckout() {
 		const id = checkBrowserId();
 		const product = getProductQuery.data;
-
+		const isQuantityValid = variant?.id ? quantity <= variant.stock : quantity <= product.stock
+		if (!isQuantityValid) {
+			toast.error("Không đủ số lượng sản phẩm")
+			return
+		}
 		const addOrder = createClientOnlyFn(() => {
 			const item = {
-				id: variant.id.toString() ?? product.id.toString(),
+				id: variant?.id.toString() ?? product.id.toString(),
 				name: product.name,
 				slug: product.slug,
-				price: variant.origin_price,
-				sale_price: variant.sale_price,
-				thumbnail: variant.file,
+				price: variant?.origin_price ?? product.origin_price,
+				sale_price: variant?.sale_price ?? product.sale_price,
+				thumbnail: variant?.file ?? product.files[0],
 				quantity,
-				combos: Object.values(variant.options).join(", "),
+				combos: variant?.options ? Object.values(variant.options).join(", ") : "",
 				selected: true,
 				product: product.id.toString(),
-				variant: variant?.id.toString(),
+				variant: variant?.id.toString() ?? "",
 			};
 			const order = orderCollection.get(id);
 			if (order?.id) {
