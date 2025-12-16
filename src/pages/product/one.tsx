@@ -153,6 +153,8 @@ export function ProductPage() {
 		setQuantity((state) => state + 1);
 	}
 
+	const stock = variant?.stock ?? product?.stock
+
 	return (
 		<main>
 			<div className="py-8">
@@ -194,6 +196,7 @@ export function ProductPage() {
 							onChange={handleOptionsChange}
 						/>
 						<div className="mt-8 space-y-4">
+							{stock && <p className="text-sm italic font-light">Còn {stock} sản phẩm</p>}
 							<Button
 								variant="outline"
 								className="h-12 rounded-full w-full cursor-pointer"

@@ -3,6 +3,7 @@ node_modules
 dist
 dist-ssr
 *.local
+*.production
 count.txt
 .env
 .nitro

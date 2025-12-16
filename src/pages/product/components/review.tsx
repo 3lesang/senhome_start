@@ -1,8 +1,6 @@
 /** biome-ignore-all lint/a11y/noStaticElementInteractions: <explanation> */
 /** biome-ignore-all lint/a11y/useKeyWithClickEvents: <explanation> */
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { memo, useState } from "react";
-import { ReviewPreview } from "@/components/review-preview";
+import { PreviewRefProps, ReviewPreview } from "@/components/review-preview";
 import { Rating } from "@/components/shadcnblocks/rating";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -11,11 +9,15 @@ import {
 	getOverviewByProductQueryOptions,
 	getReviewsByProductQueryOptions,
 } from "@/queries/review";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { memo, useRef, useState } from "react";
 
 const ReviewOverview = ({ id }: { id: number }) => {
 	const getOverviewQuery = useSuspenseQuery(
 		getOverviewByProductQueryOptions(id),
 	);
+	const ref = useRef<PreviewRefProps>(null)
+
 	return (
 		<div className="flex flex-col lg:flex-row mb-4 gap-8">
 			<div>
@@ -36,24 +38,26 @@ const ReviewOverview = ({ id }: { id: number }) => {
 				</p>
 				<div className="grid grid-cols-4 lg:grid-cols-12 gap-2">
 					<ReviewPreview
+						ref={ref}
 						data={getOverviewQuery.data.data}
-						render={({ setOpen, setCurrentReview }) => {
-							return getOverviewQuery.data.data?.map((r, idxReview) =>
-								r.files.map((f) => (
-									<img
-										key={f}
-										src={convertToFileUrl(f)}
-										alt=""
-										className="aspect-square rounded object-contain cursor-pointer"
-										onClick={() => {
-											setOpen(true);
-											setCurrentReview(idxReview);
-										}}
-									/>
-								)),
-							);
-						}}
 					/>
+					{
+						getOverviewQuery.data.data?.map((r, idxReview) =>
+							r.files.map((f, index) => (
+								<img
+									key={f}
+									src={convertToFileUrl(f)}
+									alt=""
+									className="aspect-square rounded object-contain cursor-pointer"
+									onClick={() => {
+										ref.current?.setOpen?.(true)
+										ref.current?.setCurrentReview?.(idxReview)
+										ref.current?.setScrollIndex?.(index)
+									}}
+								/>
+							)),
+						)
+					}
 				</div>
 			</div>
 		</div>
@@ -66,6 +70,8 @@ const ListReview = ({ id }: { id: number }) => {
 		has_image: false,
 		rating: 0,
 	});
+
+	const ref = useRef<PreviewRefProps>(null)
 
 	const filteredParams = Object.fromEntries(
 		Object.entries(params).filter(([_, value]) => Boolean(value)),
@@ -123,7 +129,11 @@ const ListReview = ({ id }: { id: number }) => {
 				))}
 			</div>
 			<div className="space-y-4">
-				{getReviewsQuery.data?.data?.map((item) => (
+				<ReviewPreview
+					ref={ref}
+					data={getReviewsQuery.data?.data}
+				/>
+				{getReviewsQuery.data?.data?.map((item, idxReview) => (
 					<div key={item.id} className="">
 						<div>
 							<div className="flex gap-2 items-center">
@@ -138,34 +148,23 @@ const ListReview = ({ id }: { id: number }) => {
 							<Rating rate={item.rating} className="w-24" />
 						</div>
 						<p className="text-sm mb-4">{item.comment}</p>
-						<ReviewPreview
-							data={[
-								{
-									files: item.files,
-									comment: item.comment,
-									rating: item.rating,
-									customer: item.customer,
-								},
-							]}
-							render={({ setOpen, setCurrent }) => {
-								return (
-									<div className="flex gap-2">
-										{item.files.map((f, index) => (
-											<img
-												key={f}
-												className="size-20 object-contain rounded cursor-pointer"
-												src={convertToFileUrl(f)}
-												alt=""
-												onClick={() => {
-													setOpen(true);
-													setCurrent(index);
-												}}
-											/>
-										))}
-									</div>
-								);
-							}}
-						/>
+						{
+							<div className="flex gap-2">
+								{item.files.map((f, index) => (
+									<img
+										key={f}
+										className="size-20 object-contain rounded cursor-pointer"
+										src={convertToFileUrl(f)}
+										alt=""
+										onClick={() => {
+											ref.current?.setOpen?.(true)
+											ref.current?.setCurrentReview?.(idxReview)
+											ref.current?.setScrollIndex?.(index)
+										}}
+									/>
+								))}
+							</div>
+						}
 					</div>
 				))}
 			</div>
