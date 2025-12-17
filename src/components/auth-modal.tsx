@@ -1,9 +1,7 @@
-import { useAtom } from "jotai";
-import { XIcon } from "lucide-react";
 import {
-	authAtom,
 	SIGN_IN_TYPE,
 	SIGN_UP_TYPE,
+	authAtom,
 	setAuthTypeAtom,
 	setOpenAtom,
 } from "@/atom/auth";
@@ -15,6 +13,8 @@ import {
 	ItemMedia,
 	ItemTitle,
 } from "@/components/ui/item";
+import { useAtom } from "jotai";
+import { XIcon } from "lucide-react";
 import { SigninForm } from "./signin-form";
 import { SignupForm } from "./signup-form";
 import { Button } from "./ui/button";
@@ -82,7 +82,7 @@ function Signin() {
 	);
 }
 
-function AuthPromo() {
+export function AuthPromo() {
 	return (
 		<div>
 			<p className="font-bold text-2xl">

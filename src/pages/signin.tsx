@@ -1,18 +1,16 @@
-import { AuthPromo } from "@/components/auth-modal";
-import { SignupForm } from "@/components/signup-form";
+import { SigninForm } from "@/components/signin-form";
 import { Link } from "@tanstack/react-router";
 
-export function SignupPage() {
+export function SigninPage() {
 	return <div className="py-8">
 		<div className="max-w-lg mx-auto">
-			<AuthPromo />
-			<SignupForm />
+			<SigninForm />
 			<div className="flex mt-4 justify-between">
 				<Link
-					to="/signin"
+					to="/signup"
 					className="cursor-pointer text-xs text-blue-800 font-semibold hover:underline"
 				>
-					Đăng nhập
+					Đăng kí tài khoản mới
 				</Link>
 				<Link
 					to="/"

@@ -13,6 +13,7 @@ import { Route as blankRouteRouteImport } from './routes/(blank)/route'
 import { Route as appRouteRouteImport } from './routes/(app)/route'
 import { Route as appIndexRouteImport } from './routes/(app)/index'
 import { Route as appSignupRouteImport } from './routes/(app)/signup'
+import { Route as appSigninRouteImport } from './routes/(app)/signin'
 import { Route as appCartRouteImport } from './routes/(app)/cart'
 import { Route as appAccountRouteRouteImport } from './routes/(app)/account/route'
 import { Route as blankCheckoutIndexRouteImport } from './routes/(blank)/checkout/index'
@@ -40,6 +41,11 @@ const appIndexRoute = appIndexRouteImport.update({
 const appSignupRoute = appSignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appSigninRoute = appSigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
   getParentRoute: () => appRouteRoute,
 } as any)
 const appCartRoute = appCartRouteImport.update({
@@ -96,6 +102,7 @@ const appAccountInfoRoute = appAccountInfoRouteImport.update({
 export interface FileRoutesByFullPath {
   '/account': typeof appAccountRouteRouteWithChildren
   '/cart': typeof appCartRoute
+  '/signin': typeof appSigninRoute
   '/signup': typeof appSignupRoute
   '/': typeof appIndexRoute
   '/account/info': typeof appAccountInfoRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/account': typeof appAccountRouteRouteWithChildren
   '/cart': typeof appCartRoute
+  '/signin': typeof appSigninRoute
   '/signup': typeof appSignupRoute
   '/': typeof appIndexRoute
   '/account/info': typeof appAccountInfoRoute
@@ -127,6 +135,7 @@ export interface FileRoutesById {
   '/(blank)': typeof blankRouteRouteWithChildren
   '/(app)/account': typeof appAccountRouteRouteWithChildren
   '/(app)/cart': typeof appCartRoute
+  '/(app)/signin': typeof appSigninRoute
   '/(app)/signup': typeof appSignupRoute
   '/(app)/': typeof appIndexRoute
   '/(app)/account/info': typeof appAccountInfoRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/account'
     | '/cart'
+    | '/signin'
     | '/signup'
     | '/'
     | '/account/info'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
   to:
     | '/account'
     | '/cart'
+    | '/signin'
     | '/signup'
     | '/'
     | '/account/info'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/(blank)'
     | '/(app)/account'
     | '/(app)/cart'
+    | '/(app)/signin'
     | '/(app)/signup'
     | '/(app)/'
     | '/(app)/account/info'
@@ -218,6 +230,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof appSignupRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/signin': {
+      id: '/(app)/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof appSigninRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/cart': {
@@ -312,6 +331,7 @@ const appAccountRouteRouteWithChildren = appAccountRouteRoute._addFileChildren(
 interface appRouteRouteChildren {
   appAccountRouteRoute: typeof appAccountRouteRouteWithChildren
   appCartRoute: typeof appCartRoute
+  appSigninRoute: typeof appSigninRoute
   appSignupRoute: typeof appSignupRoute
   appIndexRoute: typeof appIndexRoute
   appCollectionIdRoute: typeof appCollectionIdRoute
@@ -322,6 +342,7 @@ interface appRouteRouteChildren {
 const appRouteRouteChildren: appRouteRouteChildren = {
   appAccountRouteRoute: appAccountRouteRouteWithChildren,
   appCartRoute: appCartRoute,
+  appSigninRoute: appSigninRoute,
   appSignupRoute: appSignupRoute,
   appIndexRoute: appIndexRoute,
   appCollectionIdRoute: appCollectionIdRoute,

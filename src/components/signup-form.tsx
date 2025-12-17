@@ -1,9 +1,3 @@
-import { useForm } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
-import { useAtom } from "jotai";
-import { EyeIcon } from "lucide-react";
-import { toast } from "sonner";
-import z from "zod";
 import { SIGN_IN_TYPE, setAuthTypeAtom } from "@/atom/auth";
 import axiosClient from "@/axios";
 import { Button } from "@/components/ui/button";
@@ -15,6 +9,12 @@ import {
 	InputGroupButton,
 	InputGroupInput,
 } from "@/components/ui/input-group";
+import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
+import { useAtom } from "jotai";
+import { EyeIcon } from "lucide-react";
+import { toast } from "sonner";
+import z from "zod";
 import { Spinner } from "./ui/spinner";
 
 const schema = z.object({
@@ -61,7 +61,6 @@ export function SignupForm() {
 				e.preventDefault();
 				form.handleSubmit();
 			}}
-			className="lg:w-[464px] mx-auto"
 		>
 			<div className="grid grid-cols-2 gap-4">
 				<form.Field name="name">
