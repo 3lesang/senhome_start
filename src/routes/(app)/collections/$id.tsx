@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CollectionPage } from "@/pages/collection/one";
 import { getCollectionQueryOptions } from "@/queries/collection";
 
-export const Route = createFileRoute("/(app)/collection/$id")({
+export const Route = createFileRoute("/(app)/collections/$id")({
   component: CollectionPage,
   loader: async ({ context, params }) => {
     return context.queryClient.ensureQueryData(

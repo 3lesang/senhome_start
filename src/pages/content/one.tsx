@@ -1,11 +1,11 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { renderToReactElement } from "@tiptap/static-renderer";
 import { contentExtensions } from "@/components/content";
 import {
   getPageContentQueryOptions,
   getPageQueryOptions,
 } from "@/queries/page";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import { renderToReactElement } from "@tiptap/static-renderer";
 
 export function ContentPage() {
   const { id } = useParams({ from: "/(app)/contents/$id" });

@@ -6,7 +6,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 
 export function CollectionPage() {
-	const { id } = useParams({ from: "/(app)/collection/$id" });
+	const { id } = useParams({ from: "/(app)/collections/$id" });
 	const getCollectionQuery = useSuspenseQuery(getCollectionQueryOptions(id));
 	const getProductsQuery = useSuspenseQuery(
 		getProductsByCollectionIDQueryOptions(getCollectionQuery.data.id),

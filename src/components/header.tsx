@@ -1,6 +1,22 @@
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
+
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { ClientOnly, Link } from "@tanstack/react-router";
+import { useAtom } from "jotai";
 import {
-	SIGN_UP_TYPE,
+	ChevronDown,
+	ChevronRight,
+	ChevronRightIcon,
+	MenuIcon,
+	SearchIcon,
+	ShoppingCartIcon,
+	UserIcon,
+	XIcon,
+} from "lucide-react";
+import { useState } from "react";
+import {
 	customerAtom,
+	SIGN_UP_TYPE,
 	setAuthTypeAtom,
 	setOpenAtom,
 	tokenAtom,
@@ -27,7 +43,6 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "@/components/ui/sheet";
-import { useScrollHide } from "@/hooks/use-scroll-hide";
 import {
 	calculateDiscount,
 	cn,
@@ -37,21 +52,6 @@ import {
 import { getDiscountsQueryOptions } from "@/queries/discount";
 import { getMenuItemQueryOptions, getMenuQueryOptions } from "@/queries/menu";
 import { getSearchProductsQueryOptions } from "@/queries/product";
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { ClientOnly, Link } from "@tanstack/react-router";
-import { useAtom } from "jotai";
-import {
-	ChevronDown,
-	ChevronRight,
-	ChevronRightIcon,
-	MenuIcon,
-	SearchIcon,
-	ShoppingCartIcon,
-	UserIcon,
-	XIcon,
-} from "lucide-react";
-import { useState } from "react";
 import { CartBadge } from "./cart";
 import { Badge } from "./ui/badge";
 import { Card, CardContent } from "./ui/card";
@@ -59,17 +59,13 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 import { ScrollArea } from "./ui/scroll-area";
 
 function Discount() {
-	const hidden = useScrollHide(50);
 	const getDiscountsQuery = useSuspenseQuery(getDiscountsQueryOptions());
 	const [codeDiscount] =
 		getDiscountsQuery.data?.filter((d) => d.discount_type === "code") ?? [];
 
 	if (!codeDiscount) return null;
 	return (
-		<div
-			className={`transition-all duration-150 overflow-hidden ${hidden ? "max-h-0" : "max-h-12"
-				}`}
-		>
+		<div>
 			<div className="bg-primary text-white py-2">
 				<p className="font-bold uppercase text-center text-xs">
 					{codeDiscount?.description}
@@ -165,7 +161,19 @@ function NavMenu() {
 	);
 }
 
-const MenuItem = ({ item, level = 0 }) => {
+type MenuItemData = {
+	name: string;
+	url: string;
+	items: MenuItemData[];
+};
+
+const MenuItem = ({
+	item,
+	level = 0,
+}: {
+	item: MenuItemData;
+	level?: number;
+}) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const hasChildren = item.items && item.items.length > 0;
 
@@ -188,9 +196,9 @@ const MenuItem = ({ item, level = 0 }) => {
 					style={{ paddingLeft: `${level * 16}px` }}
 				>
 					{isOpen ? (
-						<ChevronDown className="w-4 h-4 mr-2 flex-shrink-0" />
+						<ChevronDown className="w-4 h-4 mr-2" />
 					) : (
-						<ChevronRight className="w-4 h-4 mr-2 flex-shrink-0" />
+						<ChevronRight className="w-4 h-4 mr-2" />
 					)}
 					<span className="text-sm font-medium text-gray-800">{item.name}</span>
 				</div>
@@ -281,7 +289,7 @@ function SearchInput() {
 											<CardContent className="px-0 space-y-1">
 												<p className="line-clamp-2 text-sm font-light hover:underline">
 													<Link
-														to="/product/$id"
+														to="/products/$id"
 														params={{ id: p.slug }}
 														onClick={() => setOpen(false)}
 													>

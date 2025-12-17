@@ -17,10 +17,12 @@ import { Route as appSigninRouteImport } from './routes/(app)/signin'
 import { Route as appCartRouteImport } from './routes/(app)/cart'
 import { Route as appAccountRouteRouteImport } from './routes/(app)/account/route'
 import { Route as blankCheckoutIndexRouteImport } from './routes/(blank)/checkout/index'
+import { Route as appPostsIndexRouteImport } from './routes/(app)/posts/index'
 import { Route as blankCheckoutSuccessRouteImport } from './routes/(blank)/checkout/success'
-import { Route as appProductIdRouteImport } from './routes/(app)/product/$id'
-import { Route as appContentIdRouteImport } from './routes/(app)/content/$id'
-import { Route as appCollectionIdRouteImport } from './routes/(app)/collection/$id'
+import { Route as appProductsIdRouteImport } from './routes/(app)/products/$id'
+import { Route as appPostsIdRouteImport } from './routes/(app)/posts/$id'
+import { Route as appContentsIdRouteImport } from './routes/(app)/contents/$id'
+import { Route as appCollectionsIdRouteImport } from './routes/(app)/collections/$id'
 import { Route as appAccountVoucherRouteImport } from './routes/(app)/account/voucher'
 import { Route as appAccountOrderRouteImport } from './routes/(app)/account/order'
 import { Route as appAccountInfoRouteImport } from './routes/(app)/account/info'
@@ -63,24 +65,34 @@ const blankCheckoutIndexRoute = blankCheckoutIndexRouteImport.update({
   path: '/checkout/',
   getParentRoute: () => blankRouteRoute,
 } as any)
+const appPostsIndexRoute = appPostsIndexRouteImport.update({
+  id: '/posts/',
+  path: '/posts/',
+  getParentRoute: () => appRouteRoute,
+} as any)
 const blankCheckoutSuccessRoute = blankCheckoutSuccessRouteImport.update({
   id: '/checkout/success',
   path: '/checkout/success',
   getParentRoute: () => blankRouteRoute,
 } as any)
-const appProductIdRoute = appProductIdRouteImport.update({
-  id: '/product/$id',
-  path: '/product/$id',
+const appProductsIdRoute = appProductsIdRouteImport.update({
+  id: '/products/$id',
+  path: '/products/$id',
   getParentRoute: () => appRouteRoute,
 } as any)
-const appContentIdRoute = appContentIdRouteImport.update({
-  id: '/content/$id',
-  path: '/content/$id',
+const appPostsIdRoute = appPostsIdRouteImport.update({
+  id: '/posts/$id',
+  path: '/posts/$id',
   getParentRoute: () => appRouteRoute,
 } as any)
-const appCollectionIdRoute = appCollectionIdRouteImport.update({
-  id: '/collection/$id',
-  path: '/collection/$id',
+const appContentsIdRoute = appContentsIdRouteImport.update({
+  id: '/contents/$id',
+  path: '/contents/$id',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appCollectionsIdRoute = appCollectionsIdRouteImport.update({
+  id: '/collections/$id',
+  path: '/collections/$id',
   getParentRoute: () => appRouteRoute,
 } as any)
 const appAccountVoucherRoute = appAccountVoucherRouteImport.update({
@@ -108,10 +120,12 @@ export interface FileRoutesByFullPath {
   '/account/info': typeof appAccountInfoRoute
   '/account/order': typeof appAccountOrderRoute
   '/account/voucher': typeof appAccountVoucherRoute
-  '/collection/$id': typeof appCollectionIdRoute
-  '/content/$id': typeof appContentIdRoute
-  '/product/$id': typeof appProductIdRoute
+  '/collections/$id': typeof appCollectionsIdRoute
+  '/contents/$id': typeof appContentsIdRoute
+  '/posts/$id': typeof appPostsIdRoute
+  '/products/$id': typeof appProductsIdRoute
   '/checkout/success': typeof blankCheckoutSuccessRoute
+  '/posts': typeof appPostsIndexRoute
   '/checkout': typeof blankCheckoutIndexRoute
 }
 export interface FileRoutesByTo {
@@ -123,10 +137,12 @@ export interface FileRoutesByTo {
   '/account/info': typeof appAccountInfoRoute
   '/account/order': typeof appAccountOrderRoute
   '/account/voucher': typeof appAccountVoucherRoute
-  '/collection/$id': typeof appCollectionIdRoute
-  '/content/$id': typeof appContentIdRoute
-  '/product/$id': typeof appProductIdRoute
+  '/collections/$id': typeof appCollectionsIdRoute
+  '/contents/$id': typeof appContentsIdRoute
+  '/posts/$id': typeof appPostsIdRoute
+  '/products/$id': typeof appProductsIdRoute
   '/checkout/success': typeof blankCheckoutSuccessRoute
+  '/posts': typeof appPostsIndexRoute
   '/checkout': typeof blankCheckoutIndexRoute
 }
 export interface FileRoutesById {
@@ -141,10 +157,12 @@ export interface FileRoutesById {
   '/(app)/account/info': typeof appAccountInfoRoute
   '/(app)/account/order': typeof appAccountOrderRoute
   '/(app)/account/voucher': typeof appAccountVoucherRoute
-  '/(app)/collection/$id': typeof appCollectionIdRoute
-  '/(app)/content/$id': typeof appContentIdRoute
-  '/(app)/product/$id': typeof appProductIdRoute
+  '/(app)/collections/$id': typeof appCollectionsIdRoute
+  '/(app)/contents/$id': typeof appContentsIdRoute
+  '/(app)/posts/$id': typeof appPostsIdRoute
+  '/(app)/products/$id': typeof appProductsIdRoute
   '/(blank)/checkout/success': typeof blankCheckoutSuccessRoute
+  '/(app)/posts/': typeof appPostsIndexRoute
   '/(blank)/checkout/': typeof blankCheckoutIndexRoute
 }
 export interface FileRouteTypes {
@@ -158,10 +176,12 @@ export interface FileRouteTypes {
     | '/account/info'
     | '/account/order'
     | '/account/voucher'
-    | '/collection/$id'
-    | '/content/$id'
-    | '/product/$id'
+    | '/collections/$id'
+    | '/contents/$id'
+    | '/posts/$id'
+    | '/products/$id'
     | '/checkout/success'
+    | '/posts'
     | '/checkout'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -173,10 +193,12 @@ export interface FileRouteTypes {
     | '/account/info'
     | '/account/order'
     | '/account/voucher'
-    | '/collection/$id'
-    | '/content/$id'
-    | '/product/$id'
+    | '/collections/$id'
+    | '/contents/$id'
+    | '/posts/$id'
+    | '/products/$id'
     | '/checkout/success'
+    | '/posts'
     | '/checkout'
   id:
     | '__root__'
@@ -190,10 +212,12 @@ export interface FileRouteTypes {
     | '/(app)/account/info'
     | '/(app)/account/order'
     | '/(app)/account/voucher'
-    | '/(app)/collection/$id'
-    | '/(app)/content/$id'
-    | '/(app)/product/$id'
+    | '/(app)/collections/$id'
+    | '/(app)/contents/$id'
+    | '/(app)/posts/$id'
+    | '/(app)/products/$id'
     | '/(blank)/checkout/success'
+    | '/(app)/posts/'
     | '/(blank)/checkout/'
   fileRoutesById: FileRoutesById
 }
@@ -260,6 +284,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof blankCheckoutIndexRouteImport
       parentRoute: typeof blankRouteRoute
     }
+    '/(app)/posts/': {
+      id: '/(app)/posts/'
+      path: '/posts'
+      fullPath: '/posts'
+      preLoaderRoute: typeof appPostsIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(blank)/checkout/success': {
       id: '/(blank)/checkout/success'
       path: '/checkout/success'
@@ -267,25 +298,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof blankCheckoutSuccessRouteImport
       parentRoute: typeof blankRouteRoute
     }
-    '/(app)/product/$id': {
-      id: '/(app)/product/$id'
-      path: '/product/$id'
-      fullPath: '/product/$id'
-      preLoaderRoute: typeof appProductIdRouteImport
+    '/(app)/products/$id': {
+      id: '/(app)/products/$id'
+      path: '/products/$id'
+      fullPath: '/products/$id'
+      preLoaderRoute: typeof appProductsIdRouteImport
       parentRoute: typeof appRouteRoute
     }
-    '/(app)/content/$id': {
-      id: '/(app)/content/$id'
-      path: '/content/$id'
-      fullPath: '/content/$id'
-      preLoaderRoute: typeof appContentIdRouteImport
+    '/(app)/posts/$id': {
+      id: '/(app)/posts/$id'
+      path: '/posts/$id'
+      fullPath: '/posts/$id'
+      preLoaderRoute: typeof appPostsIdRouteImport
       parentRoute: typeof appRouteRoute
     }
-    '/(app)/collection/$id': {
-      id: '/(app)/collection/$id'
-      path: '/collection/$id'
-      fullPath: '/collection/$id'
-      preLoaderRoute: typeof appCollectionIdRouteImport
+    '/(app)/contents/$id': {
+      id: '/(app)/contents/$id'
+      path: '/contents/$id'
+      fullPath: '/contents/$id'
+      preLoaderRoute: typeof appContentsIdRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/collections/$id': {
+      id: '/(app)/collections/$id'
+      path: '/collections/$id'
+      fullPath: '/collections/$id'
+      preLoaderRoute: typeof appCollectionsIdRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/account/voucher': {
@@ -334,9 +372,11 @@ interface appRouteRouteChildren {
   appSigninRoute: typeof appSigninRoute
   appSignupRoute: typeof appSignupRoute
   appIndexRoute: typeof appIndexRoute
-  appCollectionIdRoute: typeof appCollectionIdRoute
-  appContentIdRoute: typeof appContentIdRoute
-  appProductIdRoute: typeof appProductIdRoute
+  appCollectionsIdRoute: typeof appCollectionsIdRoute
+  appContentsIdRoute: typeof appContentsIdRoute
+  appPostsIdRoute: typeof appPostsIdRoute
+  appProductsIdRoute: typeof appProductsIdRoute
+  appPostsIndexRoute: typeof appPostsIndexRoute
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
@@ -345,9 +385,11 @@ const appRouteRouteChildren: appRouteRouteChildren = {
   appSigninRoute: appSigninRoute,
   appSignupRoute: appSignupRoute,
   appIndexRoute: appIndexRoute,
-  appCollectionIdRoute: appCollectionIdRoute,
-  appContentIdRoute: appContentIdRoute,
-  appProductIdRoute: appProductIdRoute,
+  appCollectionsIdRoute: appCollectionsIdRoute,
+  appContentsIdRoute: appContentsIdRoute,
+  appPostsIdRoute: appPostsIdRoute,
+  appProductsIdRoute: appProductsIdRoute,
+  appPostsIndexRoute: appPostsIndexRoute,
 }
 
 const appRouteRouteWithChildren = appRouteRoute._addFileChildren(

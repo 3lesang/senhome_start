@@ -1,7 +1,7 @@
-import axiosClient from "@/axios";
-import { STORE_PAGE_QUERY_KEY } from "@/constants";
 import { queryOptions } from "@tanstack/react-query";
 import axios from "axios";
+import axiosClient from "@/axios";
+import { STORE_PAGE_QUERY_KEY } from "@/constants";
 
 type PageData = {
   id: number;

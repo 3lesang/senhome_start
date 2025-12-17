@@ -200,7 +200,7 @@ export function ProductCard({ data, hasAction = true }: ProductCardProps) {
 			<Card key={data.id} className="border-0 shadow-none p-0">
 				<div className="aspect-square bg-neutral-50 rounded-md relative group">
 					<Link
-						to="/product/$id"
+						to="/products/$id"
 						params={{ id: data.slug }}
 						className="group-hover:opacity-0 transition-opacity duration-150"
 					>
@@ -211,7 +211,7 @@ export function ProductCard({ data, hasAction = true }: ProductCardProps) {
 						/>
 					</Link>
 					<Link
-						to="/product/$id"
+						to="/products/$id"
 						params={{ id: data.slug }}
 						className="opacity-0 group-hover:opacity-100 absolute inset-0 z-20 transition-opacity duration-150"
 					>
@@ -251,7 +251,7 @@ export function ProductCard({ data, hasAction = true }: ProductCardProps) {
 				</div>
 				<CardContent className="px-0 space-y-1">
 					<p className="line-clamp-2 text-sm font-light hover:underline">
-						<Link to="/product/$id" params={{ id: data.slug }}>
+						<Link to="/products/$id" params={{ id: data.slug }}>
 							{data.name}
 						</Link>
 					</p>

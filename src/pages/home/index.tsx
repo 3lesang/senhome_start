@@ -33,7 +33,7 @@ function HomeHero() {
 				<CarouselContent>
 					{getHeroCollectionsQuery.data?.map((item) => (
 						<CarouselItem key={item?.id}>
-							<Link to="/collection/$id" params={{ id: item.slug }}>
+							<Link to="/collections/$id" params={{ id: item.slug }}>
 								<div className="bg-neutral-50 aspect-auto lg:h-[800px] h-56">
 									<img
 										src={convertToFileUrl(item?.file)}
@@ -69,7 +69,7 @@ function HomeContent() {
 				<div className="flex justify-between items-center mb-8">
 					<p className="text-2xl font-bold">{item.name}</p>
 					<Link
-						to="/collection/$id"
+						to="/collections/$id"
 						params={{ id: item.slug }}
 						className={cn(buttonVariants({ variant: "link" }), "underline")}
 					>

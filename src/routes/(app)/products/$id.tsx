@@ -9,7 +9,7 @@ import {
   getReviewsByProductQueryOptions,
 } from "@/queries/review";
 
-export const Route = createFileRoute("/(app)/product/$id")({
+export const Route = createFileRoute("/(app)/products/$id")({
   component: ProductPage,
   loader: async ({ context, params }) => {
     const product = await context.queryClient.ensureQueryData(

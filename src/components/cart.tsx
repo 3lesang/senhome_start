@@ -1,6 +1,6 @@
+import { cartCollection } from "@/stores/db";
 import { sum, useLiveQuery } from "@tanstack/react-db";
 import { createClientOnlyFn } from "@tanstack/react-start";
-import { cartCollection } from "@/stores/db";
 import { Badge } from "./ui/badge";
 
 const getQuantity = createClientOnlyFn(() => {

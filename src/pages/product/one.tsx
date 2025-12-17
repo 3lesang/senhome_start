@@ -1,3 +1,10 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "@tanstack/react-router";
+import { createClientOnlyFn } from "@tanstack/react-start";
+import _ from "lodash";
+import { MinusIcon, PlusIcon, ShoppingCartIcon } from "lucide-react";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -12,13 +19,6 @@ import { calculateDiscount, checkBrowserId } from "@/lib/utils";
 import { getProductBySlugQueryOptions } from "@/queries/product";
 import { getOverviewByProductQueryOptions } from "@/queries/review";
 import { cartCollection, orderCollection } from "@/stores/db";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "@tanstack/react-router";
-import { createClientOnlyFn } from "@tanstack/react-start";
-import _ from "lodash";
-import { MinusIcon, PlusIcon, ShoppingCartIcon } from "lucide-react";
-import { useRef, useState } from "react";
-import { toast } from "sonner";
 import { ProductCarousel } from "./components/carousel";
 import { ProductContent } from "./components/content";
 import { ProductDiscount } from "./components/discount";
@@ -30,7 +30,7 @@ import { ProductSuggest } from "./components/suggest";
 
 export function ProductPage() {
 	const navigate = useNavigate();
-	const { id } = useParams({ from: "/(app)/product/$id" });
+	const { id } = useParams({ from: "/(app)/products/$id" });
 	const getProductQuery = useSuspenseQuery(getProductBySlugQueryOptions(id));
 	const product = getProductQuery.data;
 	const variants = product.variants;
@@ -196,7 +196,7 @@ export function ProductPage() {
 							onChange={handleOptionsChange}
 						/>
 						<div className="mt-8 space-y-4">
-							{stock && <p className="text-sm italic font-light">Còn {stock} sản phẩm</p>}
+							{stock > 0 && <p className="text-sm italic font-light">Còn {stock} sản phẩm</p>}
 							<Button
 								variant="outline"
 								className="h-12 rounded-full w-full cursor-pointer"
