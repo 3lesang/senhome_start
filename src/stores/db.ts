@@ -9,6 +9,7 @@ const cartSchema = z.object({
 	name: z.string(),
 	slug: z.string(),
 	price: z.number(),
+	weight: z.number(),
 	sale_price: z.number(),
 	thumbnail: z.string(),
 	quantity: z.number(),

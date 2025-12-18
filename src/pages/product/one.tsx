@@ -60,15 +60,23 @@ export function ProductPage() {
 
 	function handleAddToCart() {
 		const product = getProductQuery.data;
-		const isQuantityValid = variant?.id ? quantity <= variant.stock : quantity <= product.stock
+		const isQuantityValid = variant?.id
+			? quantity <= variant.stock
+			: quantity <= product.stock;
 		if (!isQuantityValid) {
-			toast.error("Không đủ số lượng sản phẩm")
-			return
+			toast.error("Không đủ số lượng sản phẩm");
+			return;
 		}
-		const data = {
+		const calWeight = Math.floor(
+			(product.long * product.wide * product.high) / 5000,
+		);
+		const weight = product.weight > calWeight ? product.weight : calWeight;
+		
+		const item = {
 			id: variant?.id.toString() ?? product.id.toString(),
 			name: product.name,
 			slug: product.slug,
+			weight: weight,
 			price: variant?.origin_price ?? product.origin_price,
 			sale_price: variant?.sale_price ?? product.sale_price,
 			thumbnail: variant?.file ?? product.files[0],
@@ -79,13 +87,13 @@ export function ProductPage() {
 			variant: variant?.id.toString() ?? "",
 		};
 		const addToCart = createClientOnlyFn(() => {
-			const exist = cartCollection.get(data.id);
+			const exist = cartCollection.get(item.id);
 			if (exist?.id) {
 				return cartCollection.update(exist.id, (cart) => {
 					cart.quantity += 1;
 				});
 			}
-			cartCollection.insert(data);
+			cartCollection.insert(item);
 		});
 		addToCart();
 		toast.success("Đã thêm vào giỏ hàng", {
@@ -100,21 +108,31 @@ export function ProductPage() {
 	function handleCheckout() {
 		const id = checkBrowserId();
 		const product = getProductQuery.data;
-		const isQuantityValid = variant?.id ? quantity <= variant.stock : quantity <= product.stock
+		const isQuantityValid = variant?.id
+			? quantity <= variant.stock
+			: quantity <= product.stock;
 		if (!isQuantityValid) {
-			toast.error("Không đủ số lượng sản phẩm")
-			return
+			toast.error("Không đủ số lượng sản phẩm");
+			return;
 		}
 		const addOrder = createClientOnlyFn(() => {
+			const calWeight = Math.floor(
+				(product.long * product.wide * product.high) / 5000,
+			);
+			const weight = product.weight > calWeight ? product.weight : calWeight;
+
 			const item = {
 				id: variant?.id.toString() ?? product.id.toString(),
 				name: product.name,
 				slug: product.slug,
 				price: variant?.origin_price ?? product.origin_price,
 				sale_price: variant?.sale_price ?? product.sale_price,
+				weight: weight,
 				thumbnail: variant?.file ?? product.files[0],
 				quantity,
-				combos: variant?.options ? Object.values(variant.options).join(", ") : "",
+				combos: variant?.options
+					? Object.values(variant.options).join(", ")
+					: "",
 				selected: true,
 				product: product.id.toString(),
 				variant: variant?.id.toString() ?? "",
@@ -153,7 +171,7 @@ export function ProductPage() {
 		setQuantity((state) => state + 1);
 	}
 
-	const stock = variant?.stock ?? product?.stock
+	const stock = variant?.stock ?? product?.stock;
 
 	return (
 		<main>
@@ -196,7 +214,11 @@ export function ProductPage() {
 							onChange={handleOptionsChange}
 						/>
 						<div className="mt-8 space-y-4">
-							{stock > 0 && <p className="text-sm italic font-light">Còn {stock} sản phẩm</p>}
+							{stock > 0 && (
+								<p className="text-sm italic font-light">
+									Còn {stock} sản phẩm
+								</p>
+							)}
 							<Button
 								variant="outline"
 								className="h-12 rounded-full w-full cursor-pointer"

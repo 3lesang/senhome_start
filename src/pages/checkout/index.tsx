@@ -1,6 +1,6 @@
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useForm, useStore } from "@tanstack/react-form";
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { InfoIcon } from "lucide-react";
@@ -8,9 +8,9 @@ import { useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
 import {
+	customerAtom,
 	SIGN_IN_TYPE,
 	SIGN_UP_TYPE,
-	customerAtom,
 	setAuthTypeAtom,
 	setOpenAtom,
 	tokenAtom,
@@ -164,7 +164,7 @@ function CheckoutDiscount({
 		const [effect] = discount.effects;
 
 		const isValid =
-			condition.condition_type === "order_amount" &&
+			condition?.condition_type === "order_amount" &&
 			Number(orderSalePrice) >= Number(condition.value);
 		if (!isValid) {
 			onInvalid?.();
@@ -194,7 +194,7 @@ function CheckoutDiscount({
 						{discounts?.map((d, index) => {
 							const [condition] = d.conditions;
 							const isValid =
-								condition.condition_type === "order_amount" &&
+								condition?.condition_type === "order_amount" &&
 								Number(orderSalePrice) >= Number(condition.value);
 
 							return (
@@ -249,6 +249,15 @@ function CheckoutDiscount({
 	);
 }
 
+type ShippingFeeData = {
+	id: number;
+	min_weight: number;
+	max_weight: number;
+	fee_amount: number;
+	min_order_value: number;
+	free_shipping: boolean;
+};
+
 export function CheckoutPage() {
 	const navigate = useNavigate();
 	const { data: order } = useLiveQuery((q) =>
@@ -272,17 +281,40 @@ export function CheckoutPage() {
 				totalPrice: acc.totalPrice + cur.price * cur.quantity,
 				totalSalePrice: acc.totalSalePrice + cur.sale_price * cur.quantity,
 				totalQuantiy: acc.totalQuantiy + cur.quantity,
+				totalWeight: acc.totalWeight + cur.quantity * cur.weight,
 			};
 		},
-		{ totalPrice: 0, totalSalePrice: 0, totalQuantiy: 0 },
+		{ totalPrice: 0, totalSalePrice: 0, totalQuantiy: 0, totalWeight: 0 },
 	);
 
-	const finalPrice = Number(orderSumary?.totalSalePrice) - discountPrice;
+	const getShippingFeeQuery = useQuery({
+		queryKey: ["shipping-fee", orderSumary?.totalWeight],
+		queryFn: () => {
+			return axiosClient.get<ShippingFeeData>(
+				`/shipping-fees/weight/${orderSumary?.totalWeight}`,
+			);
+		},
+		enabled: !!orderSumary?.totalWeight,
+	});
+
+	const shippingFeeData = getShippingFeeQuery.data?.data;
+	let shippingFeeAmount = shippingFeeData?.fee_amount ?? 0;
+
+	if (
+		Number(orderSumary?.totalSalePrice) >=
+			Number(shippingFeeData?.min_order_value) &&
+		shippingFeeData?.free_shipping
+	) {
+		shippingFeeAmount = 0;
+	}
+
+	const finalPrice =
+		Number(orderSumary?.totalSalePrice) - discountPrice + shippingFeeAmount;
 
 	const orderMutation = useMutation({
 		mutationFn: (value: FormValues) => {
 			const request: CreateOrderRequest = {
-				total_amount: Number(orderSumary?.totalSalePrice),
+				total_amount: Number(orderSumary?.totalSalePrice) + shippingFeeAmount,
 				discount_amount: discountPrice,
 				address: {
 					address_line: `${value.street}, ${value.ward.label}, ${value.district.label}, ${value.province.label}`,
@@ -666,7 +698,11 @@ export function CheckoutPage() {
 									)}
 									<div className="flex justify-between">
 										<p>Phí giao hàng</p>
-										<p>Miễn phí</p>
+										<p>
+											{shippingFeeAmount > 0
+												? formatVND(shippingFeeAmount)
+												: "Miễn phí"}
+										</p>
 									</div>
 								</CardContent>
 								<Separator />
