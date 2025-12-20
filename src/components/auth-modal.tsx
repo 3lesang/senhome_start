@@ -1,7 +1,11 @@
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
+import { useAtom } from "jotai";
+import { XIcon } from "lucide-react";
 import {
+	authAtom,
+	PHONE_VERIFY_OTP,
 	SIGN_IN_TYPE,
 	SIGN_UP_TYPE,
-	authAtom,
 	setAuthTypeAtom,
 	setOpenAtom,
 } from "@/atom/auth";
@@ -13,11 +17,10 @@ import {
 	ItemMedia,
 	ItemTitle,
 } from "@/components/ui/item";
-import { useAtom } from "jotai";
-import { XIcon } from "lucide-react";
 import { SigninForm } from "./signin-form";
 import { SignupForm } from "./signup-form";
 import { Button } from "./ui/button";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "./ui/input-otp";
 
 const models = [
 	{
@@ -82,6 +85,23 @@ function Signin() {
 	);
 }
 
+function PhoneVerifyOtp() {
+	return (
+		<div>
+			<InputOTP maxLength={6} pattern={REGEXP_ONLY_DIGITS_AND_CHARS}>
+				<InputOTPGroup>
+					<InputOTPSlot index={0} />
+					<InputOTPSlot index={1} />
+					<InputOTPSlot index={2} />
+					<InputOTPSlot index={3} />
+					<InputOTPSlot index={4} />
+					<InputOTPSlot index={5} />
+				</InputOTPGroup>
+			</InputOTP>
+		</div>
+	);
+}
+
 export function AuthPromo() {
 	return (
 		<div>
@@ -119,6 +139,7 @@ export function AuthModal() {
 				<AuthPromo />
 				{type === SIGN_UP_TYPE && <Signup />}
 				{type === SIGN_IN_TYPE && <Signin />}
+				{type === PHONE_VERIFY_OTP && <PhoneVerifyOtp />}
 				<DialogClose asChild className="absolute -top-4 -right-4">
 					<Button
 						type="button"

@@ -3,6 +3,7 @@ import { atomWithStorage } from "jotai/utils";
 
 export const SIGN_UP_TYPE = 1;
 export const SIGN_IN_TYPE = 2;
+export const PHONE_VERIFY_OTP = 3;
 
 export type AuthState = {
 	open: boolean;

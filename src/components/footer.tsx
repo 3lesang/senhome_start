@@ -35,8 +35,7 @@ export function Footer() {
 								{i.items.map((c) => (
 									<li key={c.name}>
 										<Link
-											to="/contents/$id"
-											params={{ id: c.url }}
+											to={c.url}
 											className="text-sm block whitespace-nowrap font-light hover:underline"
 										>
 											{c.name}
