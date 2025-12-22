@@ -1,3 +1,9 @@
+import { Link, useNavigate } from "@tanstack/react-router";
+import { createClientOnlyFn } from "@tanstack/react-start";
+import _ from "lodash";
+import { ShoppingCartIcon } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,12 +27,6 @@ import {
 	formatVND,
 } from "@/lib/utils";
 import { cartCollection, orderCollection } from "@/stores/db";
-import { Link, useNavigate } from "@tanstack/react-router";
-import { createClientOnlyFn } from "@tanstack/react-start";
-import _ from "lodash";
-import { ShoppingCartIcon } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
 import { ButtonGroup } from "./ui/button-group";
 
 type ProductOption = {
@@ -47,6 +47,10 @@ type ProductCardData = {
 	id: number;
 	name: string;
 	slug: string;
+	weight: number;
+	wide: number;
+	long: number;
+	high: number;
 	files: string[];
 	salePrice: number;
 	originPrice: number;
@@ -117,13 +121,17 @@ export function ProductCard({ data, hasAction = true }: ProductCardProps) {
 	}
 
 	function handleAddToCart() {
+		const calWeight = Math.floor((data.long * data.wide * data.high) / 5000);
+		const weight = data.weight > calWeight ? data.weight : calWeight;
+
 		const item = {
-			id: variant?.id.toString() ?? data.id.toString(),
+			id: `${variant?.id ?? 0}-${data.id}`,
 			name: data.name,
 			slug: data.slug,
 			price: variant?.origin_price ?? 0,
 			sale_price: variant?.sale_price ?? 0,
 			thumbnail: variant?.file ?? "",
+			weight: weight,
 			quantity: 1,
 			combos: variant?.options
 				? Object.values(variant?.options).join(", ")
@@ -154,12 +162,16 @@ export function ProductCard({ data, hasAction = true }: ProductCardProps) {
 	function handleCheckout() {
 		const id = checkBrowserId();
 		const addOrder = createClientOnlyFn(() => {
+			const calWeight = Math.floor((data.long * data.wide * data.high) / 5000);
+			const weight = data.weight > calWeight ? data.weight : calWeight;
+
 			const item = {
-				id: variant?.id.toString() ?? data.id.toString(),
+				id: `${variant?.id ?? 0}-${data.id}`,
 				name: data.name,
 				slug: data.slug,
 				price: variant?.origin_price ?? 0,
 				sale_price: variant?.sale_price ?? 0,
+				weight: weight,
 				thumbnail: variant?.file ?? "",
 				quantity: 1,
 				combos: variant?.options

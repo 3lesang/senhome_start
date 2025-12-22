@@ -55,6 +55,7 @@ export function CartPage() {
 			price: cart.price,
 			sale_price: cart.sale_price,
 			thumbnail: cart.thumbnail,
+			weight: cart.weight,
 			quantity: cart.quantity,
 			combos: cart.combos,
 			selected: cart.selected,
@@ -162,11 +163,14 @@ export function CartPage() {
 										</Link>
 									</ItemTitle>
 									<ItemDescription className="space-x-1">
-										{item.combos?.split(",").map((item) => (
-											<Badge key={item} variant="secondary">
-												{item}
-											</Badge>
-										))}
+										{item.combos?.split(",").map(
+											(item) =>
+												item && (
+													<Badge key={item} variant="secondary">
+														{item}
+													</Badge>
+												),
+										)}
 									</ItemDescription>
 								</ItemContent>
 								<ItemActions className="space-x-4">

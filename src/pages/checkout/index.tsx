@@ -61,6 +61,7 @@ type CreateOrderAddressRequest = {
 	address_line: string;
 	full_name: string;
 	phone: string;
+	email: string;
 };
 
 type CreateOrderItemsRequest = {
@@ -74,6 +75,7 @@ type CreateOrderRequest = {
 	address: CreateOrderAddressRequest;
 	total_amount: number;
 	discount_amount: number;
+	shipping_fee_amount: number;
 	items: CreateOrderItemsRequest[];
 };
 
@@ -314,12 +316,14 @@ export function CheckoutPage() {
 	const orderMutation = useMutation({
 		mutationFn: (value: FormValues) => {
 			const request: CreateOrderRequest = {
-				total_amount: Number(orderSumary?.totalSalePrice) + shippingFeeAmount,
+				total_amount: Number(orderSumary?.totalSalePrice),
 				discount_amount: discountPrice,
+				shipping_fee_amount: shippingFeeAmount,
 				address: {
 					address_line: `${value.street}, ${value.ward.label}, ${value.district.label}, ${value.province.label}`,
 					full_name: value.name,
 					phone: value.phone,
+					email: value.email,
 				},
 				items: value.items,
 			};
@@ -624,11 +628,14 @@ export function CheckoutPage() {
 													</Link>
 												</ItemTitle>
 												<ItemDescription className="space-x-2">
-													{item.combos.split(",").map((item) => (
-														<Badge key={item} variant="secondary">
-															{item}
-														</Badge>
-													))}
+													{item.combos.split(",").map(
+														(item) =>
+															item && (
+																<Badge key={item} variant="secondary">
+																	{item}
+																</Badge>
+															),
+													)}
 													<Badge>Số lượng {item.quantity}</Badge>
 												</ItemDescription>
 											</ItemContent>

@@ -71,9 +71,9 @@ export function ProductPage() {
 			(product.long * product.wide * product.high) / 5000,
 		);
 		const weight = product.weight > calWeight ? product.weight : calWeight;
-		
+
 		const item = {
-			id: variant?.id.toString() ?? product.id.toString(),
+			id: `${variant?.id ?? 0}-${product.id}`,
 			name: product.name,
 			slug: product.slug,
 			weight: weight,
@@ -122,7 +122,7 @@ export function ProductPage() {
 			const weight = product.weight > calWeight ? product.weight : calWeight;
 
 			const item = {
-				id: variant?.id.toString() ?? product.id.toString(),
+				id: `${variant?.id ?? 0}-${product.id}`,
 				name: product.name,
 				slug: product.slug,
 				price: variant?.origin_price ?? product.origin_price,
