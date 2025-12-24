@@ -241,6 +241,10 @@ export function ProductCard({ data, hasAction = true }: ProductCardProps) {
 									size="icon"
 									className="cursor-pointer rounded-full"
 									onClick={() => {
+										if (!variants.length) {
+											handleAddToCart();
+											return;
+										}
 										setMode(ADD_TO_CART);
 										setOpen(true);
 									}}
@@ -251,6 +255,10 @@ export function ProductCard({ data, hasAction = true }: ProductCardProps) {
 									type="button"
 									className="cursor-pointer rounded-full"
 									onClick={() => {
+										if (!variants.length) {
+											handleCheckout();
+											return;
+										}
 										setMode(CHECKOUT);
 										setOpen(true);
 									}}

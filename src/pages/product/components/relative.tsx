@@ -1,3 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { PlusIcon } from "lucide-react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import {
 	HoverCard,
@@ -13,9 +16,6 @@ import {
 } from "@/components/ui/item";
 import { convertToFileUrl, formatVND } from "@/lib/utils";
 import { getHotspotQueryOptions } from "@/queries/hotspot";
-import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
-import { PlusIcon } from "lucide-react";
 
 interface RelativeProductsProps {
 	productID: number;
@@ -63,7 +63,7 @@ export function RelativeProducts({ productID }: RelativeProductsProps) {
 										<ItemContent>
 											<ItemTitle>
 												<Link
-													to="/product/$id"
+													to="/products/$id"
 													params={{ id: spot.product.slug }}
 												>
 													<p className="hover:underline">{spot.product.name}</p>

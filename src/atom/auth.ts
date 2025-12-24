@@ -7,7 +7,7 @@ export const PHONE_VERIFY_OTP = 3;
 
 export type AuthState = {
 	open: boolean;
-	type: typeof SIGN_IN_TYPE | typeof SIGN_UP_TYPE | null;
+	type: typeof SIGN_IN_TYPE | typeof SIGN_UP_TYPE | typeof PHONE_VERIFY_OTP | null;
 };
 
 export type CustomerType = {

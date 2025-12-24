@@ -32,6 +32,10 @@ export const ProductSuggest = ({
 									files: p.files,
 									originPrice: p.origin_price,
 									salePrice: p.sale_price,
+									weight: 0,
+									long: 0,
+									wide: 0,
+									high: 0,
 									options: p.options,
 									variants: p.variants,
 								}}

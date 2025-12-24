@@ -1,6 +1,9 @@
 /** biome-ignore-all lint/a11y/noStaticElementInteractions: <explanation> */
 /** biome-ignore-all lint/a11y/useKeyWithClickEvents: <explanation> */
-import { PreviewRefProps, ReviewPreview } from "@/components/review-preview";
+
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { memo, useRef, useState } from "react";
+import { type PreviewRefProps, ReviewPreview } from "@/components/review-preview";
 import { Rating } from "@/components/shadcnblocks/rating";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -9,8 +12,6 @@ import {
 	getOverviewByProductQueryOptions,
 	getReviewsByProductQueryOptions,
 } from "@/queries/review";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { memo, useRef, useState } from "react";
 
 const ReviewOverview = ({ id }: { id: number }) => {
 	const getOverviewQuery = useSuspenseQuery(

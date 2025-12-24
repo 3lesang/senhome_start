@@ -1,3 +1,6 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import Autoplay from "embla-carousel-autoplay";
 import { ProductCard } from "@/components/product-card";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -12,9 +15,6 @@ import {
 	getHeroCollectionsQueryOptions,
 	getHomeCollectionsQueryOptions,
 } from "@/queries/collection";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
-import Autoplay from "embla-carousel-autoplay";
 
 function HomeHero() {
 	const getHeroCollectionsQuery = useSuspenseQuery(
@@ -24,6 +24,9 @@ function HomeHero() {
 	return (
 		<section>
 			<Carousel
+				opts={{
+					loop: true,
+				}}
 				plugins={[
 					Autoplay({
 						delay: 5000,
@@ -87,6 +90,10 @@ function HomeContent() {
 								files: p.files,
 								originPrice: p.origin_price,
 								salePrice: p.sale_price,
+								weight: 0,
+								long: 0,
+								wide: 0,
+								high: 0,
 								options: p.options,
 								variants: p.variants,
 							}}

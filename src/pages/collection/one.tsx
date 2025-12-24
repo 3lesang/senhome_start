@@ -1,9 +1,9 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { getCollectionQueryOptions } from "@/queries/collection";
 import { getProductsByCollectionIDQueryOptions } from "@/queries/product";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
 
 export function CollectionPage() {
 	const { id } = useParams({ from: "/(app)/collections/$id" });
@@ -41,6 +41,10 @@ export function CollectionPage() {
 								name: p.name,
 								slug: p.slug,
 								files: p.files,
+								weight: 0,
+								long: 0,
+								wide: 0,
+								high: 0,
 								originPrice: p.origin_price,
 								salePrice: p.sale_price,
 								options: p.options,
