@@ -125,16 +125,16 @@ function NavMenu() {
 								<div className="grid grid-cols-3 gap-8">
 									{topLevel.items.map((category, catIdx) => (
 										<div key={catIdx} className="space-y-3">
-											<div className="font-semibold text-gray-900 pb-2 border-b border-gray-200">
-												{category.name}
-											</div>
+											<NavigationMenuLink className="font-semibold text-gray-900 pb-2 border-b border-gray-200">
+												<Link to={category.url}>{category.name}</Link>
+											</NavigationMenuLink>
 											{category.items && category.items.length > 0 && (
 												<ul className="space-y-2">
 													{category.items.map((item, itemIdx) => (
 														<li key={itemIdx}>
 															<NavigationMenuLink asChild>
-																<a
-																	href={item.url || "#"}
+																<Link
+																	to={item.url || "#"}
 																	className="block px-3 py-2 rounded-md text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
 																>
 																	<div className="flex items-center justify-between">
@@ -143,7 +143,7 @@ function NavMenu() {
 																			<ChevronRightIcon className="w-4 h-4" />
 																		)}
 																	</div>
-																</a>
+																</Link>
 															</NavigationMenuLink>
 														</li>
 													))}
