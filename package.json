@@ -78,7 +78,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
-    "@cloudflare/vite-plugin": "^1.13.12",
+    "@cloudflare/vite-plugin": "^1.21.1",
     "@tanstack/devtools-vite": "^0.3.6",
     "@tanstack/react-devtools": "^0.7.6",
     "@testing-library/dom": "^10.4.0",
@@ -95,6 +95,6 @@
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.0.5",
     "web-vitals": "^5.1.0",
-    "wrangler": "^4.42.2"
+    "wrangler": "^4.59.3"
   }
 }
