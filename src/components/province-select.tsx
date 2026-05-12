@@ -28,7 +28,7 @@ export function ProvinceSelect({ value, onChange }: ProvinceSelectProps) {
 	const { data } = useQuery({
 		queryKey: ["province"],
 		queryFn: async () => {
-			const res = await axios.get<{ name: string, code: string }[]>("https://provinces.open-api.vn/api/v2/p", {
+			const res = await axios.get<{ code: number, name: string }[]>("https://provinces.open-api.vn/api/v2/p", {
 			});
 			return res.data;
 		},
@@ -58,14 +58,14 @@ export function ProvinceSelect({ value, onChange }: ProvinceSelectProps) {
 								variant="ghost"
 								className="w-full justify-start"
 								onClick={() =>
-									handleSelect({ value: item.code, label: item.name })
+									handleSelect({ value: item.code.toString(), label: item.name })
 								}
 							>
 								{item.name}
 								<CheckIcon
 									className={cn(
 										"ml-auto",
-										item.code === state?.value ? "opacity-100" : "opacity-0",
+										item.code.toString() === state?.value ? "opacity-100" : "opacity-0",
 									)}
 								/>
 							</Button>

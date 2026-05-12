@@ -29,7 +29,7 @@ export function WardSelect({ value, onChange, id }: WardSelectProps) {
 	const { data } = useQuery({
 		queryKey: ["ward", id],
 		queryFn: async () => {
-			const res = await axios.get<{ code: string, name: string }[]>("https://provinces.open-api.vn/api/v2/w", {
+			const res = await axios.get<{ code: number, name: string }[]>("https://provinces.open-api.vn/api/v2/w", {
 				params: {
 					province: id,
 				},
@@ -70,13 +70,13 @@ export function WardSelect({ value, onChange, id }: WardSelectProps) {
 							key={item.code}
 							variant="ghost"
 							className="w-full justify-start"
-							onClick={() => handleSelect({ value: item.code, label: item.name })}
+							onClick={() => handleSelect({ value: item.code.toString(), label: item.name })}
 						>
 							{item.name}
 							<CheckIcon
 								className={cn(
 									"ml-auto",
-									item.code === state?.value ? "opacity-100" : "opacity-0",
+									item.code.toString() === state?.value ? "opacity-100" : "opacity-0",
 								)}
 							/>
 						</Button>
