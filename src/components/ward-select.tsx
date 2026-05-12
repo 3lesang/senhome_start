@@ -29,10 +29,9 @@ export function WardSelect({ value, onChange, id }: WardSelectProps) {
 	const { data } = useQuery({
 		queryKey: ["ward", id],
 		queryFn: async () => {
-			const res = await axios.get(`https://open.oapi.vn/location/wards/${id}`, {
+			const res = await axios.get<{ code: string, name: string }[]>("https://provinces.open-api.vn/api/v2/w", {
 				params: {
-					page: 0,
-					size: 100,
+					province: id,
 				},
 			});
 			return res.data;
@@ -65,19 +64,19 @@ export function WardSelect({ value, onChange, id }: WardSelectProps) {
 			</PopoverTrigger>
 			<PopoverContent className="w-56">
 				<ScrollArea className="h-72">
-					{data?.data?.map((item: { id: string; name: string }) => (
+					{data?.map((item) => (
 						<Button
 							type="button"
-							key={item.id}
+							key={item.code}
 							variant="ghost"
 							className="w-full justify-start"
-							onClick={() => handleSelect({ value: item.id, label: item.name })}
+							onClick={() => handleSelect({ value: item.code, label: item.name })}
 						>
 							{item.name}
 							<CheckIcon
 								className={cn(
 									"ml-auto",
-									item.id === state?.value ? "opacity-100" : "opacity-0",
+									item.code === state?.value ? "opacity-100" : "opacity-0",
 								)}
 							/>
 						</Button>

@@ -16,7 +16,6 @@ import {
 	tokenAtom,
 } from "@/atom/auth";
 import axiosClient from "@/axios";
-import { DistrictSelect } from "@/components/district-select";
 import { ProvinceSelect } from "@/components/province-select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -87,10 +86,6 @@ const schema = z.object({
 	province: z.object({
 		value: z.string(),
 		label: z.string().min(1, "Name is required"),
-	}),
-	district: z.object({
-		value: z.string(),
-		label: z.string().min(1, "Name is requied"),
 	}),
 	ward: z.object({
 		value: z.string(),
@@ -320,7 +315,7 @@ export function CheckoutPage() {
 				discount_amount: discountPrice,
 				shipping_fee_amount: shippingFeeAmount,
 				address: {
-					address_line: `${value.street}, ${value.ward.label}, ${value.district.label}, ${value.province.label}`,
+					address_line: `${value.street}, ${value.ward.label}, ${value.province.label}`,
 					full_name: value.name,
 					phone: value.phone,
 					email: value.email,
@@ -347,7 +342,6 @@ export function CheckoutPage() {
 		email: order?.email ?? "",
 		street: order?.street ?? "",
 		province: order?.province ?? { label: "", value: "" },
-		district: order?.district ?? { label: "", value: "" },
 		ward: order?.ward ?? { label: "", value: "" },
 		payment: "cod",
 		status: "created",
@@ -376,10 +370,6 @@ export function CheckoutPage() {
 	const provinceID = useStore(
 		form.store,
 		(state) => state.values.province.value,
-	);
-	const districtID = useStore(
-		form.store,
-		(state) => state.values.district.value,
 	);
 
 	return (
@@ -511,7 +501,7 @@ export function CheckoutPage() {
 										{(field) => (
 											<Field
 												aria-invalid={!field.state.meta.isValid}
-												className="col-span-12 lg:col-span-4"
+												className="col-span-12 lg:col-span-6"
 											>
 												<FieldLabel>Tỉnh/TP</FieldLabel>
 												<ProvinceSelect
@@ -524,35 +514,17 @@ export function CheckoutPage() {
 											</Field>
 										)}
 									</form.Field>
-									<form.Field name="district">
-										{(field) => (
-											<Field
-												aria-invalid={!field.state.meta.isValid}
-												className="col-span-12 lg:col-span-4"
-											>
-												<FieldLabel>Quận/Huyện</FieldLabel>
-												<DistrictSelect
-													value={field.state.value}
-													onChange={field.handleChange}
-													id={provinceID}
-												/>
-												{!field.state.meta.isValid && (
-													<FieldError errors={field.state.meta.errors} />
-												)}
-											</Field>
-										)}
-									</form.Field>
 									<form.Field name="ward">
 										{(field) => (
 											<Field
 												aria-invalid={!field.state.meta.isValid}
-												className="col-span-12 lg:col-span-4"
+												className="col-span-12 lg:col-span-6"
 											>
 												<FieldLabel>Phường/Xã</FieldLabel>
 												<WardSelect
 													value={field.state.value}
 													onChange={field.handleChange}
-													id={districtID}
+													id={provinceID}
 												/>
 												{!field.state.meta.isValid && (
 													<FieldError errors={field.state.meta.errors} />
